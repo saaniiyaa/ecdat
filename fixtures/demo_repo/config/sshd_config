@@ -1,0 +1,6 @@
+Port 22
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKeyAlgorithms +ssh-rsa,rsa-sha2-256,diffie-hellman-group-exchange-sha256
+KexAlgorithms diffie-hellman-group1-sha1,diffie-hellman-group14-sha1,curve25519-sha256@libssh.org
+Ciphers aes128-cbc,3des-cbc,aes256-ctr,arcfour
+MACs hmac-sha1,hmac-sha2-256
