@@ -64,6 +64,18 @@ Breaks-Api: yes|no
 
 **Append-only API:** new fields and new endpoints are fine. Never remove, rename or retype a field.
 
+**Git hygiene (this bit us once, so it is a rule):** your tests must pass in a **clean clone**,
+not just in your working tree —
+
+```bash
+git clone <url> ../ecdat-check && cd ../ecdat-check && python setup_ecdat.py test
+```
+
+A file that exists only in your working tree is invisible to your teammate, and three of ours were
+(invisible `*.pem`/`*.key` fixtures — the suite was green here and broken there). Never commit
+`.env`, a database, `uploads/`, `.venv/` or real keys; the synthetic demo certs in
+`fixtures/demo_repo/certs/` are committed on purpose.
+
 ## 3. Run the backend (it is already running for you)
 
 ```bash
