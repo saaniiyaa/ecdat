@@ -1,0 +1,64 @@
+# Two profiles in one file:
+#   docker compose --profile sqlite up      -> laptop / demo, zero cloud spend
+#   docker compose --profile postgres up   -> same API, production database
+services:
+  api:
+    build: .
+    image: ecdat-backend:1.0.0
+    profiles: ["sqlite", "postgres"]
+    environment:
+      ECDAT_ENV: ${ECDAT_ENV:-dev}
+      ECDAT_API_KEYS: ${ECDAT_API_KEYS:-dev-ecdat-key}
+      ECDAT_CORS_ORIGINS: ${ECDAT_CORS_ORIGINS:-*}
+      ECDAT_SCAN_WORKERS: ${ECDAT_SCAN_WORKERS:-4}
+      ECDAT_ALLOW_LIVE_PROBE: "false"
+      ECDAT_LOG_LEVEL: ${ECDAT_LOG_LEVEL:-INFO}
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////data/ecdat.db}
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - ecdat-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    depends_on:
+      db:
+        condition: service_healthy
+        required: false
+
+  db:
+    image: postgres:17-alpine
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_USER: ecdat
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ecdat-dev-password}
+      POSTGRES_DB: ecdat
+    volumes:
+      - ecdat-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecdat -d ecdat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # One-shot: nightly consistent backup of the SQLite demo volume.
+  #   docker compose --profile sqlite run --rm api python -m app.manage backup --out-dir /data/backups
+  backup:
+    image: ecdat-backend:1.0.0
+    profiles: ["sqlite"]
+    entrypoint: ["sh", "-c"]
+    command: ["python -m app.manage backup --out-dir /data/backups"]
+    volumes:
+      - ecdat-data:/data
+    environment:
+      DATABASE_URL: sqlite:////data/ecdat.db
+    depends_on: [api]
+
+volumes:
+  ecdat-data:
+  ecdat-pg:
