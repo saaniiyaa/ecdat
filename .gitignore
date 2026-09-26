@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Runtime state - never commit a database or a scan artefact
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+backups/
+/data/
+uploads/
+scan-roots/
+
+# Secrets
+.env
+*.pem
+*.key
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+.ecdat/
+
+# Local sandbox dependency cache (not part of the project)
+/pylibs/
