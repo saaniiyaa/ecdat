@@ -1,0 +1,138 @@
+{
+  "environment": {
+    "python": "3.13.14",
+    "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+    "cpu_count": 2,
+    "scan_workers": "4",
+    "database": "sqlite:///./ecdat.db",
+    "measured_at": "2026-09-26T18:46:39Z"
+  },
+  "health": {
+    "status": "healthy",
+    "version": "1.0.0",
+    "engine_version": "1.0.0",
+    "policy_pack_version": "pp-2026.09",
+    "database": "connected",
+    "dialect": "sqlite",
+    "uptime_seconds": 5.7,
+    "queue_depth": 4,
+    "timestamp": "2026-09-26T18:46:39Z"
+  },
+  "demo_estate": {
+    "files": 22,
+    "surfaces": 22,
+    "findings": 61,
+    "scan_ms": 362,
+    "wall_ms": 394.0,
+    "coverage_index": 0.983,
+    "unobserved_pct": 1.7,
+    "by_band": [
+      {
+        "band": "high",
+        "count": 25
+      },
+      {
+        "band": "critical",
+        "count": 16
+      },
+      {
+        "band": "low",
+        "count": 11
+      },
+      {
+        "band": "medium",
+        "count": 9
+      }
+    ],
+    "tracks": {
+      "classical_critical": 11,
+      "quantum_critical": 17,
+      "post_quantum_adopted": 3,
+      "quantum_vulnerable_assets": 8,
+      "unobserved_surfaces": 1
+    },
+    "mosca": {
+      "x_years": 15.0,
+      "y_years": 4.0,
+      "z_years": 10.0,
+      "state": "breached",
+      "holds": true,
+      "margin_years": -9.0,
+      "must_start_by": "2026-09-26"
+    },
+    "assets": 39
+  },
+  "demo_latency": {
+    "findings": {
+      "p50_ms": 20.7,
+      "p95_ms": 23.3,
+      "bytes": 95703,
+      "samples": 20
+    },
+    "risk_summary": {
+      "p50_ms": 11.8,
+      "p95_ms": 12.6,
+      "bytes": 20962,
+      "samples": 20
+    },
+    "cbom_export": {
+      "p50_ms": 9.1,
+      "p95_ms": 10.7,
+      "bytes": 41751,
+      "samples": 20
+    }
+  },
+  "dense_estate": {
+    "copies": 100,
+    "files": 2200,
+    "surfaces": 2200,
+    "findings": 6100,
+    "scan_ms": 43658,
+    "files_per_second": 50.4,
+    "findings_per_second": 139.7,
+    "scan_id": "855802f3-b411-4a37-89cc-27a7fcd7e42c"
+  },
+  "dense_latency": {
+    "findings": {
+      "p50_ms": 28.5,
+      "p95_ms": 39.5,
+      "bytes": 96738,
+      "samples": 20
+    },
+    "findings_band_filtered": {
+      "p50_ms": 45.3,
+      "p95_ms": 50.7,
+      "bytes": 98194,
+      "samples": 20
+    },
+    "findings_search": {
+      "p50_ms": 43.6,
+      "p95_ms": 47.6,
+      "bytes": 98194,
+      "samples": 20
+    },
+    "risk_summary": {
+      "p50_ms": 75.5,
+      "p95_ms": 138.3,
+      "bytes": 21150,
+      "samples": 20
+    },
+    "coverage": {
+      "p50_ms": 33.7,
+      "p95_ms": 101.9,
+      "bytes": 3285,
+      "samples": 20
+    }
+  },
+  "export_guard": {
+    "status": 413,
+    "code": "EXPORT_TOO_LARGE"
+  },
+  "test_suite": {
+    "summary": "84 passed, 1 warning in 16.01s",
+    "exit_code": 0
+  },
+  "api_surface": {
+    "endpoints": 34
+  }
+}
