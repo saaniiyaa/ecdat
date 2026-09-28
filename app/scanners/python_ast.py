@@ -13,6 +13,7 @@ import ast
 from pathlib import Path
 
 from app.registry import canonicalise, material_asset, with_purpose
+from app.scanners.source_context import source_context
 from app.scanners.base import (
     AST_RESOLVED,
     AST_UNRESOLVED,
@@ -201,7 +202,8 @@ class PythonAstScanner:
             symbol=symbol,
             snippet=redact(snippet),
             source=self.source,
-            extra=extra or {},
+            # The scanner's own extras win; context is added, never replaces.
+            extra={**source_context(rel_path), **(extra or {})},
         )
 
     def _handle_call(self, node: ast.Call, consts: dict, rel_path: str, lines: list[str]) -> list[RawFinding]:

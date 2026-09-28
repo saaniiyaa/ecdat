@@ -46,5 +46,11 @@ def finding_out(
         "detector_id": finding.detector_id, "evidence_class": finding.evidence_class,
         "confidence": finding.confidence, "corroborations": finding.corroborations,
         "snippet_redacted": finding.snippet_redacted, "source": finding.source,
+        # The detector's own reasoning. `extra.declaration` is why a scanner
+        # believes a declaration, and without it the console can only show that
+        # a finding exists - not the argument for it. An auditor's first
+        # question about a non-AST finding is "on what basis?", and the answer
+        # was being discarded here.
+        "extra": finding.extra or {},
         "asset": asset_out(asset), "risk": risk_out(risk, factors),
     }

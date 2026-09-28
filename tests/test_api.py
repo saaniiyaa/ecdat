@@ -507,3 +507,56 @@ def test_scan_path_normalises_windows_separators(tmp_path):
     # whatever the host separator is, the stored path is POSIX
     assert scan_path(target, root) == "src/main/java/PaymentGateway.java"
     assert "\\" not in scan_path(target, root)
+
+
+# --------------------------------------------------------------------------- #
+# Frontend contract: what the console needs in order to be honest
+# --------------------------------------------------------------------------- #
+
+def test_findings_expose_detector_reasoning(client):
+    """The console must be able to show *why* a finding exists.
+
+    An auditor's first question about an INFERRED finding is "on what basis?".
+    If the API drops `extra`, the only honest thing the UI can do is show a
+    bare table row, and the declaration tier loses the one thing that
+    distinguishes it from an AST scan. This pins the field to the contract.
+    """
+    scan = client.post("/api/v1/scans", params={"wait_seconds": 300},
+                       json={"target_uri": str(ROOT / "fixtures" / "pyjwt_repo"),
+                             "name": "contract-extra-probe"}).json()
+    findings = client.get(f"/api/v1/scans/{scan['id']}/findings",
+                          params={"limit": 500}).json()["items"]
+    assert findings, "expected findings in the PyJWT corpus"
+    for f in findings:
+        assert "extra" in f, "FindingOut must expose the detector's extra payload"
+
+    declared = [f for f in findings if f["detector_id"] == "scanner.declarations"]
+    assert declared, "the PyJWT corpus contains declaration-tier findings"
+    assert all(f["extra"].get("declaration") for f in declared), \
+        "every declaration finding must carry its reasoning string"
+
+
+def test_findings_expose_source_context(client):
+    """Test-path findings are downweighted, never hidden. The UI needs to say so."""
+    scan = client.post("/api/v1/scans", params={"wait_seconds": 300},
+                       json={"target_uri": str(ROOT / "fixtures" / "pyjwt_repo"),
+                             "name": "contract-context-probe"}).json()
+    findings = client.get(f"/api/v1/scans/{scan['id']}/findings",
+                          params={"limit": 500}).json()["items"]
+    contexts = {f["extra"].get("source_context") for f in findings}
+    assert "production" in contexts
+
+
+def test_accuracy_endpoint_serves_the_measured_report(client):
+    """A measured figure must reach the screen as a fetched number.
+
+    The frontend's first P0 item is "do not hardcode these". This guarantees
+    there is something to fetch, and that its absence is stated rather than
+    silently rendered as a row of zeroes.
+    """
+    response = client.get("/api/v1/accuracy")
+    assert response.status_code == 200
+    body = response.json()
+    assert "available" in body
+    if body["available"]:
+        assert body.get("multilang") or body.get("independent")

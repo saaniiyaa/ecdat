@@ -203,6 +203,10 @@ class FindingOut(BaseModel):
     corroborations: int
     snippet_redacted: Optional[str] = None
     source: str
+    # Detector-supplied reasoning and context. Additive: existing consumers are
+    # unaffected, and the field is what lets the console show *why* a finding
+    # exists rather than only that it does.
+    extra: dict[str, Any] = Field(default_factory=dict)
     asset: AssetOut
     risk: Optional["RiskOut"] = None
 

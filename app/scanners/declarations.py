@@ -48,6 +48,7 @@ import re
 from pathlib import Path
 
 from app.registry import canonicalise, with_purpose
+from app.scanners.source_context import source_context
 from app.scanners.base import INFERRED, RawFinding, redact
 
 INFERRED = "INFERRED"
@@ -257,7 +258,7 @@ class DeclarationScanner:
                     symbol=asset,
                     snippet=redact(snippet),
                     source="static",
-                    extra={"declaration": why},
+                    extra={**source_context(rel_path), "declaration": why},
                 )
             )
 

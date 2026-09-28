@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import time
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, Request
@@ -73,6 +75,44 @@ def registry() -> dict[str, Any]:
         "libraries": sorted(LIBRARIES),
         "policy_pack": POLICY_PACK,
     }
+
+
+@router.get("/accuracy", summary="Measured detector performance against hand-labelled real-world corpora")
+def accuracy() -> dict[str, Any]:
+    """The measured accuracy report, served verbatim.
+
+    This exists so the console can display the real numbers instead of a copy
+    someone typed into a component. A hardcoded figure in the UI is the one
+    thing that guarantees it eventually disagrees with the tool it describes.
+
+    It is a *report*, not a boast: the payload carries the corpora, their
+    provenance, and the known gaps, so a reader sees the misses next to the
+    hits. If the report file is absent - a source checkout that never ran the
+    benchmark - this says so rather than returning an empty object that a UI
+    would render as a row of zeroes.
+    """
+    report = _load_accuracy_report()
+    if report is None:
+        return {
+            "available": False,
+            "reason": "accuracy report not generated; run scripts/accuracy_real.py",
+            "corpora": [],
+        }
+    report["available"] = True
+    return report
+
+
+def _load_accuracy_report() -> dict[str, Any] | None:
+    for candidate in (
+        Path(__file__).resolve().parents[2] / "docs" / "accuracy_report.json",
+        Path("/app/docs/accuracy_report.json"),
+    ):
+        try:
+            if candidate.is_file():
+                return json.loads(candidate.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+    return None
 
 
 @router.get("/metrics", summary="Prometheus text exposition")
