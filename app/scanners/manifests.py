@@ -22,6 +22,11 @@ MANIFEST_EXTS = {".txt", ".json", ".mod", ".toml", ".xml", ".gradle", ".kts", ".
 MANIFEST_NAMES = {"requirements.txt", "requirements-dev.txt", "package.json", "go.mod", "pom.xml",
                   "build.gradle", "build.gradle.kts", "cargo.toml", "gemfile", "composer.json",
                   "pyproject.toml", "packages.config", "podfile.lock", "go.sum", "gradle.lockfile"}
+# Files that reach the name==version lockfile parser. Anything outside this set
+# is not a lockfile, however manifest-like its contents look.
+LOCKFILE_NAMES = {"package-lock.json", "yarn.lock", "poetry.lock", "pnpm-lock.yaml",
+                  "cargo.lock", "gemfile.lock", "composer.lock", "Pipfile.lock",
+                  "pdm.lock", "go.sum", "packages.lock.json"}
 MODULE_PREFIXES = ("spring-boot-starter", "spring-security", "junit", "log4j", "commons-", "mockito",
                    "jackson", "guava", "slf4j", "protobuf", "testng", "assertj")
 
@@ -55,7 +60,16 @@ class ManifestScanner:
             elif name in {"composer.json"}:
                 deps = self._composer(text)
             else:
-                deps = self._requirements(text)  # lockfiles: name==version lines
+                # Only genuine lockfiles may reach the name==version parser.
+                # Falling through to it for every unrecognised file meant
+                # .go and .java source was parsed as if it were a
+                # requirements.txt, and every `for` loop and `hash` field
+                # became a LIBRARY/ finding. A manifest scanner that invents
+                # dependencies is worse than one that misses them.
+                if name in LOCKFILE_NAMES:
+                    deps = self._requirements(text)
+                else:
+                    return []
         except Exception:  # a malformed manifest must never abort a scan
             return []
 

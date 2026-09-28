@@ -1,0 +1,69 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ["1.21", "1.22", "1.23", "1.24", "1.25"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Setup Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version: "${{ matrix.go }}"
+          check-latest: true
+      - name: Check Go code formatting
+        run: |
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+            gofmt -s -l .
+            echo "Please format Go code by running: go fmt ./..."
+            exit 1
+          fi
+      - name: Install tparse
+        run: |
+          mkdir -p $HOME/.local/bin
+          curl -L -o $HOME/.local/bin/tparse https://github.com/mfridman/tparse/releases/latest/download/tparse_linux_x86_64
+          chmod +x $HOME/.local/bin/tparse
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Build
+        run: |
+          go vet ./...
+          go test -v -race -count=1 -json -cover ./... | tee output.json | tparse -follow -notests || true
+          tparse -format markdown -file output.json -all > $GITHUB_STEP_SUMMARY
+          go build ./...
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Setup Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+      - name: Coverage
+        run: |
+          go test -v -covermode=count -coverprofile=coverage.cov ./...
+      - name: Coveralls
+        uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
+        with:
+          file: coverage.cov
+          format: golang

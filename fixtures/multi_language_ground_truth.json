@@ -1,0 +1,158 @@
+{
+  "_about": [
+    "Hand-labelled ground truth for golang-jwt/jwt (Go) and auth0/java-jwt (Java),",
+    "two further real-world corpora that this project did not author.",
+    "Produced by reading each library's shipped (non-test) source, NOT from ECDAT output.",
+    "These exist so the multi-language claim is measured rather than asserted."
+  ],
+  "method": "manual line-by-line review of the non-test source of each library",
+  "corpora": [
+    {
+      "name": "golang-jwt/jwt v5",
+      "root": "fixtures/golang_jwt_repo",
+      "language": "go",
+      "labelled_files": [
+        {
+          "file_path": "hmac.go",
+          "expected_algorithms": [
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "HMAC-SHA512",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "reviewer_notes": "Registers SigningMethodHS256/384/512 as &SigningMethodHMAC{...crypto.SHA256}. The family is chosen by a struct literal naming a crypto.Hash constant, so the JOSE name and the digest are both declaration-level."
+        },
+        {
+          "file_path": "rsa.go",
+          "expected_algorithms": [
+            "RSA",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "reviewer_notes": "SigningMethodRS256/384/512 over crypto.SHA256/384/512. Key size is the caller's, so the family is RSA without a fixed modulus."
+        },
+        {
+          "file_path": "rsa_pss.go",
+          "expected_algorithms": [
+            "RSA-PSS",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "reviewer_notes": "PS256/384/512 - RSASSA-PSS, a distinct scheme from PKCS#1 v1.5. Must not be merged into the RSA-2048 surface."
+        },
+        {
+          "file_path": "ecdsa.go",
+          "expected_algorithms": [
+            "ECDSA",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "reviewer_notes": "ES256/384/512 with curve byte sizes 32/48/66."
+        },
+        {
+          "file_path": "ed25519.go",
+          "expected_algorithms": [
+            "EdDSA"
+          ],
+          "reviewer_notes": "SigningMethodEdDSA over ed25519. Post-quantum secure - the only PQ-safe scheme in the library."
+        },
+        {
+          "file_path": "none.go",
+          "expected_algorithms": [
+            "JWT-ALG-NONE"
+          ],
+          "reviewer_notes": "SigningMethodNone, the unsecured JWT algorithm. Deliberately shipped behind SigningMethodNone.RequireExplicitAllowance() in v5. Its presence in the inventory is the point: an auditor must be able to see it exists and see the guard."
+        },
+        {
+          "file_path": "parser.go",
+          "expected_algorithms": [],
+          "negative_reason": "Token parsing and claim extraction. Selects a signing method through the registry but names no primitive."
+        },
+        {
+          "file_path": "validator.go",
+          "expected_algorithms": [],
+          "negative_reason": "Claim validation (expiry, not-before, issuer, audience). No cryptography."
+        },
+        {
+          "file_path": "types.go",
+          "expected_algorithms": [],
+          "negative_reason": "Struct and interface declarations for tokens and claims."
+        },
+        {
+          "file_path": "claims.go",
+          "expected_algorithms": [],
+          "negative_reason": "Registered-claim accessors. No cryptography."
+        },
+        {
+          "file_path": "signing_method.go",
+          "expected_algorithms": [],
+          "negative_reason": "Registry plumbing: RegisterSigningMethod / GetSigningMethod. Names no algorithm."
+        }
+      ]
+    },
+    {
+      "name": "auth0/java-jwt",
+      "root": "fixtures/java_jwt_repo",
+      "language": "java",
+      "labelled_files": [
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/Algorithm.java",
+          "expected_algorithms": [
+            "RSA",
+            "RSA-PSS",
+            "ECDSA",
+            "HMAC",
+            "SHA-2",
+            "JWT-ALG-NONE"
+          ],
+          "reviewer_notes": "The factory class. Every JOSE name is bound to a JCA provider name as a string literal: new RSAAlgorithm(\"RS256\", \"SHA256withRSA\", ...), new RSAAlgorithm(\"PS256\", \"RSASSA-PSS\", pssParams(\"SHA-256\",...), ...), new HMACAlgorithm(\"HS256\", \"HmacSHA256\", ...), ECAlgorithm(\"ES256\", \"SHA256withECDSA\", SECP256R1), and new NoneAlgorithm() at :441. RSA-PSS is a distinct scheme from PKCS#1 v1.5 and is inventoried separately. The primitive is chosen by the JCA provider at runtime, so the literal is the only declaration."
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/CryptoHelper.java",
+          "expected_algorithms": [
+            "JCA/Signature",
+            "JCA/Mac"
+          ],
+          "reviewer_notes": "The JCA boundary. Signature.getInstance(algorithm) and Mac.getInstance(algorithm) at :157,:209,:235,:255,:302. The name arrives as a parameter, so no specific algorithm can be named here - the class is a cryptographic primitive boundary, and that is what the label records."
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/HMACAlgorithm.java",
+          "expected_algorithms": [],
+          "negative_reason": "Sign/verify driver. Delegates to CryptoHelper with a name held in a field. No primitive named in this file."
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/RSAAlgorithm.java",
+          "expected_algorithms": [],
+          "negative_reason": "As HMACAlgorithm - the JCA name was already declared in Algorithm.java where the object is constructed."
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/ECDSAAlgorithm.java",
+          "expected_algorithms": [],
+          "negative_reason": "As HMACAlgorithm. Also carries a JWSSignatureFormat dependency for DER<->concat conversion, which is encoding rather than cryptography."
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/NoneAlgorithm.java",
+          "expected_algorithms": [
+            "JWT-ALG-NONE"
+          ],
+          "reviewer_notes": "The unsecured algorithm, shipped as Algorithm.none(). Signature verification is a no-op by construction. Correctly critical."
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/JWTCreator.java",
+          "expected_algorithms": [],
+          "negative_reason": "Token assembly. Calls Algorithm.sign(), which is polymorphic across the families already inventoried in Algorithm.java."
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/JWTVerifier.java",
+          "expected_algorithms": [],
+          "negative_reason": "Verification driver. Same polymorphic delegation."
+        }
+      ]
+    }
+  ]
+}

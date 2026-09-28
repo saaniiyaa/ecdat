@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T19:38:09.864927+00:00",
+  "generated_at": "2026-09-28T19:54:15.616602+00:00",
   "tool": "scripts/accuracy_real.py",
   "independent": {
     "corpus": "PyJWT 2.8.0 shipped library code (jwt/)",
@@ -7,11 +7,11 @@
     "labelled_files": 8,
     "totals": {
       "tp": 9,
-      "fp": 1,
+      "fp": 2,
       "fn": 6,
-      "precision": 0.9,
+      "precision": 0.8182,
       "recall": 0.6,
-      "f1": 0.72,
+      "f1": 0.6923,
       "note": null
     },
     "per_file": [
@@ -54,6 +54,7 @@
           "ECDSA-P521",
           "ECDSA-secp256k1",
           "Ed25519",
+          "Ed448",
           "HMAC-SHA256",
           "HMAC-SHA384",
           "HMAC-SHA512",
@@ -67,7 +68,7 @@
           "SHA-512"
         ],
         "expected_families": [
-          "EC-P256",
+          "EC",
           "ECDH",
           "ECDSA",
           "EdDSA",
@@ -104,7 +105,7 @@
           "JWT-ALG-NONE"
         ],
         "false_negatives": [
-          "EC-P256",
+          "EC",
           "ECDH",
           "RSA-OAEP"
         ]
@@ -127,15 +128,21 @@
           "EC",
           "ECDH"
         ],
-        "detected": [],
+        "detected": [
+          "Ed25519"
+        ],
         "expected_families": [
           "EC",
           "ECDH",
           "RSA"
         ],
-        "detected_families": [],
+        "detected_families": [
+          "EdDSA"
+        ],
         "true_positives": [],
-        "false_positives": [],
+        "false_positives": [
+          "EdDSA"
+        ],
         "false_negatives": [
           "EC",
           "ECDH",
@@ -223,6 +230,410 @@
       "tests/test_jwt.py"
     ]
   },
+  "multilang": [
+    {
+      "corpus": "golang-jwt/jwt v5",
+      "language": "go",
+      "method": "manual line-by-line review of the non-test source of each library",
+      "labelled_files": 11,
+      "totals": {
+        "tp": 10,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "note": null
+      },
+      "per_file": [
+        {
+          "file_path": "hmac.go",
+          "expected": [
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "HMAC-SHA512",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "detected": [
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "HMAC-SHA512",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "expected_families": [
+            "HMAC",
+            "SHA-2"
+          ],
+          "detected_families": [
+            "HMAC",
+            "SHA-2"
+          ],
+          "true_positives": [
+            "HMAC",
+            "SHA-2"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "rsa.go",
+          "expected": [
+            "RSA",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "detected": [
+            "RSA-2048",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "expected_families": [
+            "RSA",
+            "SHA-2"
+          ],
+          "detected_families": [
+            "RSA",
+            "SHA-2"
+          ],
+          "true_positives": [
+            "RSA",
+            "SHA-2"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "rsa_pss.go",
+          "expected": [
+            "RSA-PSS",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "detected": [
+            "RSA-PSS",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "expected_families": [
+            "RSA-PSS",
+            "SHA-2"
+          ],
+          "detected_families": [
+            "RSA-PSS",
+            "SHA-2"
+          ],
+          "true_positives": [
+            "RSA-PSS",
+            "SHA-2"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "ecdsa.go",
+          "expected": [
+            "ECDSA",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "detected": [
+            "ECDSA-P256",
+            "ECDSA-P384",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "expected_families": [
+            "ECDSA",
+            "SHA-2"
+          ],
+          "detected_families": [
+            "ECDSA",
+            "SHA-2"
+          ],
+          "true_positives": [
+            "ECDSA",
+            "SHA-2"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "ed25519.go",
+          "expected": [
+            "EdDSA"
+          ],
+          "detected": [
+            "Ed25519"
+          ],
+          "expected_families": [
+            "EdDSA"
+          ],
+          "detected_families": [
+            "EdDSA"
+          ],
+          "true_positives": [
+            "EdDSA"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "none.go",
+          "expected": [
+            "JWT-ALG-NONE"
+          ],
+          "detected": [
+            "JWT-ALG-NONE"
+          ],
+          "expected_families": [
+            "JWT-ALG-NONE"
+          ],
+          "detected_families": [
+            "JWT-ALG-NONE"
+          ],
+          "true_positives": [
+            "JWT-ALG-NONE"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "parser.go",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "Token parsing and claim extraction. Selects a signing method through the registry but names no primitive."
+        },
+        {
+          "file_path": "validator.go",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "Claim validation (expiry, not-before, issuer, audience). No cryptography."
+        },
+        {
+          "file_path": "types.go",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "Struct and interface declarations for tokens and claims."
+        },
+        {
+          "file_path": "claims.go",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "Registered-claim accessors. No cryptography."
+        },
+        {
+          "file_path": "signing_method.go",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "Registry plumbing: RegisterSigningMethod / GetSigningMethod. Names no algorithm."
+        }
+      ]
+    },
+    {
+      "corpus": "auth0/java-jwt",
+      "language": "java",
+      "method": "manual line-by-line review of the non-test source of each library",
+      "labelled_files": 8,
+      "totals": {
+        "tp": 8,
+        "fp": 0,
+        "fn": 1,
+        "precision": 1.0,
+        "recall": 0.8889,
+        "f1": 0.9412,
+        "note": null
+      },
+      "per_file": [
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/Algorithm.java",
+          "expected": [
+            "RSA",
+            "RSA-PSS",
+            "ECDSA",
+            "HMAC",
+            "SHA-2",
+            "JWT-ALG-NONE"
+          ],
+          "detected": [
+            "ECDSA-P256",
+            "ECDSA-P384",
+            "ECDSA-P521",
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "HMAC-SHA512",
+            "RSA-2048",
+            "RSA-3072",
+            "RSA-4096",
+            "RSA-PSS",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "expected_families": [
+            "ECDSA",
+            "HMAC",
+            "JWT-ALG-NONE",
+            "RSA",
+            "RSA-PSS",
+            "SHA-2"
+          ],
+          "detected_families": [
+            "ECDSA",
+            "HMAC",
+            "RSA",
+            "RSA-PSS",
+            "SHA-2"
+          ],
+          "true_positives": [
+            "ECDSA",
+            "HMAC",
+            "RSA",
+            "RSA-PSS",
+            "SHA-2"
+          ],
+          "false_positives": [],
+          "false_negatives": [
+            "JWT-ALG-NONE"
+          ]
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/CryptoHelper.java",
+          "expected": [
+            "JCA/Signature",
+            "JCA/Mac"
+          ],
+          "detected": [
+            "JCA/Mac",
+            "JCA/Signature"
+          ],
+          "expected_families": [
+            "JCA-MAC",
+            "JCA-SIGNATURE"
+          ],
+          "detected_families": [
+            "JCA-MAC",
+            "JCA-SIGNATURE"
+          ],
+          "true_positives": [
+            "JCA-MAC",
+            "JCA-SIGNATURE"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/HMACAlgorithm.java",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "Sign/verify driver. Delegates to CryptoHelper with a name held in a field. No primitive named in this file."
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/RSAAlgorithm.java",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "As HMACAlgorithm - the JCA name was already declared in Algorithm.java where the object is constructed."
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/ECDSAAlgorithm.java",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "As HMACAlgorithm. Also carries a JWSSignatureFormat dependency for DER<->concat conversion, which is encoding rather than cryptography."
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/algorithms/NoneAlgorithm.java",
+          "expected": [
+            "JWT-ALG-NONE"
+          ],
+          "detected": [
+            "JWT-ALG-NONE"
+          ],
+          "expected_families": [
+            "JWT-ALG-NONE"
+          ],
+          "detected_families": [
+            "JWT-ALG-NONE"
+          ],
+          "true_positives": [
+            "JWT-ALG-NONE"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/JWTCreator.java",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "Token assembly. Calls Algorithm.sign(), which is polymorphic across the families already inventoried in Algorithm.java."
+        },
+        {
+          "file_path": "lib/src/main/java/com/auth0/jwt/JWTVerifier.java",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "Verification driver. Same polymorphic delegation."
+        }
+      ]
+    }
+  ],
   "fixture_regression": {
     "available": true,
     "corpus": "fixtures/demo_repo (authored by this project)",

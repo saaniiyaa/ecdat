@@ -1,0 +1,250 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        // https://github.com/melix/japicmp-gradle-plugin/issues/36
+        classpath 'com.google.guava:guava:31.1-jre'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'checkstyle'
+    id 'me.champeau.gradle.japicmp' version '0.4.6'
+    id 'maven-publish'
+}
+
+sourceSets {
+    jmh {
+
+    }
+}
+
+configurations {
+    jmhImplementation {
+        extendsFrom implementation
+    }
+}
+
+checkstyle {
+    toolVersion '10.0'
+}
+configurations.checkstyle {
+    resolutionStrategy {
+        force 'commons-beanutils:commons-beanutils:1.11.0'
+    }
+}
+//We are disabling lint checks for tests
+tasks.named("checkstyleTest").configure({
+    enabled = false
+})
+tasks.named("checkstyleJmh").configure({
+    enabled = false
+})
+
+apply from: rootProject.file('gradle/versioning.gradle')
+
+version = getVersionFromFile()
+group = GROUP
+logger.lifecycle("Using version ${version} for ${name} group $group")
+
+import me.champeau.gradle.japicmp.JapicmpTask
+
+project.afterEvaluate {
+
+    def versions = project.ext.testInJavaVersions
+    for (pluginJavaTestVersion in versions) {
+        def taskName = "testInJava-${pluginJavaTestVersion}"
+        tasks.register(taskName, Test) {
+            def versionToUse = taskName.split("-").getAt(1) as Integer
+            description = "Runs unit tests on Java version ${versionToUse}."
+            project.logger.quiet("Test will be running in ${versionToUse}")
+            group = 'verification'
+            javaLauncher.set(javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(versionToUse)
+            })
+            shouldRunAfter(tasks.named('test'))
+        }
+        tasks.named('check') {
+            dependsOn(taskName)
+        }
+    }
+
+    project.configure(project) {
+        def baselineVersion = project.ext.baselineCompareVersion
+        task('apiDiff', type: JapicmpTask, dependsOn: 'jar') {
+            oldClasspath.from(files(getBaselineJar(project, baselineVersion)))
+            newClasspath.from(files(jar.archiveFile))
+            onlyModified = true
+            failOnModification = true
+            ignoreMissingClasses = true
+            htmlOutputFile = file("$buildDir/reports/apiDiff/apiDiff.html")
+            txtOutputFile = file("$buildDir/reports/apiDiff/apiDiff.txt")
+            doLast {
+                project.logger.quiet("Comparing against baseline version ${baselineVersion}")
+            }
+        }
+    }
+}
+
+private static File getBaselineJar(Project project, String baselineVersion) {
+    // Use detached configuration: https://github.com/square/okhttp/blob/master/build.gradle#L270
+    def group = project.group
+    try {
+        def baseline = "${project.group}:${project.name}:$baselineVersion"
+        project.group = 'virtual_group_for_japicmp'
+        def dependency = project.dependencies.create(baseline + "@jar")
+        return project.configurations.detachedConfiguration(dependency).files.find {
+            it.name == "${project.name}-${baselineVersion}.jar"
+        }
+    } finally {
+        project.group = group
+    }
+}
+
+ext {
+    baselineCompareVersion = '4.1.0'
+    testInJavaVersions = [8, 11, 17, 21]
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+compileJava {
+    exclude 'module-info.java'
+    // Required to be compatible with JDK 8+
+    options.release = 8
+}
+
+javadoc {
+    // Exclude internal implementation package from javadoc
+    excludes = ['com/auth0/jwt/impl', 'module-info.java']
+}
+
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.22.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.2'
+
+    testImplementation 'org.bouncycastle:bcprov-jdk18on:1.85.2'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'net.jodah:concurrentunit:0.4.6'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+    testImplementation 'org.mockito:mockito-core:4.11.0'
+
+    jmhImplementation sourceSets.main.output
+    jmhImplementation 'org.openjdk.jmh:jmh-core:1.37'
+    jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
+}
+
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+test {
+    testLogging {
+        events "skipped", "failed", "standardError"
+        exceptionFormat "short"
+    }
+}
+
+task compileModuleInfoJava(type: JavaCompile) {
+    classpath = files()
+    source = 'src/main/java/module-info.java'
+    destinationDir = compileJava.destinationDir
+    doLast {
+        def descriptor = new File(compileJava.destinationDir, 'module-info.class')
+        def dest = new File(compileJava.destinationDir, 'META-INF/versions/9')
+        ant.move file: descriptor, todir: dest
+    }
+
+    doFirst {
+        options.compilerArgs = [
+                '--release', '9',
+                '--module-path', compileJava.classpath.asPath
+        ]
+    }
+}
+
+compileTestJava {
+    options.release = 8
+    options.compilerArgs = ["-Xlint:deprecation"]
+}
+
+def testJava8 = tasks.register('testJava8', Test) {
+    description = 'Runs unit tests on Java 8.'
+    group = 'verification'
+
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(8)
+    })
+    shouldRunAfter(tasks.named('test'))
+}
+
+def testJava17 = tasks.register('testJava17', Test) {
+    description = 'Runs unit tests on Java 17.'
+    group = 'verification'
+
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    })
+    shouldRunAfter(tasks.named('test'))
+}
+
+def testJava21 = tasks.register('testJava21', Test) {
+    description = 'Runs unit tests on Java 21.'
+    group = 'verification'
+
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    })
+    shouldRunAfter(tasks.named('test'))
+}
+
+tasks.named('check') {
+    dependsOn(testJava8)
+    dependsOn(testJava17)
+    dependsOn(testJava21)
+}
+
+jar {
+    manifest.attributes('Multi-Release': 'true')
+}
+
+compileModuleInfoJava.dependsOn compileJava
+classes.dependsOn compileModuleInfoJava
+
+// you can pass any arguments JMH accepts via Gradle args.
+// Example: ./gradlew runJMH --args="-lrf"
+tasks.register('runJMH', JavaExec) {
+    description 'Run JMH benchmarks.'
+    group 'verification'
+
+    main 'org.openjdk.jmh.Main'
+    classpath sourceSets.jmh.runtimeClasspath
+
+    args project.hasProperty("args") ? project.property("args").split() : ""
+}
+tasks.register('jmhHelp', JavaExec) {
+    description 'Prints the available command line options for JMH.'
+    group 'help'
+
+    main 'org.openjdk.jmh.Main'
+    classpath sourceSets.jmh.runtimeClasspath
+
+    args '-h'
+}
+
+apply from: rootProject.file('gradle/maven-publish.gradle')

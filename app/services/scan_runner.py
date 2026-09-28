@@ -14,6 +14,8 @@ Execution model
 
 from __future__ import annotations
 
+import logging
+
 import datetime as dt
 import os
 import tempfile
@@ -48,6 +50,8 @@ from app.services import mosca as mosca_svc
 from app.services import recommend as recommend_svc
 from app.services import risk as risk_svc
 from app.services.serialize import jsonable
+
+log = logging.getLogger("ecdat")
 
 MANIFEST_NAMES = {"requirements.txt", "package.json", "go.mod", "pom.xml", "build.gradle",
                   "build.gradle.kts", "cargo.toml", "pyproject.toml", "composer.json", "gemfile",
@@ -256,11 +260,20 @@ def scan_surface(path: Path, rel: str, kind: str, settings: Settings) -> Surface
                              reason=f"no detector for {path.suffix or 'this file type'}")
 
     findings: list[RawFinding] = []
+    detector_errors: list[str] = []
     for scanner in applicable:
         try:
             findings.extend(scanner.scan_text(text, rel))
         except Exception as exc:  # a broken detector must not kill the scan
-            findings = findings  # keep going, record below
+            # Record it, loudly. An earlier version swallowed this with a
+            # no-op assignment, and the result was a scan that reported
+            # "no cryptographic declarations" while a NameError in one
+            # detector was the real cause. A silently reduced inventory is
+            # indistinguishable from a clean system, which is the one
+            # outcome a security tool must never produce.
+            detector_errors.append(f"{scanner.name}: {type(exc).__name__}: {exc}")
+            log.warning("detector failed path=%s detector=%s error=%s",
+                        rel, scanner.name, exc, exc_info=True)
     deduped: dict[tuple[str, int | None, str], RawFinding] = {}
     for finding in findings:
         key = (finding.asset.get("canonical_name", "?"), finding.line_start, finding.detector_id)
@@ -268,10 +281,21 @@ def scan_surface(path: Path, rel: str, kind: str, settings: Settings) -> Surface
         if existing is None or finding.confidence > existing.confidence:
             deduped[key] = finding
     unique = sorted(deduped.values(), key=lambda f: (f.file_path, f.line_start or 0, f.asset.get("canonical_name", "")))
+    if detector_errors:
+        # A surface we could not fully inspect is `partial`, never `observed`.
+        # Coverage accounting reads that distinction, so a crashed detector
+        # lowers the coverage index instead of quietly inflating confidence.
+        status = "partial"
+        reason = f"{len(detector_errors)} detector(s) failed: {'; '.join(detector_errors[:3])}"
+    elif truncated:
+        status = "partial"
+        reason = "file truncated at max_file_bytes"
+    else:
+        status, reason = "observed", None
     return SurfaceRecord(
-        rel, kind, "partial" if truncated else "observed", size, digest,
+        rel, kind, status, size, digest,
         lines=lines, detector=",".join(s.name for s in applicable), findings=unique,
-        reason="file truncated at max_file_bytes" if truncated else None,
+        reason=reason,
     )
 
 

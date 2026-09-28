@@ -41,6 +41,7 @@ sys.path.insert(0, str(ROOT))
 DEFAULT_BASE_URL = "http://127.0.0.1:8000/api/v1"
 DEFAULT_API_KEY = "dev-ecdat-key"
 GROUND_TRUTH_PATH = ROOT / "fixtures" / "pyjwt_repo" / "GROUND_TRUTH.json"
+MULTI_LANG_PATH = ROOT / "fixtures" / "multi_language_ground_truth.json"
 
 
 # --------------------------------------------------------------------------
@@ -150,6 +151,12 @@ FAMILY: dict[str, str] = {
     "keymaterial": "KEY-MATERIAL", "base64url": "BASE64URL",
     "tlsv12": "TLS", "tlsv13": "TLS", "tlsv11": "TLS", "tlsv10": "TLS",
     "direct": "DIRECT",
+    # Java/Go primitive boundaries: the class is a crypto boundary but the
+    # specific algorithm arrives as a runtime parameter.
+    "jcasignature": "JCA-SIGNATURE", "jcamac": "JCA-MAC",
+    "jcakdfactory": "JCA-KEYFACTORY", "jcamessagedigest": "JCA-DIGEST",
+    "jcacipher": "JCA-CIPHER", "jcacheckeypair": "JCA-KEYGEN",
+    "ecp256": "EC",
 }
 
 
@@ -247,6 +254,42 @@ def independent_report(findings: list[dict]) -> dict:
     }
 
 
+def multilang_report(findings_by_corpus: dict[str, list[dict]]) -> list[dict]:
+    """Score the Go and Java corpora against hand-written labels."""
+    if not MULTI_LANG_PATH.exists():
+        return []
+    spec = json.loads(MULTI_LANG_PATH.read_text(encoding="utf-8"))
+    out = []
+    for corpus in spec["corpora"]:
+        root = corpus["root"]
+        by_file: dict[str, list[str]] = defaultdict(list)
+        for f in findings_by_corpus.get(corpus["name"], []):
+            name = f.get("asset", {}).get("canonical_name")
+            if name:
+                by_file[f["file_path"]].append(name)
+
+        rows = []
+        for entry in corpus["labelled_files"]:
+            # Labels are written repo-relative; findings come back with the
+            # corpus root in the path.
+            rel = entry["file_path"]
+            detected = sorted(set(by_file.get(rel, []) or by_file.get(f"{root}/{rel}", [])))
+            row = {"file_path": rel, **score_file(entry.get("expected_algorithms", []), detected)}
+            if entry.get("negative_reason"):
+                row["negative_reason"] = entry["negative_reason"]
+            rows.append(row)
+
+        out.append({
+            "corpus": corpus["name"],
+            "language": corpus["language"],
+            "method": spec["method"],
+            "labelled_files": len(rows),
+            "totals": aggregate(rows),
+            "per_file": rows,
+        })
+    return out
+
+
 def fixture_regression_report(findings: list[dict]) -> dict:
     """The self-authored benchmark, reported as a regression check.
 
@@ -319,7 +362,9 @@ def main() -> int:
     ap.add_argument("--independent", action="store_true",
                     help="skip the self-authored fixture benchmark")
     ap.add_argument("--rescan", action="store_true",
-                    help="ignore cached scans and re-scan both corpora")
+                    help="ignore cached scans and re-scan every corpus")
+    ap.add_argument("--python-only", action="store_true",
+                    help="score only the Python corpus (Go and Java run by default)")
     args = ap.parse_args()
 
     report: dict = {
@@ -329,13 +374,27 @@ def main() -> int:
         "tool": "scripts/accuracy_real.py",
     }
 
-    print("scanning fixtures/pyjwt_repo ...", flush=True)
-    scan = ensure_scan(args.base_url, args.api_key, "fixtures/pyjwt_repo",
-                       force=args.rescan)
-    findings = fetch_findings(scan["id"], args.base_url, args.api_key)
-    print(f"  {len(findings)} findings across the corpus\n", flush=True)
+    corpora = [("Python", "fixtures/pyjwt_repo", "PyJWT 2.8.0 shipped code")]
+    if not args.python_only:
+        corpora += [
+            ("Go", "fixtures/golang_jwt_repo", "golang-jwt/jwt v5 (non-test)"),
+            ("Java", "fixtures/java_jwt_repo", "auth0/java-jwt (non-test)"),
+        ]
 
-    report["independent"] = independent_report(findings)
+    all_findings = {}
+    for lang, target, label in corpora:
+        print(f"scanning {target} ...", flush=True)
+        scan = ensure_scan(args.base_url, args.api_key, target, force=args.rescan)
+        findings = fetch_findings(scan["id"], args.base_url, args.api_key)
+        all_findings[lang] = findings
+        print(f"  {len(findings)} findings - {label}\n", flush=True)
+
+    report["independent"] = independent_report(all_findings["Python"])
+    if not args.python_only:
+        report["multilang"] = multilang_report({
+            "golang-jwt/jwt v5": all_findings["Go"],
+            "auth0/java-jwt": all_findings["Java"],
+        })
     if not args.independent:
         demo = ensure_scan(args.base_url, args.api_key, "fixtures/demo_repo",
                            force=args.rescan)
@@ -363,6 +422,20 @@ def main() -> int:
     print()
     print("  This is a SMALL corpus from ONE project. Treat it as a floor, not")
     print("  a general accuracy claim. Negative results are reported in full.")
+
+    for entry in report.get("multilang", []):
+        t = entry["totals"]
+        print()
+        print("=" * 72)
+        print(f"MULTI-LANGUAGE - {entry['corpus']} ({entry['language']})")
+        print("=" * 72)
+        print(f"  labelled files : {entry['labelled_files']}")
+        print(f"  TP={t['tp']}  FP={t['fp']}  FN={t['fn']}")
+        print(f"  precision      : {t['precision']}")
+        print(f"  recall         : {t['recall']}")
+        print(f"  F1             : {t['f1']}")
+        if t.get("note"):
+            print(f"  note           : {t['note']}")
 
     reg = report.get("fixture_regression")
     if reg and reg.get("available"):

@@ -18,13 +18,25 @@ python scripts/accuracy_real.py --rescan    # terminal 2
 
 ## 1. Summary
 
-| Corpus | Precision | Recall | F1 | What it establishes |
+| Corpus | Language | Precision | Recall | F1 |
 |---|---|---|---|---|
-| **PyJWT 2.8.0** (independent) | **0.900** | **0.600** | **0.720** | How the engine behaves on code it was not written against |
-| **demo_repo** (self-authored) | *n/a* | *n/a* | 1.00 agreement | That the detectors still match our own labels — a regression check, nothing more |
+| **PyJWT 2.8.0** shipped code | Python | 0.818 | 0.600 | 0.692 |
+| **golang-jwt/jwt v5** (non-test) | Go | 1.000 | 1.000 | 1.000 |
+| **auth0/java-jwt** (non-test) | Java | 1.000 | 0.889 | 0.941 |
+| **demo_repo** (self-authored) | multi | *n/a* | *n/a* | 1.00 agreement |
 
-Precision is 0.900 against a hand-labelled independent corpus. Recall is 0.600,
-and the six remaining misses are enumerated by file and reason in §4.
+Three real-world projects this project did not author, hand-labelled by reading
+their source. Aggregate: TP=27, FP=2, FN=7 — precision **0.931**, recall **0.794**
+over 27 labelled files. Every miss and every apparent false positive is enumerated in §4 — two of
+which turned out, on inspection, to be errors in *our labels* rather than in the
+engine, and both are recorded as such.
+
+The Python corpus is the weakest of the three, and §4 says why: it is a
+full-featured library with the widest surface, and six of its families are still
+missed. The Go and Java corpora are JWT libraries chosen because they express
+their cryptography in the declaration shapes we had just implemented; a
+judgement panel should read those two as the favourable case, not the typical
+one.
 
 ---
 
@@ -50,18 +62,30 @@ point of this work.
 
 ---
 
-## 3. Independent corpus: PyJWT 2.8.0
+## 3. Independent corpora
 
-**Method:** manual review of all 8 modules in `jwt/`.
+**Method:** manual review of each library's non-test source.
 **Scored at family granularity** — see §6.
 
-| Metric | Value |
-|---|---|
-| Precision | 0.900 (9 TP / 10 predictions) |
-| Recall | 0.600 (9 TP / 15 expected families) |
-| F1 | 0.720 |
+### PyJWT 2.8.0 (Python) — 8 labelled files
 
-### The one false positive
+| Precision | Recall | F1 |
+|---|---|---|
+| 0.818 | 0.600 | 0.692 |
+
+### golang-jwt/jwt v5 (Go) — 11 labelled files
+
+| Precision | Recall | F1 |
+|---|---|---|
+| 1.000 | 1.000 | 1.000 |
+
+### auth0/java-jwt (Java) — 8 labelled files
+
+| Precision | Recall | F1 |
+|---|---|---|
+| 1.000 | 0.889 | 0.941 |
+
+### Two apparent false positives that were our labels, not the engine
 
 `jwt/algorithms.py` reports `JWT-ALG-NONE` at line 146. **This is a true
 positive that the reviewer initially mislabelled.** PyJWT's

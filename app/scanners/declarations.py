@@ -102,6 +102,35 @@ HASH_FUNCS: dict[str, str] = {
     "sha3_256": "SHA3-256", "sha3_512": "SHA3-512", "blake2b": "BLAKE2b-512",
 }
 
+# JCA / JCE standard algorithm names (Java, and anything else that names a
+# provider by string). The same declaration trick as JOSE: a library says
+# "SHA256withRSA" as a string and lets the provider pick the primitive, so the
+# only place the algorithm exists is the literal.
+JCA_NAMES: dict[str, str] = {
+    # signatures
+    "sha1withrsa": "RSA-2048", "sha256withrsa": "RSA-2048",
+    "sha384withrsa": "RSA-3072", "sha512withrsa": "RSA-4096",
+    "sha1witherca": "ECDSA-P256", "sha256withecdsa": "ECDSA-P256",
+    "sha384withecdsa": "ECDSA-P384", "sha512withecdsa": "ECDSA-P521",
+    "rsassa-pss": "RSA-PSS", "md5withrsa": "RSA-2048",
+    "nonewithrsa": "RSA-2048", "nonewithecdsa": "ECDSA-P256",
+    # digests
+    "sha-256": "SHA-256", "sha-384": "SHA-384", "sha-512": "SHA-512",
+    "sha-1": "SHA-1", "md5": "MD5",
+    # mac / kdf
+    "hmacsha256": "HMAC-SHA256", "hmacsha384": "HMAC-SHA384",
+    "hmacsha512": "HMAC-SHA512", "hmacsha1": "HMAC-SHA1",
+    "pbkdf2withhmacsha256": "PBES2", "pbkdf2withhmacsha512": "PBES2",
+    # symmetric
+    "aes/ctr/nopadding": "AES-CTR", "aes/gcm/nopadding": "AES-GCM",
+    "aes/cbc/pkcs5padding": "AES-CBC", "chacha20-poly1305": "ChaCha20-Poly1305",
+    "ed25519": "Ed25519", "ed448": "Ed448",
+    # key agreement
+    "ecdh": "ECDH", "x25519": "X25519", "x448": "X448",
+    # transports
+    "tls": "TLS", "ssl": "TLS", "tlsv1.2": "TLS", "tlsv1.3": "TLS",
+}
+
 CIPHER_TOKENS: dict[str, str] = {
     "aes-256-gcm": "AES-256-GCM", "aes-128-gcm": "AES-128-GCM",
     "aes-256-cbc": "AES-256-CBC", "aes-128-cbc": "AES-128-CBC",
@@ -181,6 +210,12 @@ class DeclarationScanner:
         jose_context = bool(_PYJWT.search(rel_path)) or bool(
             re.search(r"\b(jwt|jose)\b", text[:4000], re.I)
         )
+        # Broader crypto context, used by the JCA tier: a Java/JS file that
+        # imports javax.crypto, java.security or a JOSE library is a crypto file
+        # even when it is not literally named jwt.
+        crypto_context = jose_context or bool(
+            re.search(r"(javax\.crypto|java\.security|\bcrypto\.|nacl|webcrypto|node:crypto)", text[:6000])
+        )
 
         out: list[RawFinding] = []
         seen: set[tuple[str, int]] = set()
@@ -220,8 +255,75 @@ class DeclarationScanner:
             # -- 3. call sites for named hash/cipher constructors ----------
             if isinstance(node, ast.Call):
                 self._scan_call(node, add)
+                self._scan_jca_factory(node, add)
+
+            # -- 4. JCA/JCE standard algorithm names as string literals ----
+            if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                self._scan_jca_literal(node, add, crypto_context)
 
         return out
+
+    def _scan_jca_factory(self, node: ast.Call, add) -> None:
+        """`Signature.getInstance(name)` / `Mac.getInstance(name)` / KeyFactory.
+
+        The JCA resolves the primitive at runtime from a name the caller
+        supplies, so the class that calls getInstance is where the algorithm
+        is chosen. Emitted at lower confidence than a literal: the name may
+        arrive as a variable from a caller we cannot see, in which case this is
+        the *use site* of a cryptographic primitive rather than its declaration.
+        Either way it is a genuine cryptographic boundary worth reporting.
+        """
+        fn = _dotted(node.func)
+        leaf = fn.rsplit(".", 1)[-1]
+        if leaf not in {"getInstance", "getInstanceOrNull"}:
+            return
+        owner = fn.rsplit(".", 2)[-2] if "." in fn else ""
+        if owner not in {"Signature", "Mac", "KeyFactory", "KeyPairGenerator",
+                         "MessageDigest", "Cipher", "KeyAgreement"}:
+            return
+        arg = node.args[0] if node.args else None
+        name = None
+        if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+            name = arg.value
+        if name:
+            key = name.strip().lower().replace("_", "-")
+            asset = JCA_NAMES.get(key) or JCA_NAMES.get(key.replace("-", ""))
+            if asset:
+                add(asset, node, f"{fn}({name!r}) - JCA primitive resolution", conf=0.6)
+                return
+        # Resolved from a variable: still a cryptographic primitive boundary.
+        default = {
+            "Signature": "digital_signature", "Mac": "message_authentication",
+            "MessageDigest": "hash", "Cipher": "confidentiality",
+            "KeyFactory": "key_material", "KeyPairGenerator": "key_generation",
+            "KeyAgreement": "key_agreement",
+        }.get(owner, "cryptographic_primitive")
+        add(
+            f"JCA/{owner}",
+            node,
+            f"{fn} with a runtime-supplied algorithm name - "
+            f"{default.replace('_', ' ')} primitive boundary",
+            conf=0.5,
+        )
+
+    def _scan_jca_literal(self, node: ast.Constant, add, crypto_context: bool) -> None:
+        """A JCA name in a string is a cryptographic declaration.
+
+        Java libraries build algorithms as `new RSAAlgorithm("RS256",
+        "SHA256withRSA", provider)`. The only record that SHA256withRSA is in
+        use is the string literal, and the primitive is chosen by the JCA
+        provider at runtime. Requires the literal to look like a JCA name
+        (compound, provider-style) so ordinary English strings stay silent.
+        """
+        raw = node.value
+        key = raw.strip().lower().replace("_", "-")
+        asset = JCA_NAMES.get(key) or JCA_NAMES.get(key.replace("-", ""))
+        if not asset:
+            return
+        # Single common words only qualify inside a crypto-flavoured file.
+        if len(key) < 6 and not crypto_context:
+            return
+        add(asset, node, f"JCA standard algorithm name {raw!r}", conf=0.62)
 
     # -- handlers --------------------------------------------------------
     def _scan_jose_dict(self, node: ast.Dict, jose_context: bool, add) -> None:
