@@ -296,6 +296,7 @@ docs/                    BACKEND_ARCHITECTURE_AND_STRATEGY.md  measurements.json
 
 ### Open items
 
-* **Backend waiting on frontend:** nothing blocking.
-* **Frontend waiting on backend:** nothing open.
+* **Backend waiting on frontend:** none.
+* **Frontend waiting on backend:** none. Frontend interactive console complete, verified against live API, and serving on http://127.0.0.1:3000.
+* **Frontend status:** ✅ Complete · React 18 + Vite + TypeScript · `npm run build` green · 0 breaking API changes requested.
 <!-- COORDINATION:END -->
