@@ -134,3 +134,72 @@ def test_test_findings_are_downweighted_not_hidden():
     assert any(f.rule_id == "M-012" for f in test.factors)
     # Both are still fully assessed - the finding exists either way.
     assert test.band and prod.band
+
+
+def test_java_jca_literals_are_marked_as_declarations():
+    """Declaration-shaped findings must be identifiable in every language.
+
+    The console asks "what does this find that never calls a primitive?". If
+    only the Python scanner answers, the question silently returns an empty
+    result for Go and Java, which reads as "nothing to find" rather than "not
+    measured". The reasoning string is what makes the answer language-neutral.
+    """
+    from app.scanners.source_text import SCANNER as SRC
+
+    finding = SRC.scan_text(
+        'Signature sig = Signature.getInstance("SHA256withRSA");', "src/Auth.java"
+    )[0]
+    assert finding.extra.get("declaration"), "JCA literal must carry its reasoning"
+    assert "SHA256withRSA" in finding.extra["declaration"]
+
+
+def test_every_detector_reports_a_source_context():
+    """No finding may be produced without knowing where it lives.
+
+    A missing context silently means "production" to every downstream weight
+    and badge, so a detector that omits it inflates a test-only scan into a set
+    of production exposures.
+    """
+    from app.scanners import configs, source_text
+    from app.scanners import declarations, python_ast
+
+    # Probes taken from shapes the existing suite already proves fire, so this
+    # test measures context coverage rather than detector reach.
+    probes = {
+        source_text: ('Cipher.getInstance("AES/CBC/PKCS5Padding")', "src/A.java"),
+        configs: ("ssl_protocols TLSv1 TLSv1.1;", "nginx.conf"),
+        declarations: ('ALG = {"RS256": hashlib.sha256, "ES256": None}', "jwt/algorithms.py"),
+        python_ast: ("import hashlib\nhashlib.md5(b'x')\n", "a.py"),
+    }
+    for module, (text, path) in probes.items():
+        findings = module.SCANNER.scan_text(text, path)
+        assert findings, f"{module.__name__} produced no finding for the probe"
+        for f in findings:
+            assert "source_context" in f.extra, f"{module.__name__} omitted source_context"
+
+
+def test_no_detector_can_silently_drop_source_context():
+    """The permanent guard, over every detector in the package.
+
+    Wiring context into each detector by hand worked, and the next detector
+    would have quietly forgotten. A missing context is not cosmetic: every
+    downstream weight reads an absent value as "production", so one forgotten
+    call site turns a test-only finding into an apparent production exposure -
+    the precise error this feature exists to prevent.
+
+    The check is static over the whole package rather than a hand-written list,
+    so a new detector is covered the moment it is added with no edit here. A
+    runtime probe would only exercise the branches the probe happens to hit,
+    which is how the gap got in the first time.
+    """
+    import pathlib
+
+    from app.scanners import base
+
+    pkg = pathlib.Path(base.__file__).parent
+    offenders = [
+        path.name for path in sorted(pkg.glob("*.py"))
+        if "RawFinding(" in path.read_text(encoding="utf-8")
+        and "source_context" not in path.read_text(encoding="utf-8")
+    ]
+    assert not offenders, f"detectors emitting findings without source_context: {offenders}"

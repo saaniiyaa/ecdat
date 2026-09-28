@@ -186,6 +186,18 @@ export interface FindingOut {
   corroborations?: number;
   snippet_redacted?: string | null;
   source?: string | null;
+  /**
+   * The detector's own reasoning and context. `declaration` explains why a
+   * declaration-tier finding exists; `source_context` says whether the code is
+   * production or test/fixture. The UI reads these to explain itself - it
+   * never recomputes them.
+   */
+  extra?: {
+    declaration?: string;
+    source_context?: 'production' | 'non_production' | 'unknown' | string;
+    source_context_note?: string | null;
+    [key: string]: any;
+  };
   asset?: AssetOut | null;
   risk?: RiskOut | null;
 }
@@ -318,6 +330,8 @@ export interface CertificateOut {
   not_before: string;
   not_after: string;
   expired: boolean;
+  /** Server-computed. Negative means already lapsed. */
+  days_to_expiry?: number | null;
   signature_algorithm: string;
   public_key_algorithm: string;
   public_key_bits: number;
@@ -392,6 +406,20 @@ export interface RegistrySnapshot {
   scenarios?: Array<{ name: string; z_years: number; label: string; source: string }>;
 }
 
+export interface VersionOut {
+  name: string;
+  version: string;
+  engine_version: string;
+  policy_pack_version: string;
+  api_version?: string;
+  /**
+   * The synchronous exporter's ceiling for this deployment, in findings.
+   * Configurable server-side via ECDAT_EXPORT_MAX_FINDINGS - which is exactly
+   * why the client asks rather than assuming.
+   */
+  export_max_findings?: number;
+}
+
 export interface RegistryOut {
   snapshot?: RegistrySnapshot;
   algorithms: RegistryAlgorithm[];
@@ -413,5 +441,76 @@ export interface ScanDiffResult {
     removed_count: number;
     changed_count: number;
     risk_delta: number;
+  };
+}
+
+
+// --------------------------------------------------------------------------- //
+// Measured detector accuracy (GET /api/v1/accuracy)
+//
+// These are *measurements*, not constants. The console renders whatever the
+// server last measured; nothing here is a number the frontend may hardcode.
+// --------------------------------------------------------------------------- //
+
+export interface AccuracyTotals {
+  tp: number;
+  fp: number;
+  fn: number;
+  precision: number;
+  recall: number;
+  f1?: number;
+  note?: string | null;
+}
+
+export interface AccuracyPerFile {
+  file_path: string;
+  expected: string[];
+  detected: string[];
+  expected_families?: string[];
+  detected_families?: string[];
+  true_positives?: string[];
+  false_positives?: string[];
+  false_negatives?: string[];
+}
+
+export interface AccuracyCorpus {
+  corpus: string;
+  language?: string;
+  method?: string;
+  labelled_files: number;
+  totals: AccuracyTotals;
+  per_file?: AccuracyPerFile[];
+  /** Present on the hand-reviewed corpus, which is where the misses are known. */
+  known_detector_gaps?: DetectorGap[];
+  unlabelled_paths_with_findings?: string[];
+}
+
+export interface DetectorGap {
+  location: string;
+  missed: string;
+  why: string;
+}
+
+export interface AccuracyReport {
+  /** False when the benchmark has never been run on this deployment. */
+  available: boolean;
+  reason?: string;
+  generated_at?: string;
+  tool?: string;
+  independent?: AccuracyCorpus;
+  multilang?: AccuracyCorpus[];
+  /**
+   * The hand-authored fixture regression. Present, but *not* independent
+   * evidence: we wrote both the fixture and the expectations, so it can only
+   * catch self-inconsistency. The panel says so rather than counting it.
+   */
+  fixture_regression?: {
+    available: boolean;
+    corpus?: string;
+    labelled_files?: number;
+    agreement_rate?: number;
+    agreed?: number;
+    disagreed?: number;
+    interpretation?: string;
   };
 }

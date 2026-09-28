@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useScan } from '../context/ScanContext';
 import { ecdatApi } from '../api/endpoints';
+import { RealCorpusPanel } from '../components/scan/RealCorpusPanel';
 import { ScanCreate, ScanOut, ScanEventOut } from '../types/api';
 import {
   Play,
@@ -21,6 +22,20 @@ interface ScanLauncherProps {
   onClose?: () => void;
 }
 
+/**
+ * Third-party source already checked into the repository.
+ *
+ * These are the same trees the accuracy report is measured against, with the
+ * same hand labels. Scanning them from the console is therefore not a
+ * prettiness - it is the user re-running, in the UI, the measurement quoted on
+ * the dashboard, and being able to open any of the findings it scored.
+ */
+const REAL_CORPORA = [
+  { path: 'fixtures/pyjwt_repo', corpus: 'PyJWT 2.8.0', lang: 'python' },
+  { path: 'fixtures/golang_jwt_repo', corpus: 'golang-jwt/jwt v5', lang: 'go' },
+  { path: 'fixtures/java_jwt_repo', corpus: 'auth0/java-jwt', lang: 'java' },
+];
+
 export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onClose }) => {
   const { workspaces, startNewScan, cancelCurrentScan, activeScan } = useScan();
 
@@ -37,6 +52,48 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
   const [classification, setClassification] = useState<'secret' | 'confidential' | 'restricted' | 'public'>('confidential');
   const [dataLifetimeYears, setDataLifetimeYears] = useState<number>(15);
   const [systemName, setSystemName] = useState('VAJRA Core Payments');
+
+  // Real-corpus run. The synthetic demo estate is useful for showing the UI;
+  // it is useless for showing the detector works, because we wrote both sides.
+  // These three are third-party code already in the repo, and the same files
+  // carry the hand labels the accuracy figure is measured against.
+  const [corpusRun, setCorpusRun] = useState<Record<string, string>>({});
+  const [corpusBusy, setCorpusBusy] = useState(false);
+  const [corpusTotals, setCorpusTotals] = useState<Record<string, number>>({});
+
+  const runRealCorpora = async () => {
+    setCorpusBusy(true);
+    setCorpusRun({});
+    setCorpusTotals({});
+    try {
+      for (const c of REAL_CORPORA) {
+        setCorpusRun((r) => ({ ...r, [c.path]: 'running' }));
+        try {
+          const scan = await startNewScan(
+            {
+              target_uri: c.path,
+              name: `corpus-${c.lang}`,
+              context: {
+                exposure: 'internet_facing',
+                criticality: 'core_operations',
+                classification: 'confidential',
+                data_lifetime_years: 10,
+                system_name: c.corpus,
+              } as any,
+            },
+            300
+          );
+          const page = await ecdatApi.listFindings(scan.id, { limit: 1 });
+          setCorpusTotals((t) => ({ ...t, [c.path]: page.data.total }));
+          setCorpusRun((r) => ({ ...r, [c.path]: 'done' }));
+        } catch (err: any) {
+          setCorpusRun((r) => ({ ...r, [c.path]: err.message || 'failed' }));
+        }
+      }
+    } finally {
+      setCorpusBusy(false);
+    }
+  };
 
   // Mosca Form
   const [moscaScenario, setMoscaScenario] = useState<'baseline' | 'conservative' | 'accelerated'>('baseline');
@@ -142,6 +199,19 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+      <RealCorpusPanel
+        corpusRun={corpusRun}
+        corpusBusy={corpusBusy}
+        corpusTotals={corpusTotals}
+        onRun={runRealCorpora}
+        onPick={(path, corpus) => {
+          setMode('path');
+          setTargetUri(path);
+          setScanName(corpus);
+          setSystemName(corpus);
+        }}
+      />
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold font-mono text-slate-100 flex items-center gap-2">

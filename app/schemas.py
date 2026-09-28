@@ -56,6 +56,11 @@ class VersionOut(BaseModel):
     engine_version: str
     policy_pack_version: str
     api_version: str = "v1"
+    # Deployment capability, published so the console can bound its own export
+    # buttons. This is configurable per deployment; a client that hardcoded
+    # 5000 would be wrong the moment an operator changed it, and the user
+    # would find out by clicking a button and getting a 413.
+    export_max_findings: int = 5000
 
 
 # --------------------------------------------------------------------------- #

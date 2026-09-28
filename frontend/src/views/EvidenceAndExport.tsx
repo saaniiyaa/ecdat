@@ -37,6 +37,28 @@ export const EvidenceAndExport: React.FC = () => {
   // Export Loading States
   const [exportingType, setExportingType] = useState<string | null>(null);
 
+  // Export bounds. Both numbers are *fetched*: the cap is a per-deployment
+  // setting, and the count is this scan's real total. A button that cannot
+  // succeed should look disabled, not fail with a 413 after the user commits
+  // to the click.
+  const [exportCap, setExportCap] = useState<number | null>(null);
+  const [findingTotal, setFindingTotal] = useState<number | null>(null);
+
+  useEffect(() => {
+    ecdatApi.getVersion()
+      .then((r) => setExportCap(r.data.export_max_findings ?? null))
+      .catch(() => setExportCap(null));
+  }, []);
+
+  useEffect(() => {
+    if (!activeScanId) { setFindingTotal(null); return; }
+    ecdatApi.listFindings(activeScanId, { limit: 1 })
+      .then((r) => setFindingTotal(r.data.total))
+      .catch(() => setFindingTotal(null));
+  }, [activeScanId]);
+
+  const overCap = exportCap != null && findingTotal != null && findingTotal > exportCap;
+
   const loadCoverage = useCallback(async () => {
     if (!activeScanId) return;
     setLoadingCoverage(true);
@@ -93,6 +115,7 @@ export const EvidenceAndExport: React.FC = () => {
   };
 
   const handleExport = async (type: 'cbom' | 'sarif' | 'report' | 'findings.csv', specVersion?: '1.6' | '1.7') => {
+    if (overCap) return;
     if (!activeScanId) return;
     setExportingType(type + (specVersion || ''));
     try {
@@ -141,6 +164,35 @@ export const EvidenceAndExport: React.FC = () => {
           <span className="text-xs text-slate-500">Byte-reproducible outputs</span>
         </div>
 
+        {/* Bounds. Stated before the buttons, not discovered through a 413. */}
+        <div
+          className={`rounded-lg border p-3.5 font-mono text-[11px] ${
+            overCap
+              ? 'border-rose-500/40 bg-rose-950/20 text-rose-300'
+              : 'border-slate-800 bg-slate-950/50 text-slate-400'
+          }`}
+        >
+          {findingTotal == null ? (
+            <span>Counting findings in this scan…</span>
+          ) : overCap ? (
+            <span>
+              This scan has <strong className="text-rose-200">{findingTotal.toLocaleString()}</strong> findings.
+              The synchronous exporter on this deployment is bounded at{' '}
+              <strong className="text-rose-200">{(exportCap || 0).toLocaleString()}</strong>, so these
+              exports are unavailable — the server would reject them with 413 EXPORT_TOO_LARGE. Narrow the
+              findings by filter and export a subset, or raise ECDAT_EXPORT_MAX_FINDINGS and run the export
+              off the request path.
+            </span>
+          ) : (
+            <span>
+              This scan has <strong className="text-slate-200">{findingTotal.toLocaleString()}</strong>{' '}
+              findings, within the exporter bound of{' '}
+              <strong className="text-slate-200">{(exportCap || 0).toLocaleString()}</strong> for this
+              deployment. Exports contain the full scan, not a filtered view.
+            </span>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* CBOM v1.7 */}
           <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between space-y-3">
@@ -158,7 +210,7 @@ export const EvidenceAndExport: React.FC = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => handleExport('cbom', '1.7')}
-                disabled={exportingType === 'cbom1.7'}
+                disabled={exportingType === 'cbom1.7' || overCap}
                 className="flex-1 py-1.5 px-3 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition disabled:opacity-50"
               >
                 <Download className="w-3.5 h-3.5" />
@@ -166,7 +218,7 @@ export const EvidenceAndExport: React.FC = () => {
               </button>
               <button
                 onClick={() => handleExport('cbom', '1.6')}
-                disabled={exportingType === 'cbom1.6'}
+                disabled={exportingType === 'cbom1.6' || overCap}
                 className="py-1.5 px-2.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs hover:bg-slate-700 transition"
                 title="Download CBOM 1.6"
               >
@@ -190,7 +242,7 @@ export const EvidenceAndExport: React.FC = () => {
             </div>
             <button
               onClick={() => handleExport('sarif')}
-              disabled={exportingType === 'sarif'}
+              disabled={exportingType === 'sarif' || overCap}
               className="w-full py-1.5 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
               <Download className="w-3.5 h-3.5" />
@@ -213,7 +265,7 @@ export const EvidenceAndExport: React.FC = () => {
             </div>
             <button
               onClick={() => handleExport('report')}
-              disabled={exportingType === 'report'}
+              disabled={exportingType === 'report' || overCap}
               className="w-full py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
               <FileText className="w-3.5 h-3.5" />
@@ -236,7 +288,7 @@ export const EvidenceAndExport: React.FC = () => {
             </div>
             <button
               onClick={() => handleExport('findings.csv')}
-              disabled={exportingType === 'findings.csv'}
+              disabled={exportingType === 'findings.csv' || overCap}
               className="w-full py-1.5 px-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />

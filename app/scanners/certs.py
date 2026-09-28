@@ -13,6 +13,7 @@ import re
 from pathlib import Path
 
 from app.registry import SIG_ALG_OIDS, canonicalise, material_asset, with_purpose
+from app.scanners.source_context import source_context
 from app.scanners.base import PARSED_STRUCTURE, RawFinding, redact
 
 PEM_CERT = re.compile(
@@ -84,7 +85,8 @@ class CertificateScanner:
                     symbol="DH PARAMETERS",
                     snippet="PEM DH PARAMETERS block",
                     source=self.source,
-                    extra={"key_material": {"kind": "dh_parameters", "bits": 2048}},
+                    extra={**source_context(rel_path),
+                           "key_material": {"kind": "dh_parameters", "bits": 2048}},
                 )
             )
         return out
@@ -166,7 +168,7 @@ class CertificateScanner:
                 snippet=f"subject={cert_record['subject'][:80]} issuer={cert_record['issuer'][:80]} "
                         f"valid_until={not_after.date().isoformat()} sig={cert_record['signature_algorithm']}",
                 source=self.source,
-                extra={"certificate": cert_record},
+                extra={**source_context(rel_path), "certificate": cert_record},
             )
         )
 
@@ -177,7 +179,7 @@ class CertificateScanner:
                     evidence_class=PARSED_STRUCTURE, confidence=0.95,
                     symbol=f"public key {pub_asset['canonical_name']}",
                     snippet=f"SubjectPublicKeyInfo: {pub_asset['canonical_name']}",
-                    source=self.source, extra={"certificate": cert_record},
+                    source=self.source, extra={**source_context(rel_path), "certificate": cert_record},
                 )
             )
 
@@ -190,7 +192,7 @@ class CertificateScanner:
                         detector_id=self.name, evidence_class=PARSED_STRUCTURE, confidence=0.92,
                         symbol=f"signature algorithm {cert_record['signature_algorithm']}",
                         snippet=f"signatureAlgorithm={cert_record['signature_algorithm']}",
-                        source=self.source, extra={"certificate": cert_record},
+                        source=self.source, extra={**source_context(rel_path), "certificate": cert_record},
                     )
                 )
         if hash_name:
@@ -201,7 +203,7 @@ class CertificateScanner:
                         file_path=rel_path, asset=with_purpose(hash_asset, "digital_signature"),
                         detector_id=self.name, evidence_class=PARSED_STRUCTURE, confidence=0.93,
                         symbol=f"certificate digest {hash_name}", snippet=f"signature hash {hash_name}",
-                        source=self.source, extra={"certificate": cert_record},
+                        source=self.source, extra={**source_context(rel_path), "certificate": cert_record},
                     )
                 )
         return out
@@ -231,7 +233,8 @@ class CertificateScanner:
             symbol=f"{algorithm} private key block",
             snippet=redact("-----BEGIN PRIVATE KEY----- (contents redacted; not stored)"),
             source=self.source,
-            extra={"key_material": {"kind": "private_key", "algorithm": algorithm, "bits": bits, "curve": curve},
+            extra={**source_context(rel_path),
+                   "key_material": {"kind": "private_key", "algorithm": algorithm, "bits": bits, "curve": curve},
                    "hardcoded_material": True},
         )
 

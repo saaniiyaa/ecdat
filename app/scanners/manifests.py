@@ -15,6 +15,7 @@ import tomllib
 from pathlib import Path
 
 from app.registry import library_asset, library_record
+from app.scanners.source_context import source_context
 from app.scanners.base import DECLARED_ONLY, RawFinding
 
 MANIFEST_EXTS = {".txt", ".json", ".mod", ".toml", ".xml", ".gradle", ".kts", ".csproj", ".gemspec",
@@ -90,7 +91,8 @@ class ManifestScanner:
                     symbol=rec["name"],
                     snippet=f'{rec["name"]}{"==" + version if version else ""} ({eco}) - {rec.get("notes") or ""}',
                     source="static",
-                    extra={"ecosystem": eco, "version": version, "library": rec["name"],
+                    extra={**source_context(rel_path),
+                           "ecosystem": eco, "version": version, "library": rec["name"],
                            "is_pqc_capable": bool(rec.get("is_pqc_capable"))},
                 )
             )

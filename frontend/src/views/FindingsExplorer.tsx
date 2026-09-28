@@ -5,6 +5,7 @@ import { ecdatApi } from '../api/endpoints';
 import { FindingOut, Page, Band, EvidenceClass } from '../types/api';
 import { BandBadge } from '../components/common/BandBadge';
 import { EvidenceBadge } from '../components/common/EvidenceBadge';
+import { DeclarationBadge, SourceContextBadge, isDeclarationFinding } from '../components/common/DeclarationBadge';
 import { QuantumBadge } from '../components/common/QuantumBadge';
 import { FindingDetailDrawer } from '../components/findings/FindingDetailDrawer';
 import {
@@ -33,6 +34,11 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
   const [quantumStatus, setQuantumStatus] = useState<string>('');
   const [evidenceClass, setEvidenceClass] = useState<string>('');
   const [purpose, setPurpose] = useState<string>('');
+  // Declared vs called. The API has no parameter for this, so the filter is
+  // applied client-side over the fetched page - and it says so, because a
+  // filter that silently covers only the current page is a filter that lies.
+  const [surface, setSurface] = useState<'all' | 'declared' | 'called'>('all');
+  const [sourceScope, setSourceScope] = useState<'all' | 'production' | 'non_production'>('all');
   const [search, setSearch] = useState<string>('');
   const [sort, setSort] = useState<'risk' | 'urgency' | 'path' | 'confidence'>('risk');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
@@ -75,7 +81,10 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
   }, [fetchFindings]);
 
   // Reset offset when filters change
-  const handleFilterChange = (setter: (val: string) => void, val: string) => {
+  // `any` here because the setters are heterogeneous - some filters are the
+  // backend's enum, two of them are ours. The cast is at the one call site
+  // that needs it rather than throughout.
+  const handleFilterChange = (setter: (val: any) => void, val: any) => {
     setter(val);
     setOffset(0);
   };
@@ -86,6 +95,8 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
     setEvidenceClass('');
     setPurpose('');
     setSearch('');
+    setSurface('all');
+    setSourceScope('all');
     setSort('risk');
     setOrder('desc');
     setOffset(0);
@@ -93,6 +104,20 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
 
   const totalPages = pageData ? Math.ceil(pageData.total / limit) : 0;
   const currentPage = Math.floor(offset / limit) + 1;
+
+  // Declared-vs-called and source-scope are client-side, because the server
+  // exposes neither. `counts` is computed from the fetched page and labelled
+  // as such rather than passed off as a scan-wide total.
+  const visibleItems = (pageData?.items || []).filter((f) => {
+    const declared = isDeclarationFinding(f.detector_id, f.extra?.declaration);
+    if (surface === 'declared' && !declared) return false;
+    if (surface === 'called' && declared) return false;
+    const ctx = f.extra?.source_context || 'unknown';
+    if (sourceScope === 'production' && ctx !== 'production') return false;
+    if (sourceScope === 'non_production' && ctx === 'production') return false;
+    return true;
+  });
+  const declaredOnPage = (pageData?.items || []).filter((f) => isDeclarationFinding(f.detector_id, f.extra?.declaration)).length;
 
   if (!activeScanId) {
     return (
@@ -237,7 +262,31 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
             <option value="digest">Digest / Hash</option>
           </select>
 
-          {(band || quantumStatus || evidenceClass || purpose || search) && (
+          {/* Declared vs called - the question that separates this from an
+              AST scanner: what does it find that never calls a primitive? */}
+          <select
+            value={surface}
+            onChange={(e) => handleFilterChange(setSurface, e.target.value as any)}
+            className="px-2.5 py-1 rounded bg-slate-950 border border-fuchsia-500/40 text-slate-300 focus:outline-none focus:border-fuchsia-500"
+            title="Filter by how the finding was established: on a call site, or on a declaration surface (registry, constant, provider string, JWK)"
+          >
+            <option value="all">Declared &amp; Called</option>
+            <option value="declared">Declared only (no call site)</option>
+            <option value="called">Called only</option>
+          </select>
+
+          <select
+            value={sourceScope}
+            onChange={(e) => handleFilterChange(setSourceScope, e.target.value as any)}
+            className="px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300 focus:outline-none focus:border-cyan-500"
+            title="Separate production code from tests, fixtures, examples and vendored paths"
+          >
+            <option value="all">Any source</option>
+            <option value="production">Production only</option>
+            <option value="non_production">Test / fixture only</option>
+          </select>
+
+          {(band || quantumStatus || evidenceClass || purpose || search || surface !== 'all' || sourceScope !== 'all') && (
             <button
               onClick={handleResetFilters}
               className="px-2.5 py-1 rounded border border-rose-500/30 bg-rose-950/20 text-rose-400 hover:bg-rose-900/30 transition text-[11px]"
@@ -246,8 +295,22 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
             </button>
           )}
 
-          <div className="ml-auto text-slate-400 text-xs font-mono">
-            {pageData ? `Showing ${pageData.items.length} of ${pageData.total} findings` : ''}
+          <div className="ml-auto text-slate-400 text-xs font-mono text-right">
+            {pageData && (
+              <>
+                <div>
+                  Showing {visibleItems.length} of {pageData.total} findings
+                  {visibleItems.length !== pageData.items.length && (
+                    <span className="text-amber-400"> (filtered on this page)</span>
+                  )}
+                </div>
+                {declaredOnPage > 0 && surface === 'all' && (
+                  <div className="text-[10px] text-fuchsia-400">
+                    {declaredOnPage} on this page came from declaration surfaces
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -281,8 +344,18 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
                     No findings match the applied filter criteria.
                   </td>
                 </tr>
+              ) : visibleItems.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-12 text-center text-slate-500 font-mono space-y-2">
+                    <div>No finding on this page matches the declared-vs-called or source filter.</div>
+                    <div className="text-[11px] text-slate-600">
+                      That filter is applied to the {pageData.items.length} rows on this page, not to all{' '}
+                      {pageData.total} in the scan. Page through, or clear the filter.
+                    </div>
+                  </td>
+                </tr>
               ) : (
-                pageData.items.map((f) => {
+                visibleItems.map((f) => {
                   const asset = f.asset;
                   const risk = f.risk;
                   const regAlg = asset ? resolveAlgorithm(asset.canonical_name) : undefined;
@@ -320,6 +393,13 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
                             Line {f.line_start}{f.line_end ? `–${f.line_end}` : ''}
                           </div>
                         )}
+                        <div className="flex flex-wrap gap-1 pl-5 pt-1">
+                          <DeclarationBadge detectorId={f.detector_id} reasoning={f.extra?.declaration} />
+                          <SourceContextBadge
+                            sourceContext={f.extra?.source_context}
+                            note={f.extra?.source_context_note}
+                          />
+                        </div>
                       </td>
 
                       {/* Evidence Class */}

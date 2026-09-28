@@ -26,13 +26,19 @@ import {
   VerifyOut,
   RegistryOut,
   ScanDiffResult,
+  AccuracyReport,
+  VersionOut,
 } from '../types/api';
 
 export const ecdatApi = {
   // Meta
   getHealth: () => apiRequest<HealthOut>('/health'),
-  getVersion: () => apiRequest<any>('/version'),
+  getVersion: () => apiRequest<VersionOut>('/version'),
   getRegistry: () => apiRequest<RegistryOut>('/registry'),
+  // Measured detector accuracy, served from docs/accuracy_report.json.
+  // Fetched, never hardcoded: a number typed into a component is a number that
+  // will eventually contradict the tool it claims to describe.
+  getAccuracy: () => apiRequest<AccuracyReport>('/accuracy'),
 
   // Workspaces
   listWorkspaces: () => apiRequest<WorkspaceOut[]>('/workspaces'),

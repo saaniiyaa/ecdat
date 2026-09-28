@@ -15,6 +15,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from app.registry import canonicalise, library_asset
+from app.scanners.source_context import source_context
 from app.scanners.base import INFERRED, SYMBOL_INFERRED, RawFinding, printable_strings
 
 MAGIC = {
@@ -123,7 +124,8 @@ class BinaryScanner:
         return RawFinding(
             file_path=rel_path, asset=asset, detector_id=self.name, evidence_class=evidence,
             confidence=conf, symbol=symbol[:120], source=self.source,
-            extra={"binary_kind": self.classify(symbol.encode()) if False else None},
+            extra={**source_context(rel_path),
+                   "binary_kind": self.classify(symbol.encode()) if False else None},
         )
 
 

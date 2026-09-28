@@ -3,6 +3,7 @@ import { FindingOut } from '../../types/api';
 import { ecdatApi } from '../../api/endpoints';
 import { BandBadge } from '../common/BandBadge';
 import { EvidenceBadge } from '../common/EvidenceBadge';
+import { DeclarationBadge, SourceContextBadge } from '../common/DeclarationBadge';
 import { QuantumBadge } from '../common/QuantumBadge';
 import { FactorBreakdown } from '../common/FactorBreakdown';
 import { useRegistry } from '../../context/RegistryContext';
@@ -186,7 +187,17 @@ export const FindingDetailDrawer: React.FC<FindingDetailDrawerProps> = ({
                 <FileCode className="w-4 h-4 text-cyan-400" />
                 Detection Evidence (Rule 6.5)
               </span>
-              <span>Detector: {activeFinding.detector_id}</span>
+              <span className="flex items-center gap-2">
+                <span>Detector: {activeFinding.detector_id}</span>
+                <DeclarationBadge
+                  detectorId={activeFinding.detector_id}
+                  reasoning={activeFinding.extra?.declaration}
+                />
+                <SourceContextBadge
+                  sourceContext={activeFinding.extra?.source_context}
+                  note={activeFinding.extra?.source_context_note}
+                />
+              </span>
             </div>
 
             <div className="p-3.5 rounded-lg bg-slate-950 border border-slate-800 space-y-2 font-mono text-xs">
@@ -198,6 +209,36 @@ export const FindingDetailDrawer: React.FC<FindingDetailDrawerProps> = ({
               {activeFinding.symbol && (
                 <div className="text-slate-400">
                   Symbol: <span className="text-cyan-300">{activeFinding.symbol}</span>
+                </div>
+              )}
+
+              {/* Why the detector believes this. For a call-site finding the
+                  snippet is the argument; for a declaration it is the only
+                  argument there is, and this string is the whole explainability
+                  story for the tier. It is rendered verbatim from the server -
+                  the UI does not restate or reword the detector's reasoning. */}
+              {activeFinding.extra?.declaration && (
+                <div className="rounded border border-fuchsia-500/30 bg-fuchsia-950/20 p-2.5">
+                  <div className="text-[10px] uppercase tracking-wider text-fuchsia-300 font-semibold mb-1">
+                    Why this was reported
+                  </div>
+                  <div className="text-slate-200 text-xs leading-relaxed">
+                    {activeFinding.extra.declaration}
+                  </div>
+                </div>
+              )}
+
+              {activeFinding.extra?.source_context && (
+                <div className="text-slate-400 text-[11px]">
+                  Source context:{' '}
+                  <span className={activeFinding.extra.source_context === 'production' ? 'text-emerald-400' : 'text-slate-300'}>
+                    {activeFinding.extra.source_context.replace('_', ' ')}
+                  </span>
+                  {activeFinding.extra.source_context_note && (
+                    <div className="text-slate-500 mt-1 leading-relaxed">
+                      {activeFinding.extra.source_context_note}
+                    </div>
+                  )}
                 </div>
               )}
 

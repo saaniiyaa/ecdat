@@ -346,10 +346,15 @@ def list_recommendations(scan_id: str, page: Pagination = Depends(),
 def list_certificates(scan_id: str, session: Session = Depends(get_session)) -> list[dict]:
     get_scan(session, scan_id)
     rows = session.query(Certificate).filter(Certificate.scan_id == scan_id).order_by(Certificate.not_after).all()
+    now = utcnow()
     return [{
         "id": c.id, "fingerprint_sha256": c.fingerprint_sha256, "subject": c.subject, "issuer": c.issuer,
         "serial_number": c.serial_number, "not_before": iso(c.not_before), "not_after": iso(c.not_after),
-        "expired": bool(c.not_after and c.not_after < utcnow()),
+        "expired": bool(c.not_after and c.not_after < now),
+        # Computed here so the console does not do date arithmetic and then
+        # disagree with the server about what "expired" means. Negative means
+        # it lapsed that many days ago.
+        "days_to_expiry": round((c.not_after - now).total_seconds() / 86400, 1) if c.not_after else None,
         "signature_algorithm": c.signature_algorithm, "public_key_algorithm": c.public_key_algorithm,
         "public_key_bits": c.public_key_bits, "is_ca": c.is_ca, "is_self_signed": c.is_self_signed,
         "source_path": c.source_path,

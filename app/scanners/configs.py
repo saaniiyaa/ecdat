@@ -11,6 +11,7 @@ import re
 from pathlib import Path
 
 from app.registry import canonicalise, library_asset
+from app.scanners.source_context import source_context
 from app.scanners.base import PATTERN, RawFinding
 
 CONFIG_NAMES = {"nginx.conf", "httpd.conf", "apache2.conf", "sshd_config", "ipsec.conf", "openssl.cnf",
@@ -136,6 +137,7 @@ class ConfigScanner:
             file_path=rel_path, asset=asset, detector_id=self.name, evidence_class=PATTERN,
             confidence=0.75, line_start=line, line_end=line, symbol=symbol[:120],
             snippet=symbol[:200], source=self.source,
+            extra=source_context(rel_path),
         )
 
 

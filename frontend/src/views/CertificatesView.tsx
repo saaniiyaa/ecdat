@@ -104,6 +104,31 @@ export const CertificatesView: React.FC = () => {
                     >
                       {c.expired ? 'Expired Certificate' : 'Active / Valid'}
                     </span>
+                    {/* days_to_expiry is computed server-side, so this number
+                        and the badge above can never disagree. A certificate
+                        inside its last 30 days is called out separately from
+                        one that has already lapsed - they need different
+                        responses from the same team. */}
+                    {c.days_to_expiry != null && (
+                      <span
+                        className={`shrink-0 px-2 py-0.5 rounded text-[10px] font-mono border ${
+                          c.days_to_expiry < 0
+                            ? 'bg-rose-950/60 text-rose-300 border-rose-500/40'
+                            : c.days_to_expiry <= 30
+                            ? 'bg-amber-950/60 text-amber-300 border-amber-500/40'
+                            : 'bg-slate-900 text-slate-500 border-slate-700'
+                        }`}
+                        title={
+                          c.days_to_expiry < 0
+                            ? `Lapsed ${Math.abs(c.days_to_expiry)} days ago`
+                            : `Expires in ${c.days_to_expiry} days`
+                        }
+                      >
+                        {c.days_to_expiry < 0
+                          ? `${Math.abs(c.days_to_expiry)}d ago`
+                          : `${c.days_to_expiry}d`}
+                      </span>
+                    )}
                     {c.is_ca && (
                       <span className="px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/40 text-[10px]">
                         CA Root

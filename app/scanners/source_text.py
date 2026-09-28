@@ -212,7 +212,15 @@ class SourceTextScanner:
                     if key in seen:
                         continue
                     seen.add(key)
-                    out.append(self._f(rel_path, asset, idx, match.group(0).strip("\"'"), snippet))
+                    # A JCA algorithm is *named*, not called. The literal is a
+                    # declaration surface whether or not a getInstance ever
+                    # consumes it, so it is reported as one.
+                    literal = match.group(0).strip("\"'")
+                    out.append(self._f(
+                        rel_path, asset, idx, literal, snippet,
+                        declaration=f"JCA standard algorithm name {literal!r} is declared on this "
+                                   f"line; the primitive is selected by name at runtime",
+                    ))
 
             if JCA_FACTORY.search(line):
                 # The JCA resolves the primitive at runtime from a name the
@@ -257,7 +265,15 @@ class SourceTextScanner:
                     if key2 in seen:
                         continue
                     seen.add(key2)
-                    out.append(self._f(rel_path, canonicalise(asset), idx, match.group(0), snippet))
+                    # `crypto.SHA256` is a package-level constant: the digest is
+                    # *named* here and selected by reference, not invoked. That
+                    # makes it a declaration surface in the same sense as a JCA
+                    # provider string, and the reason is worth showing.
+                    out.append(self._f(
+                        rel_path, canonicalise(asset), idx, match.group(0), snippet,
+                        declaration=f"Go crypto package constant {match.group(0)} is referenced here; "
+                                   f"the digest is bound by name rather than invoked at this line",
+                    ))
 
             for match in JOSE_ALG.finditer(line):
                 alg = match.group(1)
@@ -356,13 +372,19 @@ class SourceTextScanner:
         return out
 
     def _f(self, rel_path: str, asset: dict, line: int, symbol: str, snippet: str | None,
-           confidence: float = 0.75, evidence: str = PATTERN) -> RawFinding:
+           confidence: float = 0.75, evidence: str = PATTERN,
+           declaration: str | None = None) -> RawFinding:
         return RawFinding(
             # A finding in a test file is real but is not a production
             # exposure. The engine does not drop it - suppressing it would
             # hide a real occurrence - it marks it so the risk model and the
             # UI can say where it came from.
-            extra=source_context(rel_path),
+            # `declaration` marks a finding that came from a declaration
+            # surface - a provider string, a registry entry, a digest binding -
+            # rather than a call site. The console keys its "declared vs
+            # called" question off this, so it has to be set wherever the
+            # detector is inferring rather than observing an invocation.
+            extra={**source_context(rel_path), **({"declaration": declaration} if declaration else {})},
             file_path=rel_path,
             asset=asset,
             detector_id=self.name,

@@ -5,6 +5,7 @@ import { RiskSummaryOut, CoverageOut, FindingOut } from '../types/api';
 import { BandBadge, BAND_COLORS } from '../components/common/BandBadge';
 import { QuantumBadge } from '../components/common/QuantumBadge';
 import { CoverageHonestyBanner } from '../components/common/CoverageHonestyBanner';
+import { AccuracyPanel } from '../components/common/AccuracyPanel';
 import { FindingDetailDrawer } from '../components/findings/FindingDetailDrawer';
 import {
   ShieldAlert,
@@ -148,6 +149,10 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         coverageIndex={summary.coverage_index}
         unobservedPct={summary.unobserved_pct}
       />
+
+      {/* Measured accuracy, fetched from the server. Coverage says what was
+          looked at; this says what the looking is worth. */}
+      <AccuracyPanel />
 
       {/* Top 4 KPI Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

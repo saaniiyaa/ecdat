@@ -50,7 +50,8 @@ def health(request: Request, session: Session = Depends(get_session)) -> dict:
 def version(request: Request) -> dict:
     settings = request.app.state.settings
     return {"name": settings.app_name, "version": settings.version,
-            "engine_version": settings.engine_version, "policy_pack_version": settings.policy_pack_version}
+            "engine_version": settings.engine_version, "policy_pack_version": settings.policy_pack_version,
+            "export_max_findings": settings.export_max_findings}
 
 
 @router.get("/registry", summary="Algorithm catalogue and policy pack (the tool's knowledge base)")

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T20:07:12.707579+00:00",
+  "generated_at": "2026-09-28T20:22:07.608382+00:00",
   "tool": "scripts/accuracy_real.py",
   "independent": {
     "corpus": "PyJWT 2.8.0 shipped library code (jwt/)",

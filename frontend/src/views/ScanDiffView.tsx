@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useScan } from '../context/ScanContext';
 import { ecdatApi } from '../api/endpoints';
-import { ScanDiffResult } from '../types/api';
+import { ScanDiffResult, FindingOut } from '../types/api';
 import { BandBadge } from '../components/common/BandBadge';
 import {
   GitCompare,
@@ -52,6 +52,58 @@ export const ScanDiffView: React.FC = () => {
     }
   }, [activeScanId, againstId]);
 
+  // A diff answers "did this codebase get worse?". Between two scans of the
+  // same project that is the right question. Between Python and Java it is
+  // not - there is no drift, only difference. So the view works out whether it
+  // is looking at drift or at a cross-language comparison, and says which.
+  // The family comparison below is the interesting part either way: RSA-PSS and
+  // EdDSA being separated from PKCS#1 v1.5 in *both* languages is the claim the
+  // multi-language support rests on.
+  const [leftFamilies, setLeftFamilies] = useState<Map<string, number>>(new Map());
+  const [rightFamilies, setRightFamilies] = useState<Map<string, number>>(new Map());
+  const [leftCount, setLeftCount] = useState(0);
+  const [rightCount, setRightCount] = useState(0);
+
+  const tally = (items: FindingOut[]): Map<string, number> => {
+    const m = new Map<string, number>();
+    for (const f of items) {
+      const fam = f.asset?.family;
+      if (fam) m.set(fam, (m.get(fam) || 0) + 1);
+    }
+    return m;
+  };
+
+  useEffect(() => {
+    if (!activeScanId) { setLeftFamilies(new Map()); return; }
+    ecdatApi.listFindings(activeScanId, { limit: 500 })
+      .then((r) => { setLeftFamilies(tally(r.data.items)); setLeftCount(r.data.total); })
+      .catch(() => setLeftFamilies(new Map()));
+  }, [activeScanId]);
+
+  useEffect(() => {
+    if (!againstId) { setRightFamilies(new Map()); return; }
+    ecdatApi.listFindings(againstId, { limit: 500 })
+      .then((r) => { setRightFamilies(tally(r.data.items)); setRightCount(r.data.total); })
+      .catch(() => setRightFamilies(new Map()));
+  }, [againstId]);
+
+  const leftName = activeScan?.name || 'active scan';
+  const againstName = otherScans.find((s) => s.id === againstId)?.name || 'comparison scan';
+  // A name that carries a language token is a different-language comparison.
+  const LANG = /python|pyjwt|go|golang|java|jwt/i;
+  const isCrossLanguage =
+    LANG.test(leftName) && LANG.test(againstName) &&
+    /python|pyjwt/i.test(leftName) !== /python|pyjwt/i.test(againstName) ? true
+      : /go|golang/i.test(leftName) !== /go|golang/i.test(againstName) ||
+        /java/i.test(leftName) !== /java/i.test(againstName);
+
+  const allFamilies = Array.from(new Set([...leftFamilies.keys(), ...rightFamilies.keys()])).sort();
+  const maxFam = Math.max(
+    1,
+    ...[...leftFamilies.values()],
+    ...[...rightFamilies.values()]
+  );
+
   if (!activeScanId) {
     return (
       <div className="max-w-4xl mx-auto p-12 text-center text-slate-500 font-mono">
@@ -74,6 +126,101 @@ export const ScanDiffView: React.FC = () => {
           Detect cryptographic drift, newly introduced vulnerabilities, and remediated debt
         </p>
       </div>
+
+      {/* What kind of comparison this is. Calling a Go-vs-Java difference
+          "drift" would be the kind of claim that does not survive a question
+          from the panel. */}
+      {againstId && (
+        <div
+          className={`rounded-xl border p-4 font-mono text-xs ${
+            isCrossLanguage
+              ? 'border-cyan-500/30 bg-cyan-950/15 text-cyan-200'
+              : 'border-slate-800 bg-slate-900/60 text-slate-400'
+          }`}
+        >
+          <div className="font-bold mb-1">
+            {isCrossLanguage ? 'Cross-language comparison — not drift' : 'Drift comparison — same target'}
+          </div>
+          <div className="text-[11px] leading-relaxed opacity-90">
+            {isCrossLanguage ? (
+              <>
+                These two scans are of <strong>{leftName}</strong> and <strong>{againstName}</strong> — different
+                projects in different languages. Added and removed findings below reflect what each codebase
+                contains, not a change over time. What is worth comparing is the family table underneath: the
+                same families should be separated the same way in both languages.
+              </>
+            ) : (
+              <>
+                Findings added and removed here represent real drift in the target between the two scans.
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Family-by-family comparison, present in both */}
+      {allFamilies.length > 0 && (
+        <div className="rounded-xl border border-slate-800 bg-slate-900/80 overflow-hidden">
+          <div className="px-4 py-3 border-b border-slate-800 bg-slate-950/50">
+            <h3 className="text-sm font-bold text-slate-200">Algorithm families, both scans</h3>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Counts come from the server's own finding list — this view tallies them and
+              performs no classification of its own.
+            </p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
+                  <th className="py-2.5 px-4">Family</th>
+                  <th className="py-2.5 px-4">{leftName}</th>
+                  <th className="py-2.5 px-4">{againstName}</th>
+                  <th className="py-2.5 px-4">Reading</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60">
+                {allFamilies.map((fam) => {
+                  const l = leftFamilies.get(fam) || 0;
+                  const r = rightFamilies.get(fam) || 0;
+                  const reading = l && r ? 'both' : l ? 'left only' : 'right only';
+                  return (
+                    <tr key={fam} className="hover:bg-slate-800/40">
+                      <td className="py-2.5 px-4 text-slate-200 font-semibold">{fam}</td>
+                      <td className="py-2.5 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className="w-7 text-slate-300">{l}</span>
+                          <div className="flex-1 h-1.5 rounded-full bg-slate-800 overflow-hidden min-w-[60px]">
+                            <div className="h-full bg-cyan-500" style={{ width: `${(l / maxFam) * 100}%` }} />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className="w-7 text-slate-300">{r}</span>
+                          <div className="flex-1 h-1.5 rounded-full bg-slate-800 overflow-hidden min-w-[60px]">
+                            <div className="h-full bg-violet-500" style={{ width: `${(r / maxFam) * 100}%` }} />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-4 text-[11px] text-slate-500">
+                        {reading === 'both' ? (
+                          <span className="text-emerald-400">detected in both</span>
+                        ) : (
+                          <span className="text-amber-400">{reading}</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div className="px-4 py-2.5 border-t border-slate-800 text-[10px] text-slate-600">
+            {leftCount.toLocaleString()} findings in the active scan · {rightCount.toLocaleString()} in the
+            comparison. Pages above 500 are not tallied here; use the findings explorer for a full count.
+          </div>
+        </div>
+      )}
 
       {/* Selectors */}
       <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">

@@ -14,6 +14,7 @@ import ssl
 from typing import Any
 
 from app.registry import canonicalise, with_purpose
+from app.scanners.source_context import source_context
 from app.scanners.base import OBSERVED, RawFinding
 from app.scanners.certs import _public_key_asset
 
@@ -79,7 +80,7 @@ class TlsProbe:
             out.append(RawFinding(file_path=rel, asset=version_asset, detector_id=self.name,
                                   evidence_class=OBSERVED, confidence=0.95,
                                   symbol=f"negotiated {version}", snippet=f"{version} {cipher_info[0]}",
-                                  source="live"))
+                                  source="live", extra=source_context(rel)))
 
         suite = cipher_info[0] or ""
         bits = cipher_info[2]
@@ -92,7 +93,7 @@ class TlsProbe:
                     out.append(RawFinding(file_path=rel, asset=asset, detector_id=self.name,
                                           evidence_class=OBSERVED, confidence=0.9,
                                           symbol=f"cipher suite {suite}", snippet=f"{suite} ({bits} bits)",
-                                          source="live"))
+                                          source="live", extra=source_context(rel)))
                 break
 
         exposure: dict[str, Any] = {
@@ -110,7 +111,7 @@ class TlsProbe:
                 out.append(RawFinding(file_path=rel, asset=pub_asset, detector_id=self.name,
                                       evidence_class=OBSERVED, confidence=0.95,
                                       symbol=f"served key {pub_asset['canonical_name']}",
-                                      snippet=f"peer cert {fingerprint[:16]}", source="live"))
+                                      snippet=f"peer cert {fingerprint[:16]}", source="live", extra=source_context(rel)))
             sig_family = cert.signature_algorithm_oid._name  # human readable, e.g. sha256WithRSAEncryption
             if sig_family:
                 asset = canonicalise("RSA-2048" if "RSA" in sig_family else "ECDSA-P256")
@@ -118,7 +119,7 @@ class TlsProbe:
                     out.append(RawFinding(file_path=rel, asset=with_purpose(asset, "digital_signature"),
                                           detector_id=self.name, evidence_class=OBSERVED, confidence=0.9,
                                           symbol=f"served signature {sig_family}", snippet=sig_family,
-                                          source="live"))
+                                          source="live", extra=source_context(rel)))
         return out, exposure
 
 
