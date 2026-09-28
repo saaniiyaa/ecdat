@@ -80,7 +80,7 @@ Open the interactive contract at <http://localhost:8000/docs>.
 make install      # venv + pinned requirements
 make init-db      # create schema (idempotent)
 make serve        # uvicorn on :8000
-make test         # 95 tests
+make test         # 148 tests
 make demo         # scan the demo estate through the live API and print the summary
 ```
 
@@ -248,7 +248,7 @@ python -m app.manage backup --out-dir backups      # consistent snapshot (SQLite
 python -m app.manage restore backups/ecdat-*.sqlite3
 python -m app.manage demo-scan --api-key dev-ecdat-key
 python -m app.manage verify <attestation_id>
-python -m pytest tests/ -q                         # 95 tests
+python -m pytest tests/ -q                         # 148 tests
 python scripts/measure_all.py --api-key dev-ecdat-key   # regenerate docs/measurements.json
 python scripts/scale_benchmark.py --copies 100          # throughput measurement
 ```
@@ -270,7 +270,7 @@ app/
   scanners/  python_ast  source_text  manifests  configs  certs  binaries  containers  tls_live(opt-in)
   services/  scan_runner  risk  mosca  recommend  coverage  attestation  exports  diff  serialize
   api/       routes_scans  routes_analysis  routes_evidence  routes_meta  serializers  deps
-tests/       test_detectors.py  test_risk_engine.py  test_api.py  conftest.py   (95 tests)
+tests/       test_detectors.py  test_risk_engine.py  test_api.py  conftest.py   (148 tests)
 fixtures/demo_repo/      22-file multi-language demo estate
 migrations/              Alembic env + 0001_baseline
 scripts/                 measure_all.py  scale_benchmark.py
@@ -282,7 +282,7 @@ docs/                    BACKEND_ARCHITECTURE_AND_STRATEGY.md  measurements.json
 <!-- COORDINATION:BEGIN -->
 ## 🤝 Coordination block (AI #1 backend ⇄ Saniya's AI frontend)
 
-**Backend status:** ✅ P0–P6 complete · 34 paths / 39 operations · 95 tests green · API `1.0.0`
+**Backend status:** ✅ P0–P6 complete · 34 paths / 39 operations · 148 tests green · API `1.0.0`
 **Contract version:** `openapi.json` @ 2026-09-26 · **0 breaking changes**
 **Local base URL:** `http://127.0.0.1:8000/api/v1` · **API key:** `dev-ecdat-key` (header `X-API-Key`)
 

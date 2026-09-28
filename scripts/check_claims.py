@@ -16,7 +16,10 @@ current measurement.
 
 How it works
 ------------
-Every "N.NNN" token in a document is treated as a *candidate* claim. A token is
+Two kinds of claim are checked.
+
+**Detector metrics.** Every "N.NNN" token in a document is treated as a
+*candidate* claim. A token is
 checked only if it is plausibly a detector metric, and it is matched against
 the set of values the current measurement actually produced (rounded the same
 way). A document quoting a detector metric that the measurement does not
@@ -132,6 +135,53 @@ def check(path: pathlib.Path, allowed: set[float]) -> list[str]:
     return problems
 
 
+def collected_test_count() -> int | None:
+    """How many tests the suite actually collects right now."""
+    try:
+        import subprocess
+
+        out = subprocess.run(
+            [sys.executable, "-m", "pytest", "tests/", "--collect-only", "-q"],
+            cwd=ROOT, capture_output=True, text=True, timeout=300,
+        ).stdout
+    except Exception:
+        return None
+    # pytest prints "148 tests collected in 0.36s" - the timing suffix means
+    # an endswith() check silently never matches, and a checker that silently
+    # never matches is worse than no checker at all.
+    m = re.search(r"(\d+)\s+(?:tests?\s+)?collected", out)
+    if not m:
+        m = re.search(r"collected\s+(\d+)\s+items?", out)
+    return int(m.group(1)) if m else None
+
+
+def check_test_counts(paths: list[pathlib.Path]) -> list[str]:
+    """A test count in prose is a measured claim like any other.
+
+    "95 tests" in a README outlives the change that made it 95. It is a small
+    thing, but it is the same failure mode as a stale precision: a number that
+    looks authoritative and stopped being true, in the one document a judge
+    reads first.
+    """
+    actual = collected_test_count()
+    if actual is None:
+        return []
+    problems: list[str] = []
+    for path in paths:
+        if not path.exists():
+            continue
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            if "test" not in line.lower():
+                continue
+            for m in re.finditer(r"(?<!\d)(\d{2,4})\s+tests\b", line):
+                if int(m.group(1)) != actual:
+                    problems.append(
+                        f"{path}:{number}: claims {m.group(1)} tests, but the suite "
+                        f"currently collects {actual}"
+                    )
+    return problems
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("docs", nargs="*", help="documents to check")
@@ -152,6 +202,7 @@ def main() -> int:
     for path in targets:
         if path.exists():
             problems.extend(check(path, allowed))
+    problems.extend(check_test_counts(targets))
 
     if problems:
         print("STALE OR UNSUPPORTED CLAIMS", file=sys.stderr)

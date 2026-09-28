@@ -193,16 +193,60 @@ vulnerabilities.
 
 ---
 
-## 8. Next work, in priority order
+## 8. Keeping these numbers true
 
-1. **JWK member-name detection** — `kty`/`n`/`e`/`crv` as cryptographic
-   context. Closes the `api_jwk.py` gap and generalises to any JOSE library.
-2. **Widen the independent corpus.** At minimum one Go and one Java project, so
-   the multi-language claim is measured rather than asserted.
-3. **A binary corpus** with hand-read symbol tables, to validate the weakest
-   evidence tier.
-4. **Test-directory awareness.** Findings under `tests/` should be labelled as
-   such rather than ranked beside shipped-code findings.
-5. **Import-block policy.** Decide deliberately whether guarded
+A measured figure decays the moment the code changes underneath it. Three
+mechanisms now stop that happening quietly, and all three run in CI.
+
+### `scripts/accuracy_gate.py` — required CI job
+
+Re-measures all three corpora against `docs/accuracy_baseline.json` and fails
+the build on a regression beyond tolerance (0.06), on an absolute
+precision/recall floor, or on a missing corpus. It replaces `scripts/accuracy.py`,
+which scored the detector against fixtures the same author wrote and therefore
+could only ever confirm itself.
+
+The gate is verified, not merely written. Disabling the JOSE declaration tier
+was used as a deliberate regression: aggregate recall fell from 0.794 to 0.706
+and the gate exited 1, naming the corpora affected.
+
+Re-recording the baseline with `--update` is a deliberate act, and the command
+output says so. A gate whose reference can be quietly rewritten is not a gate.
+
+### `scripts/check_claims.py` — prose cannot drift from measurement
+
+The gate proves the detector did not regress. It says nothing about
+`docs/ACCURACY.md` continuing to quote a figure the measurement no longer
+supports — which is the quieter failure, because the number keeps looking
+authoritative long after it stopped being true. This check fails the build when
+a document asserts a detector metric the current report does not produce, and
+when a test count in the README disagrees with what the suite collects.
+
+It is deliberately conservative: it never edits a document and never guesses
+intent. It reports the file, the line, and both numbers.
+
+It earned its place during this work by catching a report left on disk from the
+sabotage run above, before the figures were regenerated.
+
+### Detector failures stay visible
+
+A detector that raises must not be able to produce a clean-looking scan. The
+scan runner logs the traceback, preserves the results of the detectors that
+did work, and marks the affected surfaces `partial`. A coverage index computed
+over a silently shortened detector set is worse than no index, because it is
+still displayed as a number.
+
+## 9. Next work, in priority order
+
+1. **Close the remaining measured gaps.** The six families listed in
+   `known_detector_gaps` are the only justified detector work: each one is a
+   known miss against hand-labelled code, not a speculative improvement.
+2. **A binary corpus** with hand-read symbol tables, to validate `SYMBOL_INFERRED`,
+   the weakest tier and the only one with no independent measurement at all.
+3. **Import-block policy.** Decide deliberately whether guarded
    `cryptography`/`openssl` imports are cryptographic declarations, and measure
-   the precision cost either way.
+   the precision cost either way. Currently a deliberate precision trade.
+4. **Server-side filters for `declared`/`called` and `source_context`.** Both
+   are applied client-side in the console today, which means they filter the
+   visible page rather than the scan. The UI says so rather than implying
+   otherwise.

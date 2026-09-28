@@ -106,11 +106,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install Frontend Dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm ci --no-audit --no-fund
 
-      - name: Typecheck and Build (tsc && vite build)
+      # `npm run build` runs tsc for the app but not for vite.config.ts, which
+      # is a separate tsconfig. The proxy target is read from process.env, so a
+      # missing @types/node would only surface when someone runs the dev
+      # server - which is exactly when it is least convenient.
+      - name: Typecheck (app + vite config)
+        working-directory: frontend
+        run: |
+          npx tsc --noEmit
+          npx tsc --noEmit -p tsconfig.node.json
+
+      - name: Build
         working-directory: frontend
         run: npm run build
