@@ -2,11 +2,20 @@
 
 from __future__ import annotations
 
-from app.scanners import binaries, certs, configs, manifests, python_ast, source_text
+from app.scanners import (
+    binaries,
+    certs,
+    configs,
+    declarations,
+    manifests,
+    python_ast,
+    source_text,
+)
 from app.scanners.base import RawFinding, Scanner, is_probable_text
 
 TEXT_SCANNERS: list[Scanner] = [
     python_ast.SCANNER,
+    declarations.SCANNER,
     source_text.SCANNER,
     configs.SCANNER,
     certs.SCANNER,
@@ -26,5 +35,6 @@ for _scanner in TEXT_SCANNERS + [BINARY_SCANNER]:
 
 __all__ = [
     "TEXT_SCANNERS", "BINARY_SCANNER", "SUPPORTED_SUFFIXES", "RawFinding", "Scanner",
-    "is_probable_text", "binaries", "certs", "configs", "manifests", "python_ast", "source_text",
+    "is_probable_text", "binaries", "certs", "configs", "declarations",
+    "manifests", "python_ast", "source_text",
 ]

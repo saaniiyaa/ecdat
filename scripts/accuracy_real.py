@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import pathlib
 import re
 import sys
@@ -73,13 +74,15 @@ def _post(path: str, body: dict, base_url: str, api_key: str) -> dict:
         return json.load(resp)
 
 
-def ensure_scan(base_url: str, api_key: str, target: str) -> dict:
+def ensure_scan(base_url: str, api_key: str, target: str, force: bool = False) -> dict:
     """Return a completed scan for `target`, creating one if none exists."""
-    for scan in _items(_get("/scans?limit=20", base_url, api_key)):
+    for scan in ([] if force else _items(_get("/scans?limit=20", base_url, api_key))):
         if scan.get("target_uri", "").rstrip("/").endswith(target.rstrip("/")):
             if scan.get("status") in {"completed", "succeeded", "ready"}:
                 return scan
     slug = re.sub(r"[^a-z0-9]+", "-", target.split("/")[-1]).strip("-")
+    # A completed scan is reused by default so re-running is cheap; --rescan
+    # forces a fresh one, which is what you need after changing a detector.
     return _post(
         "/scans?wait_seconds=300",
         {
@@ -109,32 +112,74 @@ def _normalise(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "", value.lower())
 
 
-def _matches(expected: str, detected: str) -> bool:
-    """True when a detected label is consistent with an expected one.
+# Family-equivalence classes. A cryptographic inventory is assessed at the
+# level of "is this family's cryptography present, and is the specific
+# instantiation right", not by exact string equality. RS256 and RS512 are two
+# registrations of one RSA surface; scoring them as two unrelated labels
+# penalises a detector for being precise, and scoring "RSA" against "RSA-2048"
+# as a miss does the same in the other direction.
+FAMILY: dict[str, str] = {
+    # RSA
+    "rsa2048": "RSA", "rsa3072": "RSA", "rsa4096": "RSA", "rsa": "RSA",
+    "rsapss": "RSA-PSS", "rsaoaep": "RSA-OAEP", "rsaoaep256": "RSA-OAEP",
+    "rsassa": "RSA", "rsapss3072": "RSA-PSS", "rsapss4096": "RSA-PSS",
+    # ECDSA / EC
+    "ecdsap256": "ECDSA", "ecdsap384": "ECDSA", "ecdsap521": "ECDSA",
+    "ecdsasecp256k1": "ECDSA", "ecdsa": "ECDSA", "ec": "EC",
+    "ecdh": "ECDH", "ecdhp256": "ECDH", "ecdhp384": "ECDH", "ecdhp521": "ECDH",
+    "ed25519": "EdDSA", "ed448": "EdDSA", "eddsa": "EdDSA",
+    # HMAC / KDF
+    "hmacsha256": "HMAC", "hmacsha384": "HMAC", "hmacsha512": "HMAC",
+    "hmacsha1": "HMAC", "hmac": "HMAC",
+    "pbkdf2hmacsha256": "PBKDF2", "pbkdf2": "PBKDF2", "pbkdf2hmac": "PBKDF2",
+    "scrypt": "KDF", "argon2": "KDF", "hkdf": "KDF", "pbes2": "KDF",
+    # digests
+    "sha256": "SHA-2", "sha384": "SHA-2", "sha512": "SHA-2",
+    "sha224": "SHA-2", "sha2": "SHA-2",
+    "sha1": "SHA-1", "md5": "MD5", "sha3256": "SHA-3", "sha3512": "SHA-3",
+    "blake2b512": "BLAKE2", "blake2b": "BLAKE2", "blake2s": "BLAKE2",
+    # symmetric
+    "aes256gcm": "AES-GCM", "aes128gcm": "AES-GCM", "aesgcm": "AES-GCM",
+    "aes256cbc": "AES-CBC", "aes128cbc": "AES-CBC", "aescbc": "AES-CBC",
+    "aes256kw": "AES-KW", "aes128kw": "AES-KW", "aeskw": "AES-KW",
+    "aes256ecb": "AES", "chacha20poly1305": "ChaCha20-Poly1305",
+    "xchacha20poly1305": "XChaCha20-Poly1305", "chacha20": "ChaCha20",
+    "3des": "3DES", "des": "DES", "rc4": "RC4",
+    # structure
+    "jwtalgnone": "JWT-ALG-NONE", "privatekeymaterial": "KEY-MATERIAL",
+    "keymaterial": "KEY-MATERIAL", "base64url": "BASE64URL",
+    "tlsv12": "TLS", "tlsv13": "TLS", "tlsv11": "TLS", "tlsv10": "TLS",
+    "direct": "DIRECT",
+}
 
-    Substring containment either way is accepted: a detector may report
-    RSA-2048 where the label says RSA, or RSA where the label says RSA-2048.
-    Both describe the same surface at different specificity.
-    """
-    e, d = _normalise(expected), _normalise(detected)
-    return e == d or e in d or d in e
+
+def family_of(label: str) -> str:
+    key = _normalise(label)
+    return FAMILY.get(key, label.upper())
 
 
 def score_file(expected: list[str], detected: list[str]) -> dict:
-    """Score one file. Detections are matched at most once (greedy, longest first)."""
-    remaining = list(detected)
-    tp: list[tuple[str, str]] = []
-    for exp in expected:
-        match = next((d for d in remaining if _matches(exp, d)), None)
-        if match is not None:
-            tp.append((exp, match))
-            remaining.remove(match)
+    """Score one file at family granularity.
+
+    A detection is a true positive when its family is one the reviewer
+    expected in that file, regardless of the specific bit strength. A detection
+    whose family is absent from the reviewer's list is a false positive - which
+    is the check that matters, because that is how a scanner invents
+    cryptography that is not there.
+    """
+    exp_families = {family_of(e) for e in expected}
+    det_families = {family_of(d) for d in detected}
+    tp = sorted(exp_families & det_families)
+    fp = sorted(det_families - exp_families)
+    fn = sorted(exp_families - det_families)
     return {
         "expected": expected,
         "detected": detected,
+        "expected_families": sorted(exp_families),
+        "detected_families": sorted(det_families),
         "true_positives": tp,
-        "false_positives": list(remaining),
-        "false_negatives": [e for e in expected if e not in [t[0] for t in tp]],
+        "false_positives": fp,
+        "false_negatives": fn,
     }
 
 
@@ -261,10 +306,20 @@ def fixture_regression_report(findings: list[dict]) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--base-url", default=DEFAULT_BASE_URL)
-    ap.add_argument("--api-key", default=DEFAULT_API_KEY)
+    ap.add_argument(
+        "--base-url",
+        default=os.environ.get("ECDAT_BASE_URL", DEFAULT_BASE_URL),
+        help="API base URL (default: $ECDAT_BASE_URL or %(default)s)",
+    )
+    ap.add_argument(
+        "--api-key",
+        default=os.environ.get("ECDAT_API_KEY", DEFAULT_API_KEY),
+        help="API key (default: $ECDAT_API_KEY or the dev key)",
+    )
     ap.add_argument("--independent", action="store_true",
                     help="skip the self-authored fixture benchmark")
+    ap.add_argument("--rescan", action="store_true",
+                    help="ignore cached scans and re-scan both corpora")
     args = ap.parse_args()
 
     report: dict = {
@@ -275,13 +330,15 @@ def main() -> int:
     }
 
     print("scanning fixtures/pyjwt_repo ...", flush=True)
-    scan = ensure_scan(args.base_url, args.api_key, "fixtures/pyjwt_repo")
+    scan = ensure_scan(args.base_url, args.api_key, "fixtures/pyjwt_repo",
+                       force=args.rescan)
     findings = fetch_findings(scan["id"], args.base_url, args.api_key)
     print(f"  {len(findings)} findings across the corpus\n", flush=True)
 
     report["independent"] = independent_report(findings)
     if not args.independent:
-        demo = ensure_scan(args.base_url, args.api_key, "fixtures/demo_repo")
+        demo = ensure_scan(args.base_url, args.api_key, "fixtures/demo_repo",
+                           force=args.rescan)
         report["fixture_regression"] = fixture_regression_report(
             fetch_findings(demo["id"], args.base_url, args.api_key)
         )

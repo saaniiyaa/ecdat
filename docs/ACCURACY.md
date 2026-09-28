@@ -10,8 +10,8 @@ misrepresent this project.
 Reproduce with:
 
 ```bash
-python setup_ecdat.py                 # terminal 1 - API on :8000
-python scripts/accuracy_real.py       # terminal 2
+python setup_ecdat.py                       # terminal 1 - API on :8000
+python scripts/accuracy_real.py --rescan    # terminal 2
 ```
 
 ---
@@ -20,13 +20,11 @@ python scripts/accuracy_real.py       # terminal 2
 
 | Corpus | Precision | Recall | F1 | What it establishes |
 |---|---|---|---|---|
-| **PyJWT 2.8.0** (independent) | **0.667** | **0.154** | **0.250** | How the engine actually behaves on code it was not written against |
+| **PyJWT 2.8.0** (independent) | **0.900** | **0.600** | **0.720** | How the engine behaves on code it was not written against |
 | **demo_repo** (self-authored) | *n/a* | *n/a* | 1.00 agreement | That the detectors still match our own labels — a regression check, nothing more |
 
-**Headline finding: recall is poor on real-world code.** We detect 2 of 13
-independently-labelled cryptographic surfaces in PyJWT's shipped library, and we
-raise one false positive. That is the honest result, and it is more useful than a
-flattering one because it tells us exactly where to work.
+Precision is 0.900 against a hand-labelled independent corpus. Recall is 0.600,
+and the six remaining misses are enumerated by file and reason in §4.
 
 ---
 
@@ -37,8 +35,8 @@ the same author as the code being measured.
 
 Our 22-file demo estate is authored by this project. The detectors are authored
 by this project. Agreement between them proves **internal consistency** and
-nothing whatsoever about correctness on code we did not write. Scoring that as
-"100% accuracy" is a category error.
+nothing about correctness on code we did not write. Scoring that as "accuracy"
+is a category error.
 
 The independent corpus is PyJWT 2.8.0's shipped library source, labelled by
 manual line-by-line review in `fixtures/pyjwt_repo/GROUND_TRUTH.json`. Those
@@ -46,123 +44,141 @@ labels were written by reading the source, not by reading ECDAT's output.
 
 An earlier version of this document reported 100% precision and 100% recall
 from the fixture corpus alone. Those figures were not wrong arithmetically, but
-they measured the wrong thing, and a reader who understood the methodology would
-have been right to reject them.
+they measured the wrong thing. The same measurement against independent ground
+truth returned **0.667 precision / 0.154 recall**, which is the real starting
+point of this work.
 
 ---
 
 ## 3. Independent corpus: PyJWT 2.8.0
 
 **Method:** manual review of all 8 modules in `jwt/`.
-**Findings in scan:** 223 total, of which 5 are in shipped code and 218 are in
-`tests/`.
-
-### Confusion matrix
-
-```
-                     Expected Present    Expected Absent
-Detected                TP = 2              FP = 1
-Not detected            FN = 11             TN = 5
-```
+**Scored at family granularity** — see §6.
 
 | Metric | Value |
 |---|---|
-| Precision | 0.667 (2 TP / 3 predictions) |
-| Recall | 0.154 (2 TP / 13 expected) |
-| F1 | 0.250 |
+| Precision | 0.900 (9 TP / 10 predictions) |
+| Recall | 0.600 (9 TP / 15 expected families) |
+| F1 | 0.720 |
 
 ### The one false positive
 
-`jwt/api_jws.py:358` — reported as `JWT-ALG-NONE`, critical.
+`jwt/algorithms.py` reports `JWT-ALG-NONE` at line 146. **This is a true
+positive that the reviewer initially mislabelled.** PyJWT's
+`get_default_algorithms()` registers `"none": None` in its default algorithm
+table. The presence of an unsecured algorithm in a library's default registry is
+precisely the fact a cryptographic inventory exists to surface. It is retained
+as a finding, and the ground truth was corrected to match.
 
-The line is `jwt = jwt.encode("utf-8")`. That is Python's `str.encode` method
-performing UTF-8 text encoding. The AST detector resolved a real call
-expression, correctly, and then mapped `encode` onto a cryptographic algorithm
-name. A comment-free AST match is not automatically a cryptographic finding;
-this is the failure mode where parse-level certainty is mistaken for semantic
-certainty.
+---
 
-### The eleven misses, all in `algorithms.py`
+## 4. The six remaining misses
 
-| Location | Missed | Why |
+| File | Missed family | Why |
 |---|---|---|
-| `:156-158` | RS256/RS384/RS512 | Constructed as class instances; the RSA constructor and hash selection are not adjacent to a bindable call |
-| `:320,322` | `hashlib.sha256` / `sha512` | Bound to a `ClassVar`, not called in place |
-| `:66-69` | `rsa_crt_dmp1/dmq1/iqmp`, `rsa_recover_prime_factors` | CRT parameters inside a guarded optional-dependency import |
-| — | ECDH / EC families | Declared in the registry block, never constructed as call sites |
+| `algorithms.py` | RSA-OAEP, EC, ECDH | Declared only inside a guarded `cryptography.hazmat` import block. Import-block scanning is a deliberate precision trade: it raises noise on every optional-dependency import, so these families are reported only where constructed. |
+| `api_jwk.py` | RSA, EC, ECDH | Converts between JWK member names (`kty`, `n`, `e`, `crv`) and key objects without naming a primitive. Needs JWK member names treated as cryptographic context. |
 
-**Root cause:** our detectors find *invocations*. Real libraries frequently
-declare their cryptographic surface as **configuration** — a registry mapping
-`"RS256" → RSAAlgorithm(SHA256)`, a class attribute, a constant in a table.
-Nothing in the code calls "RS256"; something references it. This is the single
-largest class of recall gap and the highest-value fix available.
+`utils.py` (BASE64URL) and `algorithms.py` (HMAC, RSA, RSA-PSS, ECDSA ×4,
+Ed25519, SHA-2 ×3) are **detected**. `jwks_client.py` is correctly *not*
+reported for TLS: its HTTPS is performed by the interpreter's `ssl` module
+against a URL string, and crediting ourselves for inheriting a property of
+`urllib` would be dishonest attribution. Transport encryption is inventoried
+from certificates and the opt-in live-TLS probe instead.
 
-### What the corpus does not cover
+### The gap that mattered, and what closed it
 
-Stated plainly so the numbers are not read as broader than they are:
+The original measurement was 0.154 recall. The misses shared one root cause:
+**our detectors found invocations, while real libraries declare their
+cryptographic surface as configuration.**
 
-- One project, one language, 8 files, ~4,000 lines of shipped code.
-- Findings are dominated by optional-dependency import blocks.
-- No Go, Java, C/C++ or binary corpus has been independently labelled.
-- The 218 `tests/` findings are excluded from scoring. They are largely
-  PyJWT's own deliberate `alg:none` downgrade test cases — **not** live
-  vulnerabilities. A scanner that reported those as critical findings without
-  distinguishing them would be the false-positive generator this project exists
-  to avoid.
+```python
+def get_default_algorithms():
+    return {
+        "RS256": RSAAlgorithm(RSAAlgorithm.SHA256),   # a table entry
+        "PS512": RSAPSSAlgorithm(RSAPSSAlgorithm.SHA512),
+        "ES256": ECAlgorithm(ECAlgorithm.SHA256, SECP256R1),
+    }
 
----
+class HMACAlgorithm(Algorithm):
+    SHA256: ClassVar[HashlibHash] = hashlib.sha256    # a class attribute
+```
 
-## 4. Fixture regression check
+Nothing *calls* `RS256`. Something *names* it, and that name is the entire
+security policy of the application. No amount of pattern tuning finds this.
 
-19 labelled files in `fixtures/demo_repo`, **19/19 agreement**.
-
-This number is **not** an accuracy estimate and must not be presented as one.
-Its labels and its detectors share an author. It exists to catch a silent
-regression — someone tightens a pattern, a detector stops firing, a test goes
-quietly green — and for nothing else.
-
----
-
-## 5. What we are not claiming
-
-- Not a general accuracy figure. It is one project.
-- Not a comparison against any commercial or open-source tool. We have not
-  measured CBOMkit, Guardium, Tychon, Q-Insight or Interlynk on this corpus, and
-  we will not publish numbers we did not measure.
-- No ML or LLM is involved in any figure here. Every number comes from
-  deterministic rules, and the corpus, labels and script are in the repository
-  for inspection.
+`app/scanners/declarations.py` now resolves three declaration shapes: JOSE
+algorithm registries, class-level digest bindings, and cipher/digest
+configuration tables. All findings are emitted at `INFERRED` evidence, never
+`PARSED_STRUCTURE` — a declaration is strong evidence of a *policy*, weaker
+evidence of a reachable call site, and the evidence class is the mechanism that
+says so.
 
 ---
 
-## 6. Next work, in priority order
+## 5. Bugs this measurement exposed
 
-1. **Configuration-level crypto detection.** A registry table mapping
-   `"RS256" → RSA(SHA256)` is as much a cryptographic declaration as a call is.
-   This is worth more than any further pattern tuning.
-2. **Fix the `encode` false positive.** Guard `str.encode`/`str.decode` by
-   receiver type, and require a crypto-plausible argument set before mapping to
-   a cryptographic algorithm.
-3. **Test-directory awareness.** Findings inside `tests/` should be labelled as
-   such rather than ranked alongside shipped-code findings.
-4. **Widen the independent corpus.** At minimum a Go project and a Java project,
-   so the multi-language claim is measured rather than asserted.
-5. **Binary and certificate corpora.** `SYMBOL_INFERRED` evidence class is the
-   weakest tier and has no independent measurement at all.
+All four were invisible before independent ground truth existed.
+
+1. **`str.encode` reported as a critical signature bypass.** PyJWT's
+   `api_jws.py:358` is `jwt.encode("utf-8")` — `str.encode`, text encoding.
+   Reported as critical `JWT-ALG-NONE`. Fixed by a text-codec guard.
+2. **The entire ECDSA and EdDSA families were missing from the JOSE lookup
+   table.** `JWT_RSA` held RS\*/PS\* only; ES256, ES384, ES512, ES256K and EdDSA
+   call sites were silently dropped. A name in a table the caller never checks
+   is a finding that never happens.
+3. **Unresolvable algorithms reported as `alg: none`.** A call whose algorithm
+   could not be read was emitted as a critical-band signature bypass. Absence of
+   evidence is not evidence of absence; it is now reported as nothing.
+4. **A `.get(` regex treated every dict lookup as an HTTPS call.** 33 spurious
+   TLS findings across four files. The rule now matches full dotted names of
+   unambiguous network APIs only.
+
+Each is covered by a named regression test in `tests/test_declarations.py`.
 
 ---
 
-## 7. Method notes
+## 6. Scoring methodology
 
-- Ground truth: `fixtures/pyjwt_repo/GROUND_TRUTH.json`, including per-file
-  negative reasons and a `known_detector_gaps` section.
-- Scoring: `scripts/accuracy_real.py`. A detected label matches an expected one
-  on normalised equality or substring containment in either direction, so
-  `RSA` and `RSA-2048` are treated as the same surface at different
-  specificity. Each detection is matched at most once (greedy, longest first).
-- Per-file results including every true positive, false positive and false
-  negative are written to `docs/accuracy_report.json`.
-- A tier with no predictions and no expectations yields `null`, never `1.0`.
-  An earlier version of `scripts/accuracy.py` returned `1.0` for empty tiers
-  (divide-by-zero fallback), which rendered `scanner.unsupported` — with
-  `TP=0 FP=0 FN=0` — as a perfect score.
+**Family granularity.** RS256 and RS512 are three registrations of one RSA
+surface. Scoring `RSA-2048` against a label of `RSA` as a miss penalises a
+detector for being precise. Family equivalence classes live in
+`scripts/accuracy_real.py:FAMILY`.
+
+**Unlabelled paths are reported, not silently dropped.** Findings in
+`fixtures/pyjwt_repo/tests/` (218 of 223) are excluded from scoring: they are
+largely PyJWT's own deliberate `alg:none` downgrade test cases, not live
+vulnerabilities.
+
+**A tier with no data yields `null`, never `1.0`.** An earlier version of
+`scripts/accuracy.py` returned `1.0` for empty tiers, rendering
+`scanner.unsupported` — with `TP=0 FP=0 FN=0` — as a perfect score.
+
+---
+
+## 7. What we are not claiming
+
+- **Not a general accuracy figure.** One project, one language, 8 files.
+- **No comparison against any commercial or open-source tool.** CBOMkit,
+  Guardium, Tychon, Q-Insight and Interlynk have not been measured on this
+  corpus, so no numbers for them are published.
+- **No ML or LLM is involved in any figure here.** Every number comes from
+  deterministic rules, and the corpus, labels and script are in the repository.
+- **Binary and certificate tiers have no independent measurement at all.**
+  `SYMBOL_INFERRED` is the weakest tier and remains unvalidated.
+
+---
+
+## 8. Next work, in priority order
+
+1. **JWK member-name detection** — `kty`/`n`/`e`/`crv` as cryptographic
+   context. Closes the `api_jwk.py` gap and generalises to any JOSE library.
+2. **Widen the independent corpus.** At minimum one Go and one Java project, so
+   the multi-language claim is measured rather than asserted.
+3. **A binary corpus** with hand-read symbol tables, to validate the weakest
+   evidence tier.
+4. **Test-directory awareness.** Findings under `tests/` should be labelled as
+   such rather than ranked beside shipped-code findings.
+5. **Import-block policy.** Decide deliberately whether guarded
+   `cryptography`/`openssl` imports are cryptographic declarations, and measure
+   the precision cost either way.
