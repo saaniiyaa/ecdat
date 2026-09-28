@@ -339,9 +339,25 @@ export const EvidenceAndExport: React.FC = () => {
               )}
             </div>
 
+            {attestation.key_origin === 'ephemeral_demo' && (
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-950/40 border border-amber-500/40 text-amber-200 text-xs">
+                <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-amber-400" />
+                <div>
+                  <span className="font-bold">Demonstration key.</span>{' '}
+                  This dossier was signed with a throwaway key generated at scan time
+                  (<span className="font-mono">{attestation.key_origin}</span>). It proves the
+                  evidence has not been altered since signing; it is <em>not</em> an operator
+                  signature and proves nothing about who performed the assessment. Configure a
+                  real signing key before presenting this as an official record.
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div className="space-y-1">
-                <span className="text-slate-500">Merkle Root (Sorted 61-Leaf):</span>
+                <span className="text-slate-500">
+                  Merkle Root (Sorted {attestation.leaf_count}-Leaf):
+                </span>
                 <div className="p-2 rounded bg-slate-900 border border-slate-800/80 text-cyan-300 break-all select-all">
                   {attestation.merkle_root}
                 </div>

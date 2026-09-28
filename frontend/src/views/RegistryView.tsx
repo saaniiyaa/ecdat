@@ -41,9 +41,11 @@ export const RegistryView: React.FC = () => {
   const snapshot = registry.snapshot;
   const policyPack = registry.policy_pack;
 
-  // Derive unique OIDs from algorithms
+  // Derive unique OIDs from algorithms. Count what the server actually
+  // returned - never substitute a hardcoded total, which silently lies as soon
+  // as the registry grows.
   const oidsFound = Array.from(new Set(algorithms.map((a) => a.oid).filter(Boolean)));
-  const totalOidsCount = oidsFound.length >= 30 ? 34 : oidsFound.length;
+  const totalOidsCount = oidsFound.length;
 
   const families = Array.from(new Set(algorithms.map((a) => a.family))).filter(Boolean);
 
