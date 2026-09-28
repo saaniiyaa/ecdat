@@ -257,6 +257,14 @@ def assess(
         context_points += 5
         factors.append(Factor("M-010", "context", f"data shelf-life {context.get('data_lifetime_years')}y >= 10y", 5))
 
+    source_context = (context.get("source_context") or "unknown")
+    if source_context == "non_production":
+        context_points = int(context_points * POLICY_PACK["source_context_weights"]["non_production"])
+        factors.append(Factor(
+            "M-012", "context",
+            "occurrence is in a test, fixture, or vendored path - real, but not a "
+            "production exposure on this evidence", 0, "non_production"))
+
     composite = _clamp(max(classical, quantum) + context_points)
 
     # evidence gating

@@ -151,6 +151,24 @@ _HTTPS_CALL = re.compile(
     re.I,
 )
 
+# JSON Web Key members. A JWK is a cryptographic key expressed entirely as JSON
+# field names: "kty":"RSA" with "n" and "e" IS an RSA public key, and no
+# primitive is ever named in code. Reading a JWK is key material handling, so a
+# scanner that ignores it cannot inventory key management at all.
+JWK_KEY_TYPES: dict[str, str] = {
+    "RSA": "RSA-2048", "EC": "ECDSA-P256", "OKP": "Ed25519", "oct": "HMAC-SHA256",
+}
+JWK_CURVES: dict[str, str] = {
+    "P-256": "ECDSA-P256", "P-384": "ECDSA-P384", "P-521": "ECDSA-P521",
+    "secp256k1": "ECDSA-secp256k1", "Ed25519": "Ed25519", "Ed448": "Ed448",
+    "X25519": "X25519", "X448": "X448",
+}
+# Members whose presence indicates key material regardless of the declared type.
+JWK_KEY_MEMBERS = frozenset({
+    "n", "e", "d", "p", "q", "dp", "dq", "qi", "k",   # RSA / oct private
+    "x", "y", "crv", "oth",                           # EC / OKP
+})
+
 _PURPOSES = {
     "RSA-2048": "digital_signature", "RSA-PSS": "digital_signature",
     "ECDSA-P256": "digital_signature", "ECDSA-P384": "digital_signature",
@@ -247,6 +265,7 @@ class DeclarationScanner:
             # -- 1. JOSE algorithm registries -------------------------------
             if isinstance(node, ast.Dict) and node.keys:
                 self._scan_jose_dict(node, jose_context, add)
+                self._scan_jwk(node, add)
 
             # -- 2. class-level / module-level hash bindings ----------------
             if isinstance(node, (ast.Assign, ast.AnnAssign)):
@@ -324,6 +343,58 @@ class DeclarationScanner:
         if len(key) < 6 and not crypto_context:
             return
         add(asset, node, f"JCA standard algorithm name {raw!r}", conf=0.62)
+
+    def _scan_jwk(self, node: ast.Dict, add) -> None:
+        """A JWK is a key expressed as JSON field names.
+
+        api_jwk.py reads kty/alg/crv and builds key objects, naming no
+        primitive - the algorithm exists only as data. This reads the same way
+        an analyst reads it: the key type names the family, the curve names the
+        instantiation, and the presence of private members is a finding in its
+        own right.
+        """
+        members: dict[str, ast.AST] = {}
+        for key, value in zip(node.keys, node.values):
+            if isinstance(key, ast.Constant) and isinstance(key.value, str):
+                members[key.value] = value
+        # RFC 7517 makes "kty" a REQUIRED member of a JWK. Requiring it is not
+        # a heuristic, it is the specification - and it is the whole defence
+        # against `{"x": 1, "y": 2, "d": "2026-01-01"}` being reported as
+        # embedded private key material. That false positive is not cosmetic:
+        # it is exactly the noise that makes people stop reading findings.
+        # A JWK Set is handled too, because each entry in "keys" is walked.
+        kty = members.get("kty")
+        if not (isinstance(kty, ast.Constant) and isinstance(kty.value, str)):
+            return
+        material = set(members) & JWK_KEY_MEMBERS
+        if not material:
+            return
+
+        if isinstance(kty, ast.Constant) and isinstance(kty.value, str):
+            family = JWK_KEY_TYPES.get(kty.value)
+            if family:
+                add(family, node,
+                    f"JSON Web Key: kty={kty.value!r} with {sorted(set(members) & JWK_KEY_MEMBERS)}",
+                    conf=0.66)
+
+        crv = members.get("crv")
+        if isinstance(crv, ast.Constant) and isinstance(crv.value, str):
+            curve = JWK_CURVES.get(crv.value)
+            if curve:
+                add(curve, node, f"JSON Web Key curve {crv.value!r}", conf=0.66)
+
+        alg = members.get("alg")
+        if isinstance(alg, ast.Constant) and isinstance(alg.value, str):
+            if alg.value in JOSE_ALGORITHMS:
+                add(alg.value, node,
+                    f"JSON Web Key declares alg={alg.value!r}", conf=0.66)
+
+        if material & {"d", "p", "q", "k"}:
+            add("PRIVATE-KEY-MATERIAL", node,
+                "JSON Web Key carries private parameters "
+                f"({sorted(material & {'d', 'p', 'q', 'k'})}) - "
+                "verify this is a client key and not embedded in a shipped artefact",
+                conf=0.7)
 
     # -- handlers --------------------------------------------------------
     def _scan_jose_dict(self, node: ast.Dict, jose_context: bool, add) -> None:

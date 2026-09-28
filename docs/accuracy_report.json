@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T19:54:15.616602+00:00",
+  "generated_at": "2026-09-28T20:07:12.707579+00:00",
   "tool": "scripts/accuracy_real.py",
   "independent": {
     "corpus": "PyJWT 2.8.0 shipped library code (jwt/)",
@@ -224,6 +224,7 @@
       "tests/keys/testkey_ed25519.pem",
       "tests/keys/testkey_rsa.cer",
       "tests/test_algorithms.py",
+      "tests/test_api_jwk.py",
       "tests/test_api_jws.py",
       "tests/test_api_jwt.py",
       "tests/test_jwks_client.py",

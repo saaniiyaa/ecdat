@@ -34,19 +34,62 @@ jobs:
         run: |
           python -m app.manage init-db
 
-      - name: Run Pytest Suite (95 Automated Tests)
+      - name: Run Pytest Suite
         run: |
           python -m pytest tests/ -v
 
-      - name: Verify Live Demo Estate & Accuracy Benchmark
+      - name: Verify the demo estate scans end to end
         run: |
-          # Start background API
           python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 &
-          sleep 4
-          # Seed demo scan
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8000/api/v1/health >/dev/null && break
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:8000/api/v1/health || { echo "API never became healthy"; exit 1; }
           python -m app.manage demo-scan --api-key dev-ecdat-key --base-url http://127.0.0.1:8000
-          # Run detector precision/recall accuracy benchmark
-          python scripts/accuracy.py
+
+  accuracy-gate:
+    name: Accuracy Gate (real-world corpora)
+    runs-on: ubuntu-latest
+    # The published precision/recall figures are only true if something checks
+    # them. This job re-measures three hand-labelled corpora and fails the build
+    # on a regression, so a detector change cannot silently invalidate a claim
+    # in docs/ACCURACY.md and the README.
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Start API
+        run: |
+          python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8000/api/v1/health >/dev/null && break
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:8000/api/v1/health || { echo "API never became healthy"; exit 1; }
+
+      - name: Accuracy gate
+        env:
+          ECDAT_BASE_URL: http://127.0.0.1:8000/api/v1
+          ECDAT_API_KEY: dev-ecdat-key
+        run: python scripts/accuracy_gate.py
+
+      - name: Accuracy summary is consistent with the published document
+        run: |
+          # docs/ACCURACY.md quotes numbers in prose. If the measurement moves,
+          # the prose must be corrected in the same commit, not left stale.
+          python scripts/check_claims.py
 
   frontend-build:
     name: Frontend Build & Typecheck (Node ${{ matrix.node-version }})

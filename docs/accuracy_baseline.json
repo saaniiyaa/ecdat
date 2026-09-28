@@ -1,0 +1,41 @@
+{
+  "_about": "Recorded detector performance against hand-labelled real-world corpora. Regenerate with `python scripts/accuracy_gate.py --update` and review the diff: this file is the reference CI compares against, so changing it changes what counts as a regression.",
+  "tolerance": 0.06,
+  "floor": {
+    "precision": 0.6,
+    "recall": 0.35
+  },
+  "corpora": {
+    "pyjwt-python": {
+      "precision": 0.8182,
+      "recall": 0.6,
+      "f1": 0.6923,
+      "tp": 9,
+      "fp": 2,
+      "fn": 6
+    },
+    "go:golang-jwt/jwt v5": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 10,
+      "fp": 0,
+      "fn": 0
+    },
+    "java:auth0/java-jwt": {
+      "precision": 1.0,
+      "recall": 0.8889,
+      "f1": 0.9412,
+      "tp": 8,
+      "fp": 0,
+      "fn": 1
+    },
+    "AGGREGATE": {
+      "precision": 0.931,
+      "recall": 0.7941,
+      "tp": 27,
+      "fp": 2,
+      "fn": 7
+    }
+  }
+}

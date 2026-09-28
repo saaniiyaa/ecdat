@@ -15,6 +15,7 @@ from pathlib import Path
 
 from app.registry import canonicalise, library_asset, with_purpose
 from app.scanners.base import PATTERN, RawFinding, redact
+from app.scanners.source_context import source_context
 
 SOURCE_EXTS = {".java", ".kt", ".kts", ".js", ".jsx", ".ts", ".tsx", ".go", ".cs", ".cpp", ".cc", ".c",
                ".h", ".hpp", ".php", ".rb", ".scala", ".swift", ".rs", ".m", ".mm"}
@@ -357,6 +358,11 @@ class SourceTextScanner:
     def _f(self, rel_path: str, asset: dict, line: int, symbol: str, snippet: str | None,
            confidence: float = 0.75, evidence: str = PATTERN) -> RawFinding:
         return RawFinding(
+            # A finding in a test file is real but is not a production
+            # exposure. The engine does not drop it - suppressing it would
+            # hide a real occurrence - it marks it so the risk model and the
+            # UI can say where it came from.
+            extra=source_context(rel_path),
             file_path=rel_path,
             asset=asset,
             detector_id=self.name,

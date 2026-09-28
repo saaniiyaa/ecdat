@@ -399,7 +399,11 @@ def persist(session, scan: Scan, request: ScanRequest, records: list[SurfaceReco
 
             result = risk_svc.assess(
                 asset=asset.__dict__, evidence_class=raw.evidence_class, confidence=raw.confidence,
-                corroborations=finding.corroborations, context=request.context, mosca=mosca_result,
+                corroborations=finding.corroborations, mosca=mosca_result,
+                # The scanner's verdict on *where* the code lives is part of the
+                # context, alongside what the request says the system is.
+                context={**request.context, **{
+                    k: v for k, v in extra.items() if k.startswith("source_context")}},
                 extra=extra, purpose_override=extra.get("purpose_override"),
             )
             session.flush()

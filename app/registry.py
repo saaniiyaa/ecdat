@@ -329,6 +329,10 @@ POLICY_PACK: dict[str, Any] = {
         "criticality": {"sovereign_critical": 10, "core_operations": 6, "peripheral": 2, "unknown": 0},
         "classification": {"top_secret": 10, "secret": 9, "confidential": 7, "internal": 3, "public": 0},
     },
+    # A finding that only exists in a test or fixture does not carry the same
+    # urgency as one on a production path. This is a weight, not a filter: the
+    # finding still appears, still counts in totals, and still shows its file.
+    "source_context_weights": {"production": 1.0, "unknown": 0.75, "non_production": 0.4},
     "urgency_weights": {"risk": 0.45, "mosca": 0.35, "exposure": 0.20},
     "mosca": {
         # Breached => hard floor, regardless of detector confidence, for high-value data.
