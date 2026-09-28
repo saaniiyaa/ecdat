@@ -1,0 +1,172 @@
+{
+  "generated_at": "2026-09-28T19:24:27.657161+00:00",
+  "tool": "scripts/accuracy_real.py",
+  "independent": {
+    "corpus": "PyJWT 2.8.0 shipped library code (jwt/)",
+    "method": "manual line-by-line source review of fixtures/pyjwt_repo/jwt/*.py",
+    "labelled_files": 8,
+    "totals": {
+      "tp": 2,
+      "fp": 1,
+      "fn": 11,
+      "precision": 0.6667,
+      "recall": 0.1538,
+      "f1": 0.2499,
+      "note": null
+    },
+    "per_file": [
+      {
+        "file_path": "jwt/api_jws.py",
+        "expected": [],
+        "detected": [
+          "JWT-ALG-NONE"
+        ],
+        "true_positives": [],
+        "false_positives": [
+          "JWT-ALG-NONE"
+        ],
+        "false_negatives": [],
+        "negative_reason": "api_jws.py is encoding/serialisation logic. It calls str.encode() and str.decode() for UTF-8 handling and performs no cryptography itself. Its one 'cryptographic-looking' call, jwt.encode('utf-8') at line 358, is Python's str.encode method - text encoding, not a cipher."
+      },
+      {
+        "file_path": "jwt/algorithms.py",
+        "expected": [
+          "PBKDF2-HMAC-SHA256",
+          "PRIVATE-KEY-MATERIAL",
+          "RSA",
+          "SHA-256",
+          "SHA-512",
+          "ECDH",
+          "EC"
+        ],
+        "detected": [
+          "PBKDF2-HMAC-SHA256",
+          "PRIVATE-KEY-MATERIAL"
+        ],
+        "true_positives": [
+          [
+            "PBKDF2-HMAC-SHA256",
+            "PBKDF2-HMAC-SHA256"
+          ],
+          [
+            "PRIVATE-KEY-MATERIAL",
+            "PRIVATE-KEY-MATERIAL"
+          ]
+        ],
+        "false_positives": [],
+        "false_negatives": [
+          "RSA",
+          "SHA-256",
+          "SHA-512",
+          "ECDH",
+          "EC"
+        ]
+      },
+      {
+        "file_path": "jwt/api_jwt.py",
+        "expected": [],
+        "detected": [],
+        "true_positives": [],
+        "false_positives": [],
+        "false_negatives": [],
+        "negative_reason": "Orchestration layer: _validate_claims, encode/decode dispatch and exception mapping. Delegates all primitives to algorithms.py."
+      },
+      {
+        "file_path": "jwt/api_jwk.py",
+        "expected": [
+          "RSA",
+          "EC",
+          "ECDH"
+        ],
+        "detected": [],
+        "true_positives": [],
+        "false_positives": [],
+        "false_negatives": [
+          "RSA",
+          "EC",
+          "ECDH"
+        ]
+      },
+      {
+        "file_path": "jwt/jwks_client.py",
+        "expected": [
+          "TLS",
+          "RSA"
+        ],
+        "detected": [],
+        "true_positives": [],
+        "false_positives": [],
+        "false_negatives": [
+          "TLS",
+          "RSA"
+        ]
+      },
+      {
+        "file_path": "jwt/utils.py",
+        "expected": [
+          "BASE64URL"
+        ],
+        "detected": [],
+        "true_positives": [],
+        "false_positives": [],
+        "false_negatives": [
+          "BASE64URL"
+        ]
+      },
+      {
+        "file_path": "jwt/types.py",
+        "expected": [],
+        "detected": [],
+        "true_positives": [],
+        "false_positives": [],
+        "false_negatives": [],
+        "negative_reason": "Type declarations only (TypeVars and TypedDicts). No executable cryptographic operations."
+      },
+      {
+        "file_path": "jwt/__init__.py",
+        "expected": [],
+        "detected": [],
+        "true_positives": [],
+        "false_positives": [],
+        "false_negatives": [],
+        "negative_reason": "Public API re-exports."
+      }
+    ],
+    "known_detector_gaps": [
+      {
+        "location": "jwt/algorithms.py:156-158",
+        "missed": "RS256/RS384/RS512 (RSA signatures over SHA-256/384/512)",
+        "why": "The registry builds these as class instances, so the RSA constructor and the hash selection are not adjacent to a call expression the AST detector can bind. This is a genuine recall gap in signature-algorithm discovery."
+      },
+      {
+        "location": "jwt/algorithms.py:320,322",
+        "missed": "hashlib.sha256 / hashlib.sha512 as class-level HashlibHash attributes",
+        "why": "Assigned to a ClassVar, not called in place. Detected only when actually invoked downstream."
+      },
+      {
+        "location": "jwt/algorithms.py:66-69",
+        "missed": "rsa_crt_dmp1/dmq1/iqmp, rsa_recover_prime_factors",
+        "why": "CRT parameter handling inside a guarded optional-dependency import block. Import-level crypto indicators are not currently treated as findings."
+      }
+    ],
+    "unlabelled_paths_with_findings": [
+      "tests/keys/testkey_ed25519.pem",
+      "tests/keys/testkey_rsa.cer",
+      "tests/test_algorithms.py",
+      "tests/test_api_jws.py",
+      "tests/test_api_jwt.py",
+      "tests/test_jwks_client.py",
+      "tests/test_jwt.py"
+    ]
+  },
+  "fixture_regression": {
+    "available": true,
+    "corpus": "fixtures/demo_repo (authored by this project)",
+    "labelled_files": 19,
+    "agreement_rate": 1.0,
+    "agreed": 19,
+    "disagreed": 0,
+    "disagreements": [],
+    "interpretation": "Regression check only. These labels and these detectors share an author, so this number bounds internal consistency and is NOT an accuracy estimate. It is reported to detect silent regressions, not to demonstrate correctness."
+  }
+}
