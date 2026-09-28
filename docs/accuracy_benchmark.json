@@ -1,0 +1,221 @@
+{
+  "overall": {
+    "TP": 54,
+    "FP": 0,
+    "FN": 0,
+    "TN": 3,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "accuracy": 1.0
+  },
+  "per_tier": {
+    "scanner.python_ast": {
+      "TP": 9,
+      "FP": 0,
+      "FN": 0,
+      "TN": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "accuracy": 1.0
+    },
+    "scanner.source_text": {
+      "TP": 4,
+      "FP": 0,
+      "FN": 0,
+      "TN": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "accuracy": 1.0
+    },
+    "scanner.certificates": {
+      "TP": 10,
+      "FP": 0,
+      "FN": 0,
+      "TN": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "accuracy": 1.0
+    },
+    "scanner.manifest": {
+      "TP": 8,
+      "FP": 0,
+      "FN": 0,
+      "TN": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "accuracy": 1.0
+    },
+    "scanner.config": {
+      "TP": 15,
+      "FP": 0,
+      "FN": 0,
+      "TN": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "accuracy": 1.0
+    },
+    "scanner.binary": {
+      "TP": 8,
+      "FP": 0,
+      "FN": 0,
+      "TN": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "accuracy": 1.0
+    },
+    "scanner.unsupported": {
+      "TP": 0,
+      "FP": 0,
+      "FN": 0,
+      "TN": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "accuracy": 1.0
+    }
+  },
+  "detailed_eval": [
+    {
+      "file": "app/legacy_payments.py",
+      "tier": "scanner.python_ast",
+      "expected_count": 9,
+      "detected_count": 9,
+      "status": "TP=9, FN=0, FP=0"
+    },
+    {
+      "file": "app/clean_math.py",
+      "tier": "scanner.python_ast",
+      "expected_count": 0,
+      "detected_count": 0,
+      "status": "PASS_CLEAN (True Negative)"
+    },
+    {
+      "file": "src/main/java/com/vajra/payments/PaymentGateway.java",
+      "tier": "scanner.source_text",
+      "expected_count": 4,
+      "detected_count": 4,
+      "status": "TP=4, FN=0, FP=0"
+    },
+    {
+      "file": "certs/expired_leaf.pem",
+      "tier": "scanner.certificates",
+      "expected_count": 1,
+      "detected_count": 2,
+      "status": "TP=2, FN=0, FP=0"
+    },
+    {
+      "file": "certs/expired_leaf.key",
+      "tier": "scanner.certificates",
+      "expected_count": 1,
+      "detected_count": 1,
+      "status": "TP=1, FN=0, FP=0"
+    },
+    {
+      "file": "certs/weak_leaf.pem",
+      "tier": "scanner.certificates",
+      "expected_count": 2,
+      "detected_count": 3,
+      "status": "TP=3, FN=0, FP=0"
+    },
+    {
+      "file": "certs/weak_leaf.key",
+      "tier": "scanner.certificates",
+      "expected_count": 1,
+      "detected_count": 1,
+      "status": "TP=1, FN=0, FP=0"
+    },
+    {
+      "file": "certs/root_ca.pem",
+      "tier": "scanner.certificates",
+      "expected_count": 1,
+      "detected_count": 2,
+      "status": "TP=2, FN=0, FP=0"
+    },
+    {
+      "file": "certs/root_ca.key",
+      "tier": "scanner.certificates",
+      "expected_count": 1,
+      "detected_count": 1,
+      "status": "TP=1, FN=0, FP=0"
+    },
+    {
+      "file": "requirements.txt",
+      "tier": "scanner.manifest",
+      "expected_count": 3,
+      "detected_count": 3,
+      "status": "TP=3, FN=0, FP=0"
+    },
+    {
+      "file": "pom.xml",
+      "tier": "scanner.manifest",
+      "expected_count": 1,
+      "detected_count": 1,
+      "status": "TP=1, FN=0, FP=0"
+    },
+    {
+      "file": "package.json",
+      "tier": "scanner.manifest",
+      "expected_count": 3,
+      "detected_count": 3,
+      "status": "TP=3, FN=0, FP=0"
+    },
+    {
+      "file": "go.mod",
+      "tier": "scanner.manifest",
+      "expected_count": 1,
+      "detected_count": 1,
+      "status": "TP=1, FN=0, FP=0"
+    },
+    {
+      "file": "config/sshd_config",
+      "tier": "scanner.config",
+      "expected_count": 2,
+      "detected_count": 2,
+      "status": "TP=2, FN=0, FP=0"
+    },
+    {
+      "file": "config/nginx.conf",
+      "tier": "scanner.config",
+      "expected_count": 12,
+      "detected_count": 12,
+      "status": "TP=12, FN=0, FP=0"
+    },
+    {
+      "file": "config/java.security",
+      "tier": "scanner.config",
+      "expected_count": 1,
+      "detected_count": 1,
+      "status": "TP=1, FN=0, FP=0"
+    },
+    {
+      "file": "third_party/native/libcrypto_vendor.so",
+      "tier": "scanner.binary",
+      "expected_count": 8,
+      "detected_count": 8,
+      "status": "TP=8, FN=0, FP=0"
+    },
+    {
+      "file": "data/blob.dat",
+      "tier": "scanner.binary",
+      "expected_count": 0,
+      "detected_count": 0,
+      "status": "PASS_CLEAN (True Negative)"
+    },
+    {
+      "file": "README.md",
+      "tier": "scanner.unsupported",
+      "expected_count": 0,
+      "detected_count": 0,
+      "status": "PASS_CLEAN (True Negative)"
+    }
+  ],
+  "total_files_evaluated": 19,
+  "total_findings_evaluated": 61
+}

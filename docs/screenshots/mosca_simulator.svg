@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="560" fill="url(#bg4)"/>
+
+  <g transform="translate(40, 30)">
+    <text x="0" y="25" fill="#f8fafc" font-family="monospace" font-size="20" font-weight="bold">Mosca Theorem Simulator (X + Y &gt; Z)</text>
+    <text x="0" y="48" fill="#94a3b8" font-family="monospace" font-size="12">Interactive what-if simulator evaluated 100% server-side via POST /api/v1/scans/{id}/risk/simulate</text>
+
+    <!-- Left Controls Panel -->
+    <g transform="translate(0, 70)">
+      <rect width="500" height="420" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <text x="25" y="32" fill="#e5e7eb" font-family="monospace" font-size="13" font-weight="bold">WHAT-IF PARAMETERS</text>
+      
+      <!-- Slider X -->
+      <text x="25" y="70" fill="#38bdf8" font-family="monospace" font-size="12" font-weight="bold">X: Data Shelf-Life = 15 Years</text>
+      <rect x="25" y="80" width="450" height="8" rx="4" fill="#1f2937"/>
+      <rect x="25" y="80" width="220" height="8" rx="4" fill="#0284c7"/>
+      <circle cx="245" cy="84" r="8" fill="#38bdf8"/>
+
+      <!-- Slider Y -->
+      <text x="25" y="140" fill="#fbbf24" font-family="monospace" font-size="12" font-weight="bold">Y: Migration Duration = 4 Years</text>
+      <rect x="25" y="150" width="450" height="8" rx="4" fill="#1f2937"/>
+      <rect x="25" y="150" width="160" height="8" rx="4" fill="#d97706"/>
+      <circle cx="185" cy="154" r="8" fill="#fbbf24"/>
+
+      <!-- Slider Z -->
+      <text x="25" y="210" fill="#818cf8" font-family="monospace" font-size="12" font-weight="bold">Z: Quantum Threat Horizon = 10 Years</text>
+      <rect x="25" y="220" width="450" height="8" rx="4" fill="#1f2937"/>
+      <rect x="25" y="220" width="260" height="8" rx="4" fill="#4f46e5"/>
+      <circle cx="285" cy="224" r="8" fill="#818cf8"/>
+
+      <!-- Preset Buttons -->
+      <text x="25" y="280" fill="#9ca3af" font-family="monospace" font-size="11">PRESET HORIZONS:</text>
+      <rect x="25" y="295" width="135" height="30" rx="6" fill="#0f172a" stroke="#0ea5e9" stroke-width="1"/>
+      <text x="35" y="315" fill="#38bdf8" font-family="monospace" font-size="11">Baseline (10y)</text>
+
+      <rect x="175" y="295" width="145" height="30" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+      <text x="185" y="315" fill="#94a3b8" font-family="monospace" font-size="11">Conservative (15y)</text>
+
+      <rect x="335" y="295" width="140" height="30" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+      <text x="345" y="315" fill="#94a3b8" font-family="monospace" font-size="11">Accelerated (7y)</text>
+    </g>
+
+    <!-- Right Results Panel -->
+    <g transform="translate(530, 70)">
+      <rect width="590" height="420" rx="10" fill="#450a0a" fill-opacity="0.3" stroke="#ef4444" stroke-width="1"/>
+      
+      <!-- Verdict Header -->
+      <text x="30" y="45" fill="#fca5a5" font-family="monospace" font-size="13">MOSCA VERDICT</text>
+      <text x="30" y="85" fill="#f87171" font-family="monospace" font-size="32" font-weight="bold">BREACHED</text>
+      <text x="30" y="110" fill="#fca5a5" font-family="monospace" font-size="14">X + Y = 19y &gt; Z = 10y · Margin: -9.0 years</text>
+      
+      <rect x="30" y="130" width="530" height="60" rx="6" fill="#1f1315" stroke="#7f1d1d" stroke-width="1"/>
+      <text x="45" y="155" fill="#f87171" font-family="monospace" font-size="12" font-weight="bold">MUST START BY: 2026-09-28 (IMMEDIATE ACTION REQUIRED)</text>
+      <text x="45" y="175" fill="#cbd5e1" font-family="monospace" font-size="11">17 Shor-vulnerable findings sit inside harvest-now-decrypt-later window.</text>
+
+      <!-- Impact Stats -->
+      <g transform="translate(30, 210)">
+        <rect x="0" y="0" width="250" height="75" rx="6" fill="#0b0f19" stroke="#1f2937" stroke-width="1"/>
+        <text x="15" y="25" fill="#9ca3af" font-family="monospace" font-size="11">AFFECTED FINDINGS</text>
+        <text x="15" y="55" fill="#f87171" font-family="monospace" font-size="24" font-weight="bold">17</text>
+
+        <rect x="280" y="0" width="250" height="75" rx="6" fill="#0b0f19" stroke="#1f2937" stroke-width="1"/>
+        <text x="295" y="25" fill="#9ca3af" font-family="monospace" font-size="11">AFFECTED ASSETS</text>
+        <text x="295" y="55" fill="#f87171" font-family="monospace" font-size="24" font-weight="bold">8</text>
+      </g>
+
+      <!-- Exposed Files -->
+      <text x="30" y="320" fill="#e2e8f0" font-family="monospace" font-size="12" font-weight="bold">EXPOSED FILES REQUIRING PQC MIGRATION:</text>
+      <text x="30" y="345" fill="#cbd5e1" font-family="monospace" font-size="11">• src/main/java/com/vajra/payments/PaymentGateway.java</text>
+      <text x="30" y="365" fill="#cbd5e1" font-family="monospace" font-size="11">• third_party/native/libcrypto_vendor.so</text>
+      <text x="30" y="385" fill="#cbd5e1" font-family="monospace" font-size="11">• certs/weak_leaf.pem, expired_leaf.pem, root_ca.pem</text>
+    </g>
+  </g>
+</svg>

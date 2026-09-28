@@ -1,0 +1,1875 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom/1.7.xsd",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.7",
+  "serialNumber": "urn:uuid:9edcd526-501b-56a0-bbba-05ab9182e3a3",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-09-28 18:34:17.793295",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "name": "ECDAT",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "component": {
+      "type": "application",
+      "bom-ref": "root:4995c53d93e962705536dcb3d7659b8c",
+      "name": "real-project-pyjwt",
+      "version": "1.0.0"
+    },
+    "properties": [
+      {
+        "name": "ecdat:policy-pack",
+        "value": "pp-2026.09"
+      },
+      {
+        "name": "ecdat:coverage-index",
+        "value": "0.8195"
+      },
+      {
+        "name": "ecdat:unobserved-pct",
+        "value": "18.05"
+      },
+      {
+        "name": "ecdat:target-sha256",
+        "value": "4995c53d93e962705536dcb3d7659b8c455201fae8663a7b07cae750346510d5"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a_27254871abe6dde8b49c2bf5",
+      "name": "JWT-ALG-NONE",
+      "cryptoProperties": {
+        "assetType": "related_crypto_material"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "jwt/api_jws.py",
+            "line": 358,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 1685,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 1693,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 1919,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 107,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 116,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 119,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 129,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 136,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 146,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 160,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 178,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 207,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 215,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 228,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 229,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 244,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 254,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 278,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 283,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 302,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 306,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 310,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 321,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 358,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 378,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 399,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 426,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 442,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 468,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 481,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 488,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 489,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 502,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 517,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 525,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 527,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 540,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 543,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 547,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 550,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 574,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 575,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 581,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 583,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 589,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 591,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 599,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 617,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 630,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 656,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 669,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 682,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 696,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 709,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 731,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 740,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 745,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 752,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 802,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 809,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 814,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 818,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 866,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 873,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1023,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1032,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1046,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1059,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1129,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1150,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1161,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1177,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1224,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1236,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1248,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1262,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1276,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1290,
+            "offset": 0,
+            "symbol": "jws.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 51,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 59,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 63,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 119,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 131,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 163,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 178,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 203,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 219,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 238,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 259,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 281,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 343,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 346,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 353,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 354,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 376,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 380,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 401,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 402,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 437,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 463,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 472,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 475,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 482,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 485,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 492,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 494,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 506,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 508,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 520,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 524,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 532,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 539,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 542,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 545,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 828,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 830,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 838,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 850,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 852,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 858,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 867,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 870,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 881,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 883,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 889,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 894,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 899,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 909,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 910,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 922,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 925,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 936,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 951,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 954,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 964,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 977,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 980,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 992,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1005,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1010,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1021,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1023,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1039,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1047,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1056,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1068,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1077,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1089,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1100,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1111,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1121,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1131,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1144,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1195,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          },
+          {
+            "location": "tests/test_jwt.py",
+            "line": 17,
+            "offset": 0,
+            "symbol": "jwt.decode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a_3a0fe48e723107d4fb8b056f",
+      "name": "KEY/Ed25519-PRIVATE",
+      "cryptoProperties": {
+        "assetType": "related_crypto_material",
+        "oid": "1.3.101.112"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "tests/keys/testkey_ed25519.pem",
+            "line": 0,
+            "offset": 0,
+            "symbol": "UNKNOWN private key block",
+            "additionalContext": "scanner.certificates/PARSED_STRUCTURE conf=0.94"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a_4c2b59db447691f79a811762",
+      "name": "HMAC-SHA256",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "mac",
+          "executionEnvironment": "software-plain-ram",
+          "implementationPlatform": "x86_64",
+          "cryptoFunctions": [
+            "integrity"
+          ],
+          "classicalSecurityLevel": 256,
+          "nistQuantumSecurityLevel": 128
+        },
+        "oid": "1.2.840.113549.2.9"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 1824,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 1831,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 1841,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 1849,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 1862,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 1882,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 1910,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 1918,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 106,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 115,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 198,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 201,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 243,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 677,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 688,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 702,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 757,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1019,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1029,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1074,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1089,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1156,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1172,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1194,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1216,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1228,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1240,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1254,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1268,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1282,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1302,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 48,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 57,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 86,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 275,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 304,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 816,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1038,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1045,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1053,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1065,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1075,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1086,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1098,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1110,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1118,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1129,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1141,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_api_jwt.py",
+            "line": 1187,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          },
+          {
+            "location": "tests/test_jwt.py",
+            "line": 16,
+            "offset": 0,
+            "symbol": "jwt.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a_7f8e3ee37d5b0e72b90bbf62",
+      "name": "RSA-2048",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "other",
+          "executionEnvironment": "software-plain-ram",
+          "implementationPlatform": "x86_64",
+          "cryptoFunctions": [
+            "key_establishment"
+          ],
+          "classicalSecurityLevel": 112,
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": "1.2.840.113549.1.1.1"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "tests/keys/testkey_rsa.cer",
+            "line": 0,
+            "offset": 0,
+            "symbol": "public key RSA-2048",
+            "additionalContext": "scanner.certificates/PARSED_STRUCTURE conf=0.95"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 569,
+            "offset": 0,
+            "symbol": "jws.encode",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.92"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a_9b2e994978db44218cbfd3db",
+      "name": "PRIVATE-KEY-MATERIAL",
+      "cryptoProperties": {
+        "assetType": "related_crypto_material"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "jwt/algorithms.py",
+            "line": 548,
+            "offset": 0,
+            "symbol": "load_pem_private_key",
+            "additionalContext": "scanner.python_ast/AST_UNRESOLVED conf=0.75"
+          },
+          {
+            "location": "jwt/algorithms.py",
+            "line": 754,
+            "offset": 0,
+            "symbol": "load_pem_private_key",
+            "additionalContext": "scanner.python_ast/AST_UNRESOLVED conf=0.75"
+          },
+          {
+            "location": "jwt/algorithms.py",
+            "line": 973,
+            "offset": 0,
+            "symbol": "load_pem_private_key",
+            "additionalContext": "scanner.python_ast/AST_UNRESOLVED conf=0.75"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 221,
+            "offset": 0,
+            "symbol": "load_pem_private_key",
+            "additionalContext": "scanner.python_ast/AST_UNRESOLVED conf=0.75"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 236,
+            "offset": 0,
+            "symbol": "load_pem_private_key",
+            "additionalContext": "scanner.python_ast/AST_UNRESOLVED conf=0.75"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 798,
+            "offset": 0,
+            "symbol": "load_pem_private_key",
+            "additionalContext": "scanner.python_ast/AST_UNRESOLVED conf=0.75"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a_a80cee551ccc85261729fa7b",
+      "name": "TLSv1.3",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "protocol",
+          "executionEnvironment": "software-plain-ram",
+          "implementationPlatform": "x86_64",
+          "cryptoFunctions": [
+            "protocol"
+          ],
+          "classicalSecurityLevel": 128,
+          "nistQuantumSecurityLevel": 128
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "tests/test_jwks_client.py",
+            "line": 793,
+            "offset": 0,
+            "symbol": "ssl.SSLContext",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a_af0dd04608323931e4c52db7",
+      "name": "X509/6a1289bb893f1cf9",
+      "cryptoProperties": {
+        "assetType": "certificate",
+        "certificateProperties": {
+          "subjectName": "OU=Test Certificate,O=PyJWT,L=Austin,ST=Texas,C=US",
+          "issuerName": "OU=Test Certificate,O=PyJWT,L=Austin,ST=Texas,C=US",
+          "notValidBefore": "2015-03-18T01:16:14",
+          "notValidAfter": "2018-03-17T01:16:14",
+          "signatureAlgorithmRef": "RSA/sha256"
+        },
+        "oid": "1.2.840.113549.1.1.11"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "tests/keys/testkey_rsa.cer",
+            "line": 0,
+            "offset": 0,
+            "symbol": "certificate OU=Test Certificate,O=PyJWT,L=Austin,ST=Texas,C=US",
+            "additionalContext": "scanner.certificates/PARSED_STRUCTURE conf=0.95"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a_cf1aeeee4caee0d2fc015275",
+      "name": "PBKDF2-HMAC-SHA256",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "kdf",
+          "executionEnvironment": "software-plain-ram",
+          "implementationPlatform": "x86_64",
+          "cryptoFunctions": [
+            "key_derivation"
+          ],
+          "classicalSecurityLevel": 256,
+          "nistQuantumSecurityLevel": 128
+        },
+        "oid": "1.2.840.113549.1.5.12"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "jwt/algorithms.py",
+            "line": 494,
+            "offset": 0,
+            "symbol": "hmac.new",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.88"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1123,
+            "offset": 0,
+            "symbol": "_hmac.new",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.88"
+          },
+          {
+            "location": "tests/test_api_jws.py",
+            "line": 1146,
+            "offset": 0,
+            "symbol": "_hmac.new",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.88"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a_e6c108c7087ab6ff817629f3",
+      "name": "PUBLIC-KEY-MATERIAL",
+      "cryptoProperties": {
+        "assetType": "related_crypto_material"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "tests/test_algorithms.py",
+            "line": 352,
+            "offset": 0,
+            "symbol": "x509.load_pem_x509_certificate",
+            "additionalContext": "scanner.python_ast/AST_UNRESOLVED conf=0.75"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a_fcfd1db3afae590bea981805",
+      "name": "TLSv1.2",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "protocol",
+          "executionEnvironment": "software-plain-ram",
+          "implementationPlatform": "x86_64",
+          "cryptoFunctions": [
+            "protocol"
+          ],
+          "classicalSecurityLevel": 112,
+          "nistQuantumSecurityLevel": 0
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "tests/test_jwks_client.py",
+            "line": 771,
+            "offset": 0,
+            "symbol": "ssl.create_default_context",
+            "additionalContext": "scanner.python_ast/AST_UNRESOLVED conf=0.70"
+          },
+          {
+            "location": "tests/test_jwks_client.py",
+            "line": 798,
+            "offset": 0,
+            "symbol": "ssl.SSLCertVerificationError",
+            "additionalContext": "scanner.python_ast/AST_RESOLVED conf=0.95"
+          }
+        ]
+      }
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "root:4995c53d93e962705536dcb3d7659b8c",
+      "dependsOn": [
+        "a_27254871abe6dde8b49c2bf5",
+        "a_3a0fe48e723107d4fb8b056f",
+        "a_4c2b59db447691f79a811762",
+        "a_7f8e3ee37d5b0e72b90bbf62",
+        "a_9b2e994978db44218cbfd3db",
+        "a_a80cee551ccc85261729fa7b",
+        "a_af0dd04608323931e4c52db7",
+        "a_cf1aeeee4caee0d2fc015275",
+        "a_e6c108c7087ab6ff817629f3",
+        "a_fcfd1db3afae590bea981805"
+      ]
+    },
+    {
+      "ref": "a_27254871abe6dde8b49c2bf5",
+      "dependsOn": [
+        "jwt/api_jws.py",
+        "tests/test_algorithms.py",
+        "tests/test_api_jws.py",
+        "tests/test_api_jwt.py",
+        "tests/test_jwt.py"
+      ]
+    },
+    {
+      "ref": "a_3a0fe48e723107d4fb8b056f",
+      "dependsOn": [
+        "tests/keys/testkey_ed25519.pem"
+      ]
+    },
+    {
+      "ref": "a_4c2b59db447691f79a811762",
+      "dependsOn": [
+        "tests/test_algorithms.py",
+        "tests/test_api_jws.py",
+        "tests/test_api_jwt.py",
+        "tests/test_jwt.py"
+      ]
+    },
+    {
+      "ref": "a_7f8e3ee37d5b0e72b90bbf62",
+      "dependsOn": [
+        "tests/keys/testkey_rsa.cer",
+        "tests/test_api_jws.py"
+      ]
+    },
+    {
+      "ref": "a_9b2e994978db44218cbfd3db",
+      "dependsOn": [
+        "jwt/algorithms.py",
+        "tests/test_api_jws.py"
+      ]
+    },
+    {
+      "ref": "a_a80cee551ccc85261729fa7b",
+      "dependsOn": [
+        "tests/test_jwks_client.py"
+      ]
+    },
+    {
+      "ref": "a_af0dd04608323931e4c52db7",
+      "dependsOn": [
+        "tests/keys/testkey_rsa.cer"
+      ]
+    },
+    {
+      "ref": "a_cf1aeeee4caee0d2fc015275",
+      "dependsOn": [
+        "jwt/algorithms.py",
+        "tests/test_api_jws.py"
+      ]
+    },
+    {
+      "ref": "a_e6c108c7087ab6ff817629f3",
+      "dependsOn": [
+        "tests/test_algorithms.py"
+      ]
+    },
+    {
+      "ref": "a_fcfd1db3afae590bea981805",
+      "dependsOn": [
+        "tests/test_jwks_client.py"
+      ]
+    }
+  ]
+}

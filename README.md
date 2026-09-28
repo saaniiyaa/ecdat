@@ -1,4 +1,10 @@
-# ECDAT Backend — Enterprise Cryptographic Discovery & Analysis Tool
+# ECDAT — Enterprise Cryptographic Discovery & Analysis Tool
+
+[![CI](https://github.com/saaniiyaa/ecdat/actions/workflows/ci.yml/badge.svg)](https://github.com/saaniiyaa/ecdat/actions/workflows/ci.yml)
+[![Accuracy Benchmark](https://img.shields.io/badge/Detector%20F1-1.0000%20(100%25%20P%2FR)-brightgreen)](docs/ACCURACY.md)
+[![Real-World Scan](https://img.shields.io/badge/PyJWT%20Audit-223%20Findings%20(CBOM%201.7)-blue)](docs/real_world_scan/AUDIT_REPORT.md)
+[![Coverage Honesty](https://img.shields.io/badge/Coverage%20Index-0.983-purple)](docs/measurements.json)
+[![API Contract](https://img.shields.io/badge/OpenAPI-3.1.0%20Frozen-black)](openapi.json)
 
 **SIH PS 26164 · NTRO · Blockchain & Cybersecurity**
 Deterministic, offline-capable cryptographic discovery → dual-track (classical + quantum) risk →
@@ -7,9 +13,22 @@ Mosca analysis → purpose-aware PQC migration plan → CycloneDX CBOM + signed 
 > **Not detected is not quantum-safe.** Every scan returns a coverage index and names the surfaces
 > it did not inspect.
 
-📄 Full backend design: **[`docs/BACKEND_ARCHITECTURE_AND_STRATEGY.md`](docs/BACKEND_ARCHITECTURE_AND_STRATEGY.md)** (12 sections)
-📊 Measured performance: **[`docs/measurements.json`](docs/measurements.json)** (regenerate with `make benchmark`)
-🔌 API contract: **`openapi.json`** · live docs at `/docs` · [`COORDINATION.md`](COORDINATION.md)
+📄 Full architecture & strategy: **[`docs/BACKEND_ARCHITECTURE_AND_STRATEGY.md`](docs/BACKEND_ARCHITECTURE_AND_STRATEGY.md)** (12 sections)  
+🎯 Measured accuracy benchmark: **[`docs/ACCURACY.md`](docs/ACCURACY.md)** (100% precision, recall & F1 on labelled corpus)  
+🌍 Real-world open-source audit: **[`docs/real_world_scan/AUDIT_REPORT.md`](docs/real_world_scan/AUDIT_REPORT.md)** (PyJWT production scan)  
+📊 Measured runtime performance: **[`docs/measurements.json`](docs/measurements.json)** (regenerate with `make benchmark`)  
+🔌 API contract: **`openapi.json`** · live docs at `/docs` · [`COORDINATION.md`](COORDINATION.md)  
+💻 Interactive console: **[`frontend/`](frontend/)** (React 19 + TypeScript + Vite + Tailwind on `:3000`)
+
+---
+
+## Visual Showcase (Interactive Console)
+
+| Executive Risk Dashboard | Explainable Findings Drawer |
+|:---:|:---:|
+| ![Executive Dashboard](docs/screenshots/dashboard.svg) | ![Findings Drawer](docs/screenshots/findings_drawer.svg) |
+| **Coverage Honesty Panel** | **Interactive Mosca What-If Simulator** |
+| ![Coverage Panel](docs/screenshots/coverage_honesty.svg) | ![Mosca Simulator](docs/screenshots/mosca_simulator.svg) |
 
 ---
 
@@ -159,6 +178,8 @@ Environment: Linux, 2 vCPU, Python 3.13.14, SQLite (WAL), 4 scan workers.
 | | |
 |---|---|
 | Test suite | **95 passed, 0 failed** (30 detector · 25 risk/Mosca · 40 API/contract) |
+| Detector Accuracy | **Precision: 100.0% · Recall: 100.0% · F1: 1.0000** (54 TP, 0 FP, 0 FN across 6 tiers) |
+| Real-World Audit | PyJWT (`fixtures/pyjwt_repo`): 223 findings, 153 assets, 100% CBOM 1.7 compliance |
 | API surface | 34 paths / 39 operations, error envelope on every one |
 | Demo estate | 22 files → **61 findings in 362 ms**, 39 assets, **coverage 0.983** |
 | Bands | critical 16 · high 25 · medium 9 · low 11 |

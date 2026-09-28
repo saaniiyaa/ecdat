@@ -134,5 +134,17 @@
   },
   "api_surface": {
     "endpoints": 34
+  },
+  "accuracy": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "accuracy": 1.0,
+    "true_positives": 54,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "true_negatives": 3,
+    "negative_control_specificity": 1.0,
+    "benchmark_doc": "docs/ACCURACY.md"
   }
 }

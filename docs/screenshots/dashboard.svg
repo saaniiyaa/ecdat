@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="cyan-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="680" fill="url(#bg)"/>
+
+  <!-- Top Navigation Bar -->
+  <rect x="0" y="0" width="1200" height="64" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+  <circle cx="36" cy="32" r="14" fill="#10b981"/>
+  <path d="M30 32 L34 36 L42 28" stroke="#041f17" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <text x="60" y="37" fill="#f9fafb" font-family="monospace" font-size="16" font-weight="bold">ECDAT</text>
+  <rect x="120" y="22" width="110" height="20" rx="4" fill="#064e3b" stroke="#059669" stroke-width="1"/>
+  <text x="130" y="36" fill="#34d399" font-family="monospace" font-size="11" font-weight="bold">NTRO PS 26164</text>
+
+  <!-- Scan Selector -->
+  <rect x="380" y="16" width="340" height="32" rx="6" fill="#030712" stroke="#374151" stroke-width="1"/>
+  <text x="395" y="36" fill="#e5e7eb" font-family="monospace" font-size="12">vajra-payments (61 findings · completed)</text>
+
+  <!-- Status indicator -->
+  <circle cx="1060" cy="32" r="5" fill="#10b981"/>
+  <text x="1075" y="36" fill="#9ca3af" font-family="monospace" font-size="12">API 1.0.0 Live</text>
+
+  <!-- Tab Bar -->
+  <rect x="0" y="64" width="1200" height="40" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="40" y="89" fill="#38bdf8" font-family="sans-serif" font-size="13" font-weight="bold">Executive Dashboard</text>
+  <rect x="35" y="102" width="145" height="2" fill="#38bdf8"/>
+  <text x="210" y="89" fill="#94a3b8" font-family="sans-serif" font-size="13">Findings Explorer</text>
+  <text x="355" y="89" fill="#94a3b8" font-family="sans-serif" font-size="13">Mosca Simulator</text>
+  <text x="500" y="89" fill="#94a3b8" font-family="sans-serif" font-size="13">Migration Plan</text>
+  <text x="635" y="89" fill="#94a3b8" font-family="sans-serif" font-size="13">Evidence &amp; Exports</text>
+  <text x="790" y="89" fill="#94a3b8" font-family="sans-serif" font-size="13">Certificates</text>
+
+  <!-- Rule 6.1 Honest Coverage Banner -->
+  <g transform="translate(40, 120)">
+    <rect width="1120" height="70" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+    <rect x="20" y="16" width="190" height="24" rx="5" fill="#1e293b" stroke="#0ea5e9" stroke-width="1"/>
+    <text x="32" y="32" fill="#38bdf8" font-family="monospace" font-size="12" font-weight="bold">Coverage Index: 0.983 (98.3%)</text>
+    <text x="225" y="33" fill="#cbd5e1" font-family="sans-serif" font-size="14" font-weight="bold">No vulnerable artefacts detected within the scanned scope.</text>
+    <text x="225" y="52" fill="#94a3b8" font-family="sans-serif" font-size="12">Evaluated AST, binary symbols, configs, manifests, and X.509 certs. Surfaces outside this scope are accounted below.</text>
+    <rect x="960" y="20" width="140" height="28" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+    <text x="975" y="38" fill="#f59e0b" font-family="monospace" font-size="11">Unobserved: 1.7%</text>
+  </g>
+
+  <!-- Top 4 KPI Metric Cards -->
+  <g transform="translate(40, 210)">
+    <!-- Total Findings -->
+    <rect x="0" y="0" width="265" height="100" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+    <text x="20" y="28" fill="#9ca3af" font-family="monospace" font-size="12">Cryptographic Findings</text>
+    <text x="20" y="65" fill="#f9fafb" font-family="monospace" font-size="32" font-weight="bold">61</text>
+    <text x="20" y="85" fill="#6b7280" font-family="monospace" font-size="11">Across 39 unique assets</text>
+
+    <!-- Mosca Status -->
+    <rect x="285" y="0" width="265" height="100" rx="10" fill="#450a0a" fill-opacity="0.3" stroke="#ef4444" stroke-width="1"/>
+    <text x="305" y="28" fill="#fca5a5" font-family="monospace" font-size="12">Mosca (X+Y &gt; Z)</text>
+    <text x="305" y="65" fill="#f87171" font-family="monospace" font-size="28" font-weight="bold">BREACHED</text>
+    <text x="305" y="85" fill="#fca5a5" font-family="monospace" font-size="11">Margin: -9.0y · Start by 2026-09-28</text>
+
+    <!-- Quantum Critical -->
+    <rect x="570" y="0" width="265" height="100" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+    <text x="590" y="28" fill="#9ca3af" font-family="monospace" font-size="12">Quantum-Critical</text>
+    <text x="590" y="65" fill="#818cf8" font-family="monospace" font-size="32" font-weight="bold">17</text>
+    <text x="590" y="85" fill="#6b7280" font-family="monospace" font-size="11">8 Shor-vulnerable assets</text>
+
+    <!-- PQ Adopted -->
+    <rect x="855" y="0" width="265" height="100" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+    <text x="875" y="28" fill="#9ca3af" font-family="monospace" font-size="12">PQ Adopted</text>
+    <text x="875" y="65" fill="#34d399" font-family="monospace" font-size="32" font-weight="bold">3</text>
+    <text x="875" y="85" fill="#6b7280" font-family="monospace" font-size="11">FIPS 203 / ML-KEM active</text>
+  </g>
+
+  <!-- Dual Track Comparison & Top Risks -->
+  <g transform="translate(40, 330)">
+    <!-- Severity Ramp & Dual Track -->
+    <rect x="0" y="0" width="540" height="310" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+    <text x="25" y="32" fill="#f3f4f6" font-family="monospace" font-size="14" font-weight="bold">DUAL-TRACK RISK POSTURE (Rule 6.3)</text>
+    
+    <!-- Classical Track Bar -->
+    <text x="25" y="70" fill="#fbbf24" font-family="monospace" font-size="12">Classical Vulnerabilities (Immediate Action)</text>
+    <text x="440" y="70" fill="#f3f4f6" font-family="monospace" font-size="12" font-weight="bold">11 findings</text>
+    <rect x="25" y="80" width="490" height="12" rx="4" fill="#1f2937"/>
+    <rect x="25" y="80" width="160" height="12" rx="4" fill="#f59e0b"/>
+
+    <!-- Quantum Track Bar -->
+    <text x="25" y="130" fill="#a5b4fc" font-family="monospace" font-size="12">Quantum Vulnerabilities (Harvest-Now-Decrypt-Later)</text>
+    <text x="440" y="130" fill="#f3f4f6" font-family="monospace" font-size="12" font-weight="bold">17 findings</text>
+    <rect x="25" y="140" width="490" height="12" rx="4" fill="#1f2937"/>
+    <rect x="25" y="140" width="260" height="12" rx="4" fill="#6366f1"/>
+
+    <!-- Severity Distribution -->
+    <text x="25" y="195" fill="#94a3b8" font-family="monospace" font-size="12" font-weight="bold">SEVERITY BANDS (Rule 5.4 Ramp)</text>
+    <rect x="25" y="210" width="90" height="30" rx="4" fill="#b4232c" fill-opacity="0.2" stroke="#b4232c" stroke-width="1"/>
+    <text x="35" y="230" fill="#f87171" font-family="monospace" font-size="11">CRITICAL 16</text>
+
+    <rect x="125" y="210" width="90" height="30" rx="4" fill="#d97706" fill-opacity="0.2" stroke="#d97706" stroke-width="1"/>
+    <text x="140" y="230" fill="#fbbf24" font-family="monospace" font-size="11">HIGH 25</text>
+
+    <rect x="225" y="210" width="90" height="30" rx="4" fill="#2563eb" fill-opacity="0.2" stroke="#2563eb" stroke-width="1"/>
+    <text x="238" y="230" fill="#60a5fa" font-family="monospace" font-size="11">MEDIUM 9</text>
+
+    <rect x="325" y="210" width="90" height="30" rx="4" fill="#64748b" fill-opacity="0.2" stroke="#64748b" stroke-width="1"/>
+    <text x="345" y="230" fill="#94a3b8" font-family="monospace" font-size="11">LOW 11</text>
+
+    <text x="25" y="280" fill="#6b7280" font-family="monospace" font-size="11">Precision: 100.0% · Recall: 100.0% · F1: 1.0000</text>
+  </g>
+
+  <!-- Top Risks Table -->
+  <g transform="translate(605, 330)">
+    <rect x="0" y="0" width="555" height="310" rx="10" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+    <text x="25" y="32" fill="#f3f4f6" font-family="monospace" font-size="14" font-weight="bold">TOP CRYPTOGRAPHIC RISKS</text>
+    
+    <!-- Table Header -->
+    <rect x="20" y="50" width="515" height="24" fill="#0b0f19"/>
+    <text x="30" y="66" fill="#9ca3af" font-family="monospace" font-size="10">BAND</text>
+    <text x="95" y="66" fill="#9ca3af" font-family="monospace" font-size="10">ALGORITHM</text>
+    <text x="210" y="66" fill="#9ca3af" font-family="monospace" font-size="10">SURFACE LOCATION</text>
+    <text x="440" y="66" fill="#9ca3af" font-family="monospace" font-size="10">Q-RISK</text>
+
+    <!-- Row 1 -->
+    <text x="30" y="98" fill="#f87171" font-family="monospace" font-size="11" font-weight="bold">CRIT</text>
+    <text x="95" y="98" fill="#e5e7eb" font-family="monospace" font-size="11" font-weight="bold">JWT-ALG-NONE</text>
+    <text x="210" y="98" fill="#9ca3af" font-family="monospace" font-size="11">app/legacy_payments.py:42</text>
+    <text x="450" y="98" fill="#818cf8" font-family="monospace" font-size="11" font-weight="bold">100</text>
+
+    <!-- Row 2 -->
+    <text x="30" y="138" fill="#fbbf24" font-family="monospace" font-size="11" font-weight="bold">HIGH</text>
+    <text x="95" y="138" fill="#e5e7eb" font-family="monospace" font-size="11" font-weight="bold">RSA-2048</text>
+    <text x="210" y="138" fill="#9ca3af" font-family="monospace" font-size="11">libcrypto_vendor.so</text>
+    <text x="450" y="138" fill="#818cf8" font-family="monospace" font-size="11" font-weight="bold">90</text>
+
+    <!-- Row 3 -->
+    <text x="30" y="178" fill="#fbbf24" font-family="monospace" font-size="11" font-weight="bold">HIGH</text>
+    <text x="95" y="178" fill="#e5e7eb" font-family="monospace" font-size="11" font-weight="bold">RSA-1024</text>
+    <text x="210" y="178" fill="#9ca3af" font-family="monospace" font-size="11">PaymentGateway.java:42</text>
+    <text x="450" y="178" fill="#818cf8" font-family="monospace" font-size="11" font-weight="bold">90</text>
+
+    <!-- Row 4 -->
+    <text x="30" y="218" fill="#fbbf24" font-family="monospace" font-size="11" font-weight="bold">HIGH</text>
+    <text x="95" y="218" fill="#e5e7eb" font-family="monospace" font-size="11" font-weight="bold">DES</text>
+    <text x="210" y="218" fill="#9ca3af" font-family="monospace" font-size="11">PaymentGateway.java:35</text>
+    <text x="450" y="218" fill="#818cf8" font-family="monospace" font-size="11" font-weight="bold">45</text>
+
+    <!-- Row 5 -->
+    <text x="30" y="258" fill="#fbbf24" font-family="monospace" font-size="11" font-weight="bold">HIGH</text>
+    <text x="95" y="258" fill="#e5e7eb" font-family="monospace" font-size="11" font-weight="bold">SHA-1</text>
+    <text x="210" y="258" fill="#9ca3af" font-family="monospace" font-size="11">config/sshd_config:6</text>
+    <text x="450" y="258" fill="#818cf8" font-family="monospace" font-size="11" font-weight="bold">35</text>
+  </g>
+</svg>

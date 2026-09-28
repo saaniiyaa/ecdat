@@ -1,0 +1,785 @@
+{
+  "scan_id": "99317045-d79d-42b4-aeee-b0355f785e4f",
+  "total_findings": 223,
+  "total_assets": 10,
+  "by_band": [
+    {
+      "band": "critical",
+      "count": 162
+    },
+    {
+      "band": "low",
+      "count": 53
+    },
+    {
+      "band": "medium",
+      "count": 7
+    },
+    {
+      "band": "high",
+      "count": 1
+    }
+  ],
+  "by_family": [
+    {
+      "family": "KEY-MATERIAL",
+      "count": 164
+    },
+    {
+      "family": "HMAC",
+      "count": 50
+    },
+    {
+      "family": "KDF",
+      "count": 3
+    },
+    {
+      "family": "TLS",
+      "count": 3
+    },
+    {
+      "family": "RSA",
+      "count": 2
+    },
+    {
+      "family": "X.509",
+      "count": 1
+    }
+  ],
+  "by_evidence_class": [
+    {
+      "evidence_class": "AST_RESOLVED",
+      "count": 212
+    },
+    {
+      "evidence_class": "AST_UNRESOLVED",
+      "count": 8
+    },
+    {
+      "evidence_class": "PARSED_STRUCTURE",
+      "count": 3
+    }
+  ],
+  "top_risks": [
+    {
+      "id": "f_98266fe94c21f46c65db4ef0",
+      "scan_id": "99317045-d79d-42b4-aeee-b0355f785e4f",
+      "file_path": "tests/test_jwt.py",
+      "line_start": 17,
+      "line_end": 17,
+      "symbol": "jwt.decode",
+      "detector_id": "scanner.python_ast",
+      "evidence_class": "AST_RESOLVED",
+      "confidence": 0.95,
+      "corroborations": 157,
+      "snippet_redacted": "decoded_payload = jwt.decode(jwt_message, secret, algorithms=[\"HS256\"])",
+      "source": "static",
+      "asset": {
+        "id": "a_27254871abe6dde8b49c2bf5",
+        "canonical_name": "JWT-ALG-NONE",
+        "oid": null,
+        "asset_type": "related_crypto_material",
+        "family": "KEY-MATERIAL",
+        "primitive": "key",
+        "purpose": "jwt_alg_none",
+        "key_size_bits": null,
+        "curve": null,
+        "mode": null,
+        "classical_security_bits": 0,
+        "quantum_security_bits": 0,
+        "quantum_status": "unknown",
+        "is_post_quantum": false,
+        "nist_deprecated_after": null,
+        "nist_disallowed_after": null,
+        "replacement_hint": "assess the key type of the material that was loaded"
+      },
+      "risk": {
+        "id": "30963a30-cf43-4d37-af12-f265c791d504",
+        "classical_risk": 95,
+        "quantum_risk": 30,
+        "composite_risk": 100,
+        "band": "critical",
+        "mosca_state": "breached",
+        "mosca_margin_years": -4.0,
+        "urgency_score": 100,
+        "effort_score": 0,
+        "effective_confidence": 0.99,
+        "evidence_class": "AST_RESOLVED",
+        "deadline_year": null,
+        "capped_by_confidence": false,
+        "explanation": "JWT-ALG-NONE: classical track 95/100, quantum track 30/100, context +28 -> CRITICAL. Mosca BREACHED: X=10y + Y=4y = 14y vs Z=10y -> BREACHED; margin -4.0y; migration must start by 2026-09-29. Drivers: CL-016 KEY-MATERIAL/jwt_alg_none baseline (+95); CL-070 JWT signature verification can be bypassed (+95); Q-003 quantum status: unknown (+30)",
+        "drivers": {
+          "context": {
+            "exposure": "internet_facing",
+            "criticality": "core_operations",
+            "classification": "confidential",
+            "data_lifetime_years": 10.0
+          },
+          "context_points": 28,
+          "track_taken": "classical",
+          "mosca": {
+            "x_years": 10.0,
+            "y_years": 4.0,
+            "z_years": 10.0,
+            "state": "breached",
+            "holds": true,
+            "margin_years": -4.0,
+            "must_start_by": "2026-09-29"
+          },
+          "corroborations": 157
+        },
+        "factors": []
+      }
+    },
+    {
+      "id": "f_f453aeb415ba3e0540563fb4",
+      "scan_id": "99317045-d79d-42b4-aeee-b0355f785e4f",
+      "file_path": "tests/test_jwks_client.py",
+      "line_start": 798,
+      "line_end": 798,
+      "symbol": "ssl.SSLCertVerificationError",
+      "detector_id": "scanner.python_ast",
+      "evidence_class": "AST_RESOLVED",
+      "confidence": 0.95,
+      "corroborations": 3,
+      "snippet_redacted": "ssl.SSLCertVerificationError(\"<redacted:25chars>\")",
+      "source": "static",
+      "asset": {
+        "id": "a_fcfd1db3afae590bea981805",
+        "canonical_name": "TLSv1.2",
+        "oid": null,
+        "asset_type": "algorithm",
+        "family": "TLS",
+        "primitive": "protocol",
+        "purpose": "protocol",
+        "key_size_bits": null,
+        "curve": null,
+        "mode": null,
+        "classical_security_bits": 112,
+        "quantum_security_bits": 0,
+        "quantum_status": "shor_vulnerable",
+        "is_post_quantum": false,
+        "nist_deprecated_after": null,
+        "nist_disallowed_after": null,
+        "replacement_hint": null
+      },
+      "risk": {
+        "id": "c9015f15-546d-44a3-a234-7e438031fb35",
+        "classical_risk": 80,
+        "quantum_risk": 90,
+        "composite_risk": 100,
+        "band": "critical",
+        "mosca_state": "breached",
+        "mosca_margin_years": -4.0,
+        "urgency_score": 100,
+        "effort_score": 0,
+        "effective_confidence": 0.99,
+        "evidence_class": "AST_RESOLVED",
+        "deadline_year": null,
+        "capped_by_confidence": false,
+        "explanation": "TLSv1.2: classical track 80/100, quantum track 90/100 (Shor-vulnerable), context +28 -> CRITICAL. Mosca BREACHED: X=10y + Y=4y = 14y vs Z=10y -> BREACHED; margin -4.0y; migration must start by 2026-09-29. Drivers: CL-007 TLS/protocol baseline (+10); CL-040 obsolete protocol TLSv1.2 (+80); Q-001 quantum status: shor_vulnerable (+90)",
+        "drivers": {
+          "context": {
+            "exposure": "internet_facing",
+            "criticality": "core_operations",
+            "classification": "confidential",
+            "data_lifetime_years": 10.0
+          },
+          "context_points": 28,
+          "track_taken": "quantum",
+          "mosca": {
+            "x_years": 10.0,
+            "y_years": 4.0,
+            "z_years": 10.0,
+            "state": "breached",
+            "holds": true,
+            "margin_years": -4.0,
+            "must_start_by": "2026-09-29"
+          },
+          "corroborations": 3
+        },
+        "factors": []
+      }
+    },
+    {
+      "id": "f_0a557e22f10023449cc1d07d",
+      "scan_id": "99317045-d79d-42b4-aeee-b0355f785e4f",
+      "file_path": "tests/test_jwks_client.py",
+      "line_start": 793,
+      "line_end": 793,
+      "symbol": "ssl.SSLContext",
+      "detector_id": "scanner.python_ast",
+      "evidence_class": "AST_RESOLVED",
+      "confidence": 0.95,
+      "corroborations": 0,
+      "snippet_redacted": "url, ssl_context=ssl.SSLContext(protocol=ssl.PROTOCOL_TLS_CLIENT)",
+      "source": "static",
+      "asset": {
+        "id": "a_a80cee551ccc85261729fa7b",
+        "canonical_name": "TLSv1.3",
+        "oid": null,
+        "asset_type": "algorithm",
+        "family": "TLS",
+        "primitive": "protocol",
+        "purpose": "protocol",
+        "key_size_bits": null,
+        "curve": null,
+        "mode": null,
+        "classical_security_bits": 128,
+        "quantum_security_bits": 128,
+        "quantum_status": "symmetric_safe",
+        "is_post_quantum": false,
+        "nist_deprecated_after": null,
+        "nist_disallowed_after": null,
+        "replacement_hint": null
+      },
+      "risk": {
+        "id": "723a313b-b5da-4c60-9aaf-9144cf709bed",
+        "classical_risk": 80,
+        "quantum_risk": 0,
+        "composite_risk": 100,
+        "band": "critical",
+        "mosca_state": "breached",
+        "mosca_margin_years": -4.0,
+        "urgency_score": 100,
+        "effort_score": 0,
+        "effective_confidence": 0.95,
+        "evidence_class": "AST_RESOLVED",
+        "deadline_year": null,
+        "capped_by_confidence": false,
+        "explanation": "TLSv1.3: classical track 80/100, quantum track 0/100, context +28 -> CRITICAL. Mosca BREACHED: X=10y + Y=4y = 14y vs Z=10y -> BREACHED; margin -4.0y; migration must start by 2026-09-29. Drivers: CL-007 TLS/protocol baseline (+10); CL-040 obsolete protocol TLSv1.3 (+80); M-010 data shelf-life 10.0y >= 10y (+5)",
+        "drivers": {
+          "context": {
+            "exposure": "internet_facing",
+            "criticality": "core_operations",
+            "classification": "confidential",
+            "data_lifetime_years": 10.0
+          },
+          "context_points": 28,
+          "track_taken": "classical",
+          "mosca": {
+            "x_years": 10.0,
+            "y_years": 4.0,
+            "z_years": 10.0,
+            "state": "breached",
+            "holds": true,
+            "margin_years": -4.0,
+            "must_start_by": "2026-09-29"
+          },
+          "corroborations": 0
+        },
+        "factors": []
+      }
+    },
+    {
+      "id": "f_5a540a056911e90d8880c860",
+      "scan_id": "99317045-d79d-42b4-aeee-b0355f785e4f",
+      "file_path": "tests/test_jwks_client.py",
+      "line_start": 771,
+      "line_end": 771,
+      "symbol": "ssl.create_default_context",
+      "detector_id": "scanner.python_ast",
+      "evidence_class": "AST_UNRESOLVED",
+      "confidence": 0.7,
+      "corroborations": 2,
+      "snippet_redacted": "ssl_ctx = ssl.create_default_context()",
+      "source": "static",
+      "asset": {
+        "id": "a_fcfd1db3afae590bea981805",
+        "canonical_name": "TLSv1.2",
+        "oid": null,
+        "asset_type": "algorithm",
+        "family": "TLS",
+        "primitive": "protocol",
+        "purpose": "protocol",
+        "key_size_bits": null,
+        "curve": null,
+        "mode": null,
+        "classical_security_bits": 112,
+        "quantum_security_bits": 0,
+        "quantum_status": "shor_vulnerable",
+        "is_post_quantum": false,
+        "nist_deprecated_after": null,
+        "nist_disallowed_after": null,
+        "replacement_hint": null
+      },
+      "risk": {
+        "id": "05fedbb8-3804-43b5-a27e-0234c17930b2",
+        "classical_risk": 80,
+        "quantum_risk": 90,
+        "composite_risk": 100,
+        "band": "high",
+        "mosca_state": "breached",
+        "mosca_margin_years": -4.0,
+        "urgency_score": 100,
+        "effort_score": 0,
+        "effective_confidence": 0.91,
+        "evidence_class": "AST_UNRESOLVED",
+        "deadline_year": null,
+        "capped_by_confidence": true,
+        "explanation": "TLSv1.2: classical track 80/100, quantum track 90/100 (Shor-vulnerable), context +28 -> HIGH. Mosca BREACHED: X=10y + Y=4y = 14y vs Z=10y -> BREACHED; margin -4.0y; migration must start by 2026-09-29. Drivers: CL-007 TLS/protocol baseline (+10); CL-040 obsolete protocol TLSv1.2 (+80); Q-001 quantum status: shor_vulnerable (+90). Severity capped at high because evidence class AST_UNRESOLVED is not conclusive",
+        "drivers": {
+          "context": {
+            "exposure": "internet_facing",
+            "criticality": "core_operations",
+            "classification": "confidential",
+            "data_lifetime_years": 10.0
+          },
+          "context_points": 28,
+          "track_taken": "quantum",
+          "mosca": {
+            "x_years": 10.0,
+            "y_years": 4.0,
+            "z_years": 10.0,
+            "state": "breached",
+            "holds": true,
+            "margin_years": -4.0,
+            "must_start_by": "2026-09-29"
+          },
+          "corroborations": 2
+        },
+        "factors": []
+      }
+    },
+    {
+      "id": "f_959cf40f5ea3cf255fd8b3b0",
+      "scan_id": "99317045-d79d-42b4-aeee-b0355f785e4f",
+      "file_path": "tests/test_api_jwt.py",
+      "line_start": 1195,
+      "line_end": 1195,
+      "symbol": "jwt.decode",
+      "detector_id": "scanner.python_ast",
+      "evidence_class": "AST_RESOLVED",
+      "confidence": 0.95,
+      "corroborations": 156,
+      "snippet_redacted": "jwt.decode(token, secret, algorithms=[\"HS256\"])",
+      "source": "static",
+      "asset": {
+        "id": "a_27254871abe6dde8b49c2bf5",
+        "canonical_name": "JWT-ALG-NONE",
+        "oid": null,
+        "asset_type": "related_crypto_material",
+        "family": "KEY-MATERIAL",
+        "primitive": "key",
+        "purpose": "jwt_alg_none",
+        "key_size_bits": null,
+        "curve": null,
+        "mode": null,
+        "classical_security_bits": 0,
+        "quantum_security_bits": 0,
+        "quantum_status": "unknown",
+        "is_post_quantum": false,
+        "nist_deprecated_after": null,
+        "nist_disallowed_after": null,
+        "replacement_hint": "assess the key type of the material that was loaded"
+      },
+      "risk": {
+        "id": "02d6902d-b6fb-46b1-a7a7-7004acbb9e72",
+        "classical_risk": 95,
+        "quantum_risk": 30,
+        "composite_risk": 100,
+        "band": "critical",
+        "mosca_state": "breached",
+        "mosca_margin_years": -4.0,
+        "urgency_score": 100,
+        "effort_score": 0,
+        "effective_confidence": 0.99,
+        "evidence_class": "AST_RESOLVED",
+        "deadline_year": null,
+        "capped_by_confidence": false,
+        "explanation": "JWT-ALG-NONE: classical track 95/100, quantum track 30/100, context +28 -> CRITICAL. Mosca BREACHED: X=10y + Y=4y = 14y vs Z=10y -> BREACHED; margin -4.0y; migration must start by 2026-09-29. Drivers: CL-016 KEY-MATERIAL/jwt_alg_none baseline (+95); CL-070 JWT signature verification can be bypassed (+95); Q-003 quantum status: unknown (+30)",
+        "drivers": {
+          "context": {
+            "exposure": "internet_facing",
+            "criticality": "core_operations",
+            "classification": "confidential",
+            "data_lifetime_years": 10.0
+          },
+          "context_points": 28,
+          "track_taken": "classical",
+          "mosca": {
+            "x_years": 10.0,
+            "y_years": 4.0,
+            "z_years": 10.0,
+            "state": "breached",
+            "holds": true,
+            "margin_years": -4.0,
+            "must_start_by": "2026-09-29"
+          },
+          "corroborations": 156
+        },
+        "factors": []
+      }
+    },
+    {
+      "id": "f_f38bd42b9466b831c3be94a4",
+      "scan_id": "99317045-d79d-42b4-aeee-b0355f785e4f",
+      "file_path": "tests/test_api_jwt.py",
+      "line_start": 1144,
+      "line_end": 1144,
+      "symbol": "jwt.decode",
+      "detector_id": "scanner.python_ast",
+      "evidence_class": "AST_RESOLVED",
+      "confidence": 0.95,
+      "corroborations": 155,
+      "snippet_redacted": "jwt.decode(token, secret, algorithms=[\"HS256\"])",
+      "source": "static",
+      "asset": {
+        "id": "a_27254871abe6dde8b49c2bf5",
+        "canonical_name": "JWT-ALG-NONE",
+        "oid": null,
+        "asset_type": "related_crypto_material",
+        "family": "KEY-MATERIAL",
+        "primitive": "key",
+        "purpose": "jwt_alg_none",
+        "key_size_bits": null,
+        "curve": null,
+        "mode": null,
+        "classical_security_bits": 0,
+        "quantum_security_bits": 0,
+        "quantum_status": "unknown",
+        "is_post_quantum": false,
+        "nist_deprecated_after": null,
+        "nist_disallowed_after": null,
+        "replacement_hint": "assess the key type of the material that was loaded"
+      },
+      "risk": {
+        "id": "03160cb4-8297-444c-b2b5-bf98daaa2868",
+        "classical_risk": 95,
+        "quantum_risk": 30,
+        "composite_risk": 100,
+        "band": "critical",
+        "mosca_state": "breached",
+        "mosca_margin_years": -4.0,
+        "urgency_score": 100,
+        "effort_score": 0,
+        "effective_confidence": 0.99,
+        "evidence_class": "AST_RESOLVED",
+        "deadline_year": null,
+        "capped_by_confidence": false,
+        "explanation": "JWT-ALG-NONE: classical track 95/100, quantum track 30/100, context +28 -> CRITICAL. Mosca BREACHED: X=10y + Y=4y = 14y vs Z=10y -> BREACHED; margin -4.0y; migration must start by 2026-09-29. Drivers: CL-016 KEY-MATERIAL/jwt_alg_none baseline (+95); CL-070 JWT signature verification can be bypassed (+95); Q-003 quantum status: unknown (+30)",
+        "drivers": {
+          "context": {
+            "exposure": "internet_facing",
+            "criticality": "core_operations",
+            "classification": "confidential",
+            "data_lifetime_years": 10.0
+          },
+          "context_points": 28,
+          "track_taken": "classical",
+          "mosca": {
+            "x_years": 10.0,
+            "y_years": 4.0,
+            "z_years": 10.0,
+            "state": "breached",
+            "holds": true,
+            "margin_years": -4.0,
+            "must_start_by": "2026-09-29"
+          },
+          "corroborations": 155
+        },
+        "factors": []
+      }
+    },
+    {
+      "id": "f_c03907b9cf1365a9b7ada575",
+      "scan_id": "99317045-d79d-42b4-aeee-b0355f785e4f",
+      "file_path": "tests/test_api_jwt.py",
+      "line_start": 1131,
+      "line_end": 1131,
+      "symbol": "jwt.decode",
+      "detector_id": "scanner.python_ast",
+      "evidence_class": "AST_RESOLVED",
+      "confidence": 0.95,
+      "corroborations": 154,
+      "snippet_redacted": "decoded = jwt.decode(token, secret, algorithms=[\"HS256\"])",
+      "source": "static",
+      "asset": {
+        "id": "a_27254871abe6dde8b49c2bf5",
+        "canonical_name": "JWT-ALG-NONE",
+        "oid": null,
+        "asset_type": "related_crypto_material",
+        "family": "KEY-MATERIAL",
+        "primitive": "key",
+        "purpose": "jwt_alg_none",
+        "key_size_bits": null,
+        "curve": null,
+        "mode": null,
+        "classical_security_bits": 0,
+        "quantum_security_bits": 0,
+        "quantum_status": "unknown",
+        "is_post_quantum": false,
+        "nist_deprecated_after": null,
+        "nist_disallowed_after": null,
+        "replacement_hint": "assess the key type of the material that was loaded"
+      },
+      "risk": {
+        "id": "ae5a3308-ef9c-4c71-b763-4560298c0c15",
+        "classical_risk": 95,
+        "quantum_risk": 30,
+        "composite_risk": 100,
+        "band": "critical",
+        "mosca_state": "breached",
+        "mosca_margin_years": -4.0,
+        "urgency_score": 100,
+        "effort_score": 0,
+        "effective_confidence": 0.99,
+        "evidence_class": "AST_RESOLVED",
+        "deadline_year": null,
+        "capped_by_confidence": false,
+        "explanation": "JWT-ALG-NONE: classical track 95/100, quantum track 30/100, context +28 -> CRITICAL. Mosca BREACHED: X=10y + Y=4y = 14y vs Z=10y -> BREACHED; margin -4.0y; migration must start by 2026-09-29. Drivers: CL-016 KEY-MATERIAL/jwt_alg_none baseline (+95); CL-070 JWT signature verification can be bypassed (+95); Q-003 quantum status: unknown (+30)",
+        "drivers": {
+          "context": {
+            "exposure": "internet_facing",
+            "criticality": "core_operations",
+            "classification": "confidential",
+            "data_lifetime_years": 10.0
+          },
+          "context_points": 28,
+          "track_taken": "classical",
+          "mosca": {
+            "x_years": 10.0,
+            "y_years": 4.0,
+            "z_years": 10.0,
+            "state": "breached",
+            "holds": true,
+            "margin_years": -4.0,
+            "must_start_by": "2026-09-29"
+          },
+          "corroborations": 154
+        },
+        "factors": []
+      }
+    },
+    {
+      "id": "f_24924f6903c6d85d7150c970",
+      "scan_id": "99317045-d79d-42b4-aeee-b0355f785e4f",
+      "file_path": "tests/test_api_jwt.py",
+      "line_start": 1121,
+      "line_end": 1121,
+      "symbol": "jwt.decode",
+      "detector_id": "scanner.python_ast",
+      "evidence_class": "AST_RESOLVED",
+      "confidence": 0.95,
+      "corroborations": 153,
+      "snippet_redacted": "jwt.decode(",
+      "source": "static",
+      "asset": {
+        "id": "a_27254871abe6dde8b49c2bf5",
+        "canonical_name": "JWT-ALG-NONE",
+        "oid": null,
+        "asset_type": "related_crypto_material",
+        "family": "KEY-MATERIAL",
+        "primitive": "key",
+        "purpose": "jwt_alg_none",
+        "key_size_bits": null,
+        "curve": null,
+        "mode": null,
+        "classical_security_bits": 0,
+        "quantum_security_bits": 0,
+        "quantum_status": "unknown",
+        "is_post_quantum": false,
+        "nist_deprecated_after": null,
+        "nist_disallowed_after": null,
+        "replacement_hint": "assess the key type of the material that was loaded"
+      },
+      "risk": {
+        "id": "d8129d3d-bb0b-4f04-800a-c22882e773fe",
+        "classical_risk": 95,
+        "quantum_risk": 30,
+        "composite_risk": 100,
+        "band": "critical",
+        "mosca_state": "breached",
+        "mosca_margin_years": -4.0,
+        "urgency_score": 100,
+        "effort_score": 0,
+        "effective_confidence": 0.99,
+        "evidence_class": "AST_RESOLVED",
+        "deadline_year": null,
+        "capped_by_confidence": false,
+        "explanation": "JWT-ALG-NONE: classical track 95/100, quantum track 30/100, context +28 -> CRITICAL. Mosca BREACHED: X=10y + Y=4y = 14y vs Z=10y -> BREACHED; margin -4.0y; migration must start by 2026-09-29. Drivers: CL-016 KEY-MATERIAL/jwt_alg_none baseline (+95); CL-070 JWT signature verification can be bypassed (+95); Q-003 quantum status: unknown (+30)",
+        "drivers": {
+          "context": {
+            "exposure": "internet_facing",
+            "criticality": "core_operations",
+            "classification": "confidential",
+            "data_lifetime_years": 10.0
+          },
+          "context_points": 28,
+          "track_taken": "classical",
+          "mosca": {
+            "x_years": 10.0,
+            "y_years": 4.0,
+            "z_years": 10.0,
+            "state": "breached",
+            "holds": true,
+            "margin_years": -4.0,
+            "must_start_by": "2026-09-29"
+          },
+          "corroborations": 153
+        },
+        "factors": []
+      }
+    },
+    {
+      "id": "f_6c274bf555bc088255e809ce",
+      "scan_id": "99317045-d79d-42b4-aeee-b0355f785e4f",
+      "file_path": "tests/test_api_jwt.py",
+      "line_start": 1111,
+      "line_end": 1111,
+      "symbol": "jwt.decode",
+      "detector_id": "scanner.python_ast",
+      "evidence_class": "AST_RESOLVED",
+      "confidence": 0.95,
+      "corroborations": 152,
+      "snippet_redacted": "decoded = jwt.decode(token, secret, algorithms=[\"HS256\"])",
+      "source": "static",
+      "asset": {
+        "id": "a_27254871abe6dde8b49c2bf5",
+        "canonical_name": "JWT-ALG-NONE",
+        "oid": null,
+        "asset_type": "related_crypto_material",
+        "family": "KEY-MATERIAL",
+        "primitive": "key",
+        "purpose": "jwt_alg_none",
+        "key_size_bits": null,
+        "curve": null,
+        "mode": null,
+        "classical_security_bits": 0,
+        "quantum_security_bits": 0,
+        "quantum_status": "unknown",
+        "is_post_quantum": false,
+        "nist_deprecated_after": null,
+        "nist_disallowed_after": null,
+        "replacement_hint": "assess the key type of the material that was loaded"
+      },
+      "risk": {
+        "id": "eac16a97-b30d-4018-b7e7-40815847d957",
+        "classical_risk": 95,
+        "quantum_risk": 30,
+        "composite_risk": 100,
+        "band": "critical",
+        "mosca_state": "breached",
+        "mosca_margin_years": -4.0,
+        "urgency_score": 100,
+        "effort_score": 0,
+        "effective_confidence": 0.99,
+        "evidence_class": "AST_RESOLVED",
+        "deadline_year": null,
+        "capped_by_confidence": false,
+        "explanation": "JWT-ALG-NONE: classical track 95/100, quantum track 30/100, context +28 -> CRITICAL. Mosca BREACHED: X=10y + Y=4y = 14y vs Z=10y -> BREACHED; margin -4.0y; migration must start by 2026-09-29. Drivers: CL-016 KEY-MATERIAL/jwt_alg_none baseline (+95); CL-070 JWT signature verification can be bypassed (+95); Q-003 quantum status: unknown (+30)",
+        "drivers": {
+          "context": {
+            "exposure": "internet_facing",
+            "criticality": "core_operations",
+            "classification": "confidential",
+            "data_lifetime_years": 10.0
+          },
+          "context_points": 28,
+          "track_taken": "classical",
+          "mosca": {
+            "x_years": 10.0,
+            "y_years": 4.0,
+            "z_years": 10.0,
+            "state": "breached",
+            "holds": true,
+            "margin_years": -4.0,
+            "must_start_by": "2026-09-29"
+          },
+          "corroborations": 152
+        },
+        "factors": []
+      }
+    },
+    {
+      "id": "f_86998b74dd4a245805b1ac01",
+      "scan_id": "99317045-d79d-42b4-aeee-b0355f785e4f",
+      "file_path": "tests/test_api_jwt.py",
+      "line_start": 1100,
+      "line_end": 1100,
+      "symbol": "jwt.decode",
+      "detector_id": "scanner.python_ast",
+      "evidence_class": "AST_RESOLVED",
+      "confidence": 0.95,
+      "corroborations": 151,
+      "snippet_redacted": "decoded = jwt.decode(token, secret, algorithms=[\"HS256\"], subject=None)",
+      "source": "static",
+      "asset": {
+        "id": "a_27254871abe6dde8b49c2bf5",
+        "canonical_name": "JWT-ALG-NONE",
+        "oid": null,
+        "asset_type": "related_crypto_material",
+        "family": "KEY-MATERIAL",
+        "primitive": "key",
+        "purpose": "jwt_alg_none",
+        "key_size_bits": null,
+        "curve": null,
+        "mode": null,
+        "classical_security_bits": 0,
+        "quantum_security_bits": 0,
+        "quantum_status": "unknown",
+        "is_post_quantum": false,
+        "nist_deprecated_after": null,
+        "nist_disallowed_after": null,
+        "replacement_hint": "assess the key type of the material that was loaded"
+      },
+      "risk": {
+        "id": "51a716e6-135c-481e-9cb0-1866d6683788",
+        "classical_risk": 95,
+        "quantum_risk": 30,
+        "composite_risk": 100,
+        "band": "critical",
+        "mosca_state": "breached",
+        "mosca_margin_years": -4.0,
+        "urgency_score": 100,
+        "effort_score": 0,
+        "effective_confidence": 0.99,
+        "evidence_class": "AST_RESOLVED",
+        "deadline_year": null,
+        "capped_by_confidence": false,
+        "explanation": "JWT-ALG-NONE: classical track 95/100, quantum track 30/100, context +28 -> CRITICAL. Mosca BREACHED: X=10y + Y=4y = 14y vs Z=10y -> BREACHED; margin -4.0y; migration must start by 2026-09-29. Drivers: CL-016 KEY-MATERIAL/jwt_alg_none baseline (+95); CL-070 JWT signature verification can be bypassed (+95); Q-003 quantum status: unknown (+30)",
+        "drivers": {
+          "context": {
+            "exposure": "internet_facing",
+            "criticality": "core_operations",
+            "classification": "confidential",
+            "data_lifetime_years": 10.0
+          },
+          "context_points": 28,
+          "track_taken": "classical",
+          "mosca": {
+            "x_years": 10.0,
+            "y_years": 4.0,
+            "z_years": 10.0,
+            "state": "breached",
+            "holds": true,
+            "margin_years": -4.0,
+            "must_start_by": "2026-09-29"
+          },
+          "corroborations": 151
+        },
+        "factors": []
+      }
+    }
+  ],
+  "tracks": {
+    "classical_critical": 159,
+    "quantum_critical": 6,
+    "post_quantum_adopted": 0,
+    "quantum_vulnerable_assets": 4,
+    "unobserved_surfaces": 60
+  },
+  "mosca": {
+    "x_years": 10.0,
+    "y_years": 4.0,
+    "z_years": 10.0,
+    "state": "breached",
+    "holds": true,
+    "margin_years": -4.0,
+    "must_start_by": "2026-09-29"
+  },
+  "coverage_index": 0.8195,
+  "unobserved_pct": 18.05,
+  "policy_pack_version": "pp-2026.09",
+  "generated_at": "2026-09-28T18:34:21Z"
+}
