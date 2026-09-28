@@ -52,8 +52,9 @@ export const RegistryProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const resolveOid = (oid: string): string | undefined => {
-    if (!registry || !registry.oids) return undefined;
-    return registry.oids[oid];
+    if (!registry || !registry.algorithms) return undefined;
+    const alg = registry.algorithms.find(a => a.oid === oid);
+    return alg?.canonical_name;
   };
 
   return (

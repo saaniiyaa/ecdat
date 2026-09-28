@@ -205,14 +205,7 @@ export interface RiskSummaryOut {
   by_band: Array<{ band: Band; count: number }>;
   by_family: Array<{ family: string; count: number }>;
   by_evidence_class: Array<{ evidence_class: string; count: number }>;
-  top_risks: Array<{
-    band: Band;
-    algorithm: string;
-    file: string;
-    quantum_risk: number;
-    classical_risk?: number;
-    composite_risk?: number;
-  }>;
+  top_risks: FindingOut[];
   tracks: TrackBreakdown;
   mosca: {
     x_years: number;
@@ -384,11 +377,26 @@ export interface RegistryAlgorithm {
   replacement_hint?: string | null;
 }
 
+export interface RegistryProtocol {
+  name: string;
+  canonical_name: string;
+}
+
+export interface RegistrySnapshot {
+  policy_pack_version: string;
+  algorithms: number;
+  protocols: number;
+  libraries: number;
+  bands?: Record<string, number>;
+  evidence_classes?: Record<string, string>;
+  scenarios?: Array<{ name: string; z_years: number; label: string; source: string }>;
+}
+
 export interface RegistryOut {
+  snapshot?: RegistrySnapshot;
   algorithms: RegistryAlgorithm[];
-  oids?: Record<string, string>;
-  libraries?: Record<string, any>;
-  protocol_profiles?: Record<string, any>;
+  protocols?: RegistryProtocol[];
+  libraries?: string[];
   policy_pack?: Record<string, any>;
 }
 

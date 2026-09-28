@@ -370,50 +370,24 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
             <tbody className="divide-y divide-slate-800/60">
               {summary.top_risks.map((item, idx) => (
                 <tr
-                  key={idx}
-                  onClick={() => {
-                    // Create a partial finding to trigger the drawer
-                    setSelectedFinding({
-                      id: `top_${idx}`,
-                      scan_id: summary.scan_id,
-                      file_path: item.file.split(':')[0],
-                      line_start: item.file.includes(':') ? parseInt(item.file.split(':')[1]) : undefined,
-                      detector_id: 'scanner.top_risk',
-                      evidence_class: 'PARSED_STRUCTURE',
-                      confidence: 0.95,
-                      asset: {
-                        id: `top_asset_${idx}`,
-                        canonical_name: item.algorithm,
-                        quantum_status: item.quantum_risk >= 80 ? 'shor_vulnerable' : undefined,
-                      },
-                      risk: {
-                        id: `top_risk_${idx}`,
-                        classical_risk: item.classical_risk ?? 20,
-                        quantum_risk: item.quantum_risk,
-                        composite_risk: Math.max(item.quantum_risk, item.classical_risk ?? 20),
-                        band: item.band,
-                        urgency_score: 95,
-                        effort_score: 50,
-                        effective_confidence: 0.95,
-                        evidence_class: 'PARSED_STRUCTURE',
-                        capped_by_confidence: false,
-                        factors: [],
-                      },
-                    });
-                  }}
+                  key={item.id || idx}
+                  onClick={() => setSelectedFinding(item)}
                   className="hover:bg-slate-800/40 cursor-pointer transition"
                 >
                   <td className="py-3 px-3">
-                    <BandBadge band={item.band} size="sm" />
+                    {item.risk && <BandBadge band={item.risk.band} size="sm" />}
                   </td>
                   <td className="py-3 px-3 font-bold text-slate-200">
-                    {item.algorithm}
+                    {item.asset?.canonical_name || item.symbol || 'Cryptographic Finding'}
                   </td>
                   <td className="py-3 px-3 text-slate-400 max-w-md truncate">
-                    <span className="text-slate-300 font-mono">{item.file}</span>
+                    <span className="text-slate-300 font-mono">
+                      {item.file_path}
+                      {item.line_start ? `:${item.line_start}` : ''}
+                    </span>
                   </td>
                   <td className="py-3 px-3 text-right font-bold text-indigo-400">
-                    {item.quantum_risk}/100
+                    {item.risk?.quantum_risk ?? 0}/100
                   </td>
                   <td className="py-3 px-3 text-center text-cyan-400 hover:text-cyan-300">
                     Inspect
