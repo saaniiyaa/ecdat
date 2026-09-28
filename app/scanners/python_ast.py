@@ -82,6 +82,26 @@ def _line_of(node: ast.AST) -> int:
     return int(getattr(node, "lineno", 0) or 0)
 
 
+# Text codec names accepted as the first positional argument of str.encode /
+# bytes.decode. Passing one of these means the call is transcoding text, never
+# producing a signature - a JOSE call names an algorithm, never a codec.
+TEXT_CODECS = frozenset({
+    "utf-8", "utf8", "utf_8", "utf-16", "utf16", "utf-32", "utf32",
+    "ascii", "latin-1", "latin1", "latin_1", "iso-8859-1", "cp1252",
+    "base64", "base32", "base16", "hex", "punycode", "idna", "utf-8-sig",
+    "utf_16", "utf_32", "b64", "b32", "b16",
+})
+
+
+def _looks_like_text_codec(value: object) -> bool:
+    """True when a literal positional argument names a text/encoding codec."""
+    if not isinstance(value, str):
+        return False
+    return value.strip().strip("\"'").lower().replace("_", "-") in {
+        c.replace("_", "-") for c in TEXT_CODECS
+    }
+
+
 HASH_APIS = {
     "md5": "MD5",
     "sha1": "SHA-1",
@@ -110,6 +130,14 @@ TLS_PROTOCOLS = {
 
 JWT_HMAC = {"HS256": "HMAC-SHA256", "HS384": "HMAC-SHA384", "HS512": "HMAC-SHA512"}
 JWT_RSA = {"RS256": "RSA-2048", "RS384": "RSA-3072", "RS512": "RSA-4096", "PS256": "RSA-2048"}
+# ECDSA and EdDSA were absent here until the independent PyJWT benchmark showed
+# every ES*/EdDSA call site being silently dropped. A name in a lookup table that
+# the caller never checks is a finding that never happens.
+JWT_EC = {
+    "ES256": "ECDSA-P256", "ES384": "ECDSA-P384", "ES512": "ECDSA-P521",
+    "ES256K": "ECDSA-secp256k1", "EdDSA": "Ed25519",
+}
+_ALL_JOSE = {*JWT_HMAC, *JWT_RSA, *JWT_EC, "NONE", "none"}
 
 
 class PythonAstScanner:
@@ -307,10 +335,38 @@ class PythonAstScanner:
             return findings
 
         # JWT / JOSE -------------------------------------------------------
+        # The receiver must be an imported JWT/JOSE namespace or a parameter
+        # named like one. A bare `jwt.encode("utf-8")` where `jwt` is a local
+        # string is `str.encode` - text encoding, not a signature. The encoding
+        # argument is the tell: text codecs are never `algorithm=`/`alg=`.
         if tail in {"encode", "decode"} and head.split(".")[-1] in {"jwt", "jose", "jws", "Jose"}:
-            algo = _keyword(node, "algorithm", consts) or _positional(node, 1, consts)
-            label = str(algo).upper() if algo is not None else "NONE"
-            if label == "NONE":
+            enc = _positional(node, 0, consts) if tail == "encode" else None
+            if enc is not None and _looks_like_text_codec(enc):
+                return findings
+            algo = _keyword(node, "algorithm", consts) or _keyword(node, "alg", consts)
+            if algo is None:
+                # Signature order differs by direction: encode(payload, key, [alg])
+                # is index 2, but decode(token, key, [algorithm]) is index 2 as
+                # well while verify(token, key, [algorithm]) differs again. We
+                # only trust a positional that is a string AND a known JOSE name;
+                # anything else stays unknown rather than becoming "none".
+                for idx in (2, 1, 3):
+                    cand = _positional(node, idx, consts)
+                    if isinstance(cand, str) and cand.upper() in _ALL_JOSE:
+                        algo = cand
+                        break
+            # Registry keys are canonical JOSE spellings (EdDSA, not EDDSA);
+            # compare case-sensitively against the table, uppercase only for
+            # the "none" sentinel.
+            label = str(algo) if algo is not None else None
+            if label is not None and label.upper() in {"NONE", ""}:
+                label = "NONE"
+            if label is None:
+                # An unresolved algorithm is not evidence of alg:none. Reporting
+                # it as a signature bypass is a false positive with a critical
+                # band, which is the worst possible shape of noise.
+                return findings
+            if label in {"NONE", ""}:
                 asset = material_asset("jwt_alg_none")
                 findings.append(self._emit(node, rel_path, lines, name, asset, AST_RESOLVED, 0.95,
                                            {"critical": "JWT 'alg: none' accepted - signature bypass"}))
@@ -320,6 +376,10 @@ class PythonAstScanner:
             elif label in JWT_RSA:
                 findings.append(self._emit(node, rel_path, lines, name,
                                            with_purpose(canonicalise(JWT_RSA[label]), "digital_signature"),
+                                           AST_RESOLVED, 0.92, {"jose_alg": label}))
+            elif label in JWT_EC:
+                findings.append(self._emit(node, rel_path, lines, name,
+                                           with_purpose(canonicalise(JWT_EC[label]), "digital_signature"),
                                            AST_RESOLVED, 0.92, {"jose_alg": label}))
             return findings
 

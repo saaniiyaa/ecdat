@@ -1,71 +1,120 @@
 {
-  "generated_at": "2026-09-28T19:24:27.657161+00:00",
+  "generated_at": "2026-09-28T19:38:09.864927+00:00",
   "tool": "scripts/accuracy_real.py",
   "independent": {
     "corpus": "PyJWT 2.8.0 shipped library code (jwt/)",
     "method": "manual line-by-line source review of fixtures/pyjwt_repo/jwt/*.py",
     "labelled_files": 8,
     "totals": {
-      "tp": 2,
+      "tp": 9,
       "fp": 1,
-      "fn": 11,
-      "precision": 0.6667,
-      "recall": 0.1538,
-      "f1": 0.2499,
+      "fn": 6,
+      "precision": 0.9,
+      "recall": 0.6,
+      "f1": 0.72,
       "note": null
     },
     "per_file": [
       {
         "file_path": "jwt/api_jws.py",
         "expected": [],
-        "detected": [
-          "JWT-ALG-NONE"
-        ],
+        "detected": [],
+        "expected_families": [],
+        "detected_families": [],
         "true_positives": [],
-        "false_positives": [
-          "JWT-ALG-NONE"
-        ],
+        "false_positives": [],
         "false_negatives": [],
         "negative_reason": "api_jws.py is encoding/serialisation logic. It calls str.encode() and str.decode() for UTF-8 handling and performs no cryptography itself. Its one 'cryptographic-looking' call, jwt.encode('utf-8') at line 358, is Python's str.encode method - text encoding, not a cipher."
       },
       {
         "file_path": "jwt/algorithms.py",
         "expected": [
+          "HMAC-SHA256",
+          "HMAC-SHA384",
+          "HMAC-SHA512",
           "PBKDF2-HMAC-SHA256",
-          "PRIVATE-KEY-MATERIAL",
-          "RSA",
+          "RSA-2048",
+          "RSA-PSS",
+          "RSA-OAEP",
+          "ECDSA-P256",
+          "ECDSA-P384",
+          "ECDSA-P521",
+          "ECDSA-secp256k1",
+          "Ed25519",
+          "ECDH-P256",
+          "EC-P256",
           "SHA-256",
+          "SHA-384",
           "SHA-512",
-          "ECDH",
-          "EC"
-        ],
-        "detected": [
-          "PBKDF2-HMAC-SHA256",
           "PRIVATE-KEY-MATERIAL"
         ],
-        "true_positives": [
-          [
-            "PBKDF2-HMAC-SHA256",
-            "PBKDF2-HMAC-SHA256"
-          ],
-          [
-            "PRIVATE-KEY-MATERIAL",
-            "PRIVATE-KEY-MATERIAL"
-          ]
-        ],
-        "false_positives": [],
-        "false_negatives": [
-          "RSA",
+        "detected": [
+          "ECDSA-P256",
+          "ECDSA-P384",
+          "ECDSA-P521",
+          "ECDSA-secp256k1",
+          "Ed25519",
+          "HMAC-SHA256",
+          "HMAC-SHA384",
+          "HMAC-SHA512",
+          "JWT-ALG-NONE",
+          "PBKDF2-HMAC-SHA256",
+          "PRIVATE-KEY-MATERIAL",
+          "RSA-2048",
+          "RSA-PSS",
           "SHA-256",
-          "SHA-512",
+          "SHA-384",
+          "SHA-512"
+        ],
+        "expected_families": [
+          "EC-P256",
           "ECDH",
-          "EC"
+          "ECDSA",
+          "EdDSA",
+          "HMAC",
+          "KEY-MATERIAL",
+          "PBKDF2",
+          "RSA",
+          "RSA-OAEP",
+          "RSA-PSS",
+          "SHA-2"
+        ],
+        "detected_families": [
+          "ECDSA",
+          "EdDSA",
+          "HMAC",
+          "JWT-ALG-NONE",
+          "KEY-MATERIAL",
+          "PBKDF2",
+          "RSA",
+          "RSA-PSS",
+          "SHA-2"
+        ],
+        "true_positives": [
+          "ECDSA",
+          "EdDSA",
+          "HMAC",
+          "KEY-MATERIAL",
+          "PBKDF2",
+          "RSA",
+          "RSA-PSS",
+          "SHA-2"
+        ],
+        "false_positives": [
+          "JWT-ALG-NONE"
+        ],
+        "false_negatives": [
+          "EC-P256",
+          "ECDH",
+          "RSA-OAEP"
         ]
       },
       {
         "file_path": "jwt/api_jwt.py",
         "expected": [],
         "detected": [],
+        "expected_families": [],
+        "detected_families": [],
         "true_positives": [],
         "false_positives": [],
         "false_negatives": [],
@@ -79,44 +128,57 @@
           "ECDH"
         ],
         "detected": [],
+        "expected_families": [
+          "EC",
+          "ECDH",
+          "RSA"
+        ],
+        "detected_families": [],
         "true_positives": [],
         "false_positives": [],
         "false_negatives": [
-          "RSA",
           "EC",
-          "ECDH"
+          "ECDH",
+          "RSA"
         ]
       },
       {
         "file_path": "jwt/jwks_client.py",
-        "expected": [
-          "TLS",
-          "RSA"
-        ],
+        "expected": [],
         "detected": [],
+        "expected_families": [],
+        "detected_families": [],
         "true_positives": [],
         "false_positives": [],
-        "false_negatives": [
-          "TLS",
-          "RSA"
-        ]
+        "false_negatives": [],
+        "negative_reason": "Fetches JWKS endpoints through urllib.request.build_opener(). The TLS handshake is performed by the interpreter's ssl module against an https:// URL string, not by an explicit crypto call in this file. Recording TLS as a local finding here would credit us for inheriting a property of urllib rather than for analysis. Transport encryption is inventoried from the certificates and the live-TLS probe instead, which is the honest attribution."
       },
       {
         "file_path": "jwt/utils.py",
         "expected": [
           "BASE64URL"
         ],
-        "detected": [],
-        "true_positives": [],
-        "false_positives": [],
-        "false_negatives": [
+        "detected": [
           "BASE64URL"
-        ]
+        ],
+        "expected_families": [
+          "BASE64URL"
+        ],
+        "detected_families": [
+          "BASE64URL"
+        ],
+        "true_positives": [
+          "BASE64URL"
+        ],
+        "false_positives": [],
+        "false_negatives": []
       },
       {
         "file_path": "jwt/types.py",
         "expected": [],
         "detected": [],
+        "expected_families": [],
+        "detected_families": [],
         "true_positives": [],
         "false_positives": [],
         "false_negatives": [],
@@ -126,6 +188,8 @@
         "file_path": "jwt/__init__.py",
         "expected": [],
         "detected": [],
+        "expected_families": [],
+        "detected_families": [],
         "true_positives": [],
         "false_positives": [],
         "false_negatives": [],
@@ -134,19 +198,19 @@
     ],
     "known_detector_gaps": [
       {
-        "location": "jwt/algorithms.py:156-158",
-        "missed": "RS256/RS384/RS512 (RSA signatures over SHA-256/384/512)",
-        "why": "The registry builds these as class instances, so the RSA constructor and the hash selection are not adjacent to a call expression the AST detector can bind. This is a genuine recall gap in signature-algorithm discovery."
+        "location": "jwt/algorithms.py:40,61-69",
+        "missed": "RSA-OAEP, EC / ECDH key-wrap algorithms in the guarded `cryptography.hazmat` import block",
+        "why": "Class and function *imports* are not treated as cryptographic declarations. This is a deliberate precision trade: import-block scanning raises noise on every guarded optional-dependency import, so the family is only reported where it is constructed."
       },
       {
-        "location": "jwt/algorithms.py:320,322",
-        "missed": "hashlib.sha256 / hashlib.sha512 as class-level HashlibHash attributes",
-        "why": "Assigned to a ClassVar, not called in place. Detected only when actually invoked downstream."
+        "location": "jwt/api_jwk.py",
+        "missed": "RSA / EC / ECDH JWK key conversion",
+        "why": "The module converts between JSON Web Keys and key objects without naming a primitive. Detecting it requires recognising JWK member names (n, e, kty, crv) as cryptographic context."
       },
       {
-        "location": "jwt/algorithms.py:66-69",
-        "missed": "rsa_crt_dmp1/dmq1/iqmp, rsa_recover_prime_factors",
-        "why": "CRT parameter handling inside a guarded optional-dependency import block. Import-level crypto indicators are not currently treated as findings."
+        "location": "jwt/algorithms.py:146",
+        "missed": "NOT A GAP - `none` is correctly reported as JWT-ALG-NONE",
+        "why": "Listed here because it is the one apparent false positive in the scan. It is a true positive: PyJWT's get_default_algorithms() registers the `none` algorithm at :146, and its presence in a library's default table is exactly the fact a cryptographic inventory exists to surface."
       }
     ],
     "unlabelled_paths_with_findings": [

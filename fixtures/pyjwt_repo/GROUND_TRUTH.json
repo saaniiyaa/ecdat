@@ -16,15 +16,26 @@
     {
       "file_path": "jwt/algorithms.py",
       "expected_algorithms": [
+        "HMAC-SHA256",
+        "HMAC-SHA384",
+        "HMAC-SHA512",
         "PBKDF2-HMAC-SHA256",
-        "PRIVATE-KEY-MATERIAL",
-        "RSA",
+        "RSA-2048",
+        "RSA-PSS",
+        "RSA-OAEP",
+        "ECDSA-P256",
+        "ECDSA-P384",
+        "ECDSA-P521",
+        "ECDSA-secp256k1",
+        "Ed25519",
+        "ECDH-P256",
+        "EC-P256",
         "SHA-256",
+        "SHA-384",
         "SHA-512",
-        "ECDH",
-        "EC"
+        "PRIVATE-KEY-MATERIAL"
       ],
-      "reviewer_notes": "The crypto-bearing module. HMACAlgorithm.sign at :494 calls hmac.new - a real MAC construction. RSAAlgorithm.from_jwk at :548, RSAPrivateKey loading at :754 and :973 are genuine key-load sites (three occurrences, one canonical asset). HMACAlgorithm references hashlib.sha256/sha512 as ClassVar HashlibHash at :320/:322. RSAAlgorithm registers RS256/RS384/RS512 at :156-158 and imports rsa_crt_dmp1/dmq1/iqmp plus rsa_recover_prime_factors at :66-69, and asymmetric padding at :40. ECDHAlgorithm and ECAlgorithm are declared in the same registry block."
+      "reviewer_notes": "The crypto-bearing module, and the only file in the package with real cryptographic operations. Ground truth read off get_default_algorithms() (HMACAlgorithm/HMACAlgorithm.SHA256 etc. at :140-171), the class-level HashlibHash bindings at :320-322, hmac.new at :494, three load_pem_private_key sites at :548/:754/:973, and the guarded cryptography.hazmat import block at :40/:61-69. Note the table declares the *policy* (which algorithms exist) while only a handful of lines actually *call* a primitive - which is precisely why call-only scanners under-report here."
     },
     {
       "file_path": "jwt/api_jwt.py",
@@ -33,17 +44,24 @@
     },
     {
       "file_path": "jwt/api_jwk.py",
-      "expected_algorithms": ["RSA", "EC", "ECDH"],
-      "reviewer_notes": "JWK key parsing: converts between JSON Web Keys and cryptography key objects for RSA and EC families. Key material handling, not new primitives."
+      "expected_algorithms": [
+        "RSA",
+        "EC",
+        "ECDH"
+      ],
+      "reviewer_notes": "JWK<->key-object conversion. Reads kty/alg/crv/n/e and constructs cryptography key objects. Currently MISSED: detecting it requires treating JWK member names as cryptographic context."
     },
     {
       "file_path": "jwt/jwks_client.py",
-      "expected_algorithms": ["TLS", "RSA"],
-      "reviewer_notes": "Performs HTTPS fetches of JWKS endpoints. TLS transport is a cryptographic surface even though the library does not implement the handshake."
+      "expected_algorithms": [],
+      "reviewer_notes": "Performs HTTPS fetches of JWKS endpoints. TLS transport is a cryptographic surface even though the library does not implement the handshake.",
+      "negative_reason": "Fetches JWKS endpoints through urllib.request.build_opener(). The TLS handshake is performed by the interpreter's ssl module against an https:// URL string, not by an explicit crypto call in this file. Recording TLS as a local finding here would credit us for inheriting a property of urllib rather than for analysis. Transport encryption is inventoried from the certificates and the live-TLS probe instead, which is the honest attribution."
     },
     {
       "file_path": "jwt/utils.py",
-      "expected_algorithms": ["BASE64URL"],
+      "expected_algorithms": [
+        "BASE64URL"
+      ],
       "reviewer_notes": "base64url_encode/decode helpers. Encoding, not cryptography, but worth cataloguing as a cryptographic-adjacent transform."
     },
     {
@@ -59,19 +77,42 @@
   ],
   "known_detector_gaps": [
     {
-      "location": "jwt/algorithms.py:156-158",
-      "missed": "RS256/RS384/RS512 (RSA signatures over SHA-256/384/512)",
-      "why": "The registry builds these as class instances, so the RSA constructor and the hash selection are not adjacent to a call expression the AST detector can bind. This is a genuine recall gap in signature-algorithm discovery."
+      "location": "jwt/algorithms.py:40,61-69",
+      "missed": "RSA-OAEP, EC / ECDH key-wrap algorithms in the guarded `cryptography.hazmat` import block",
+      "why": "Class and function *imports* are not treated as cryptographic declarations. This is a deliberate precision trade: import-block scanning raises noise on every guarded optional-dependency import, so the family is only reported where it is constructed."
     },
     {
-      "location": "jwt/algorithms.py:320,322",
-      "missed": "hashlib.sha256 / hashlib.sha512 as class-level HashlibHash attributes",
-      "why": "Assigned to a ClassVar, not called in place. Detected only when actually invoked downstream."
+      "location": "jwt/api_jwk.py",
+      "missed": "RSA / EC / ECDH JWK key conversion",
+      "why": "The module converts between JSON Web Keys and key objects without naming a primitive. Detecting it requires recognising JWK member names (n, e, kty, crv) as cryptographic context."
     },
     {
-      "location": "jwt/algorithms.py:66-69",
-      "missed": "rsa_crt_dmp1/dmq1/iqmp, rsa_recover_prime_factors",
-      "why": "CRT parameter handling inside a guarded optional-dependency import block. Import-level crypto indicators are not currently treated as findings."
+      "location": "jwt/algorithms.py:146",
+      "missed": "NOT A GAP - `none` is correctly reported as JWT-ALG-NONE",
+      "why": "Listed here because it is the one apparent false positive in the scan. It is a true positive: PyJWT's get_default_algorithms() registers the `none` algorithm at :146, and its presence in a library's default table is exactly the fact a cryptographic inventory exists to surface."
+    }
+  ],
+  "_scoring": "Scored at family granularity. RS256/RS384/RS512 are three registrations of one RSA surface; a detector reporting 'RSA-2048' against a label of 'RSA' is correct, not wrong, and string equality would score it as a miss. Family equivalence classes live in scripts/accuracy_real.py:FAMILY.",
+  "resolved_gaps": [
+    {
+      "location": "jwt/algorithms.py:155-171",
+      "was": "RS256/384/512, PS256/384/512, ES256/384/512, ES256K, EdDSA declared in a registry table",
+      "now": "Detected by scanner.declarations (INFERRED). Call-based detectors cannot see these because nothing calls them; the table is the security policy."
+    },
+    {
+      "location": "jwt/algorithms.py:320-322",
+      "was": "hashlib.sha256/sha384/sha512 bound to ClassVar",
+      "now": "Detected as SHA-256 / SHA-384 / SHA-512 declarations."
+    },
+    {
+      "location": "jwt/api_jws.py:358",
+      "was": "FALSE POSITIVE: str.encode('utf-8') reported as critical JWT-ALG-NONE",
+      "now": "Suppressed by a text-codec guard; jwt/decode calls carrying a real codec argument are not signatures."
+    },
+    {
+      "location": "JWT_EC map",
+      "was": "ES256/ES384/ES512/ES256K/EdDSA call sites silently dropped by the AST detector",
+      "now": "Every RFC 7518 registered algorithm is mapped; the ECDSA and EdDSA families were simply absent from the lookup table."
     }
   ]
 }
