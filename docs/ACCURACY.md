@@ -18,25 +18,46 @@ python scripts/accuracy_real.py --rescan    # terminal 2
 
 ## 1. Summary
 
-| Corpus | Language | Precision | Recall | F1 |
-|---|---|---|---|---|
-| **PyJWT 2.8.0** shipped code | Python | 0.818 | 0.600 | 0.692 |
-| **golang-jwt/jwt v5** (non-test) | Go | 1.000 | 1.000 | 1.000 |
-| **auth0/java-jwt** (non-test) | Java | 1.000 | 0.889 | 0.941 |
-| **demo_repo** (self-authored) | multi | *n/a* | *n/a* | 1.00 agreement |
+| Corpus | Language | Precision | Recall | F1 | Labelled |
+|---|---|---|---|---|---|
+| **PyJWT 2.8.0** shipped code | Python | 0.842 | 0.727 | 0.780 | 8 files |
+| **golang-jwt/jwt v5** (non-test) | Go | 1.000 | 1.000 | 1.000 | 11 files |
+| **auth0/java-jwt** (non-test) | Java | 1.000 | 0.889 | 0.941 | 8 files |
+| **OpenSSL 4.2.0** (C) | C | 1.000 | 1.000 | 1.000 | 8 files |
+| **demo_repo** (self-authored) | multi | *n/a* | *n/a* | 1.00 agreement | — |
 
-Three real-world projects this project did not author, hand-labelled by reading
-their source. Aggregate: TP=27, FP=2, FN=7 — precision **0.931**, recall **0.794**
-over 27 labelled files. Every miss and every apparent false positive is enumerated in §4 — two of
-which turned out, on inspection, to be errors in *our labels* rather than in the
-engine, and both are recorded as such.
+Four real-world projects this project did not author, hand-labelled by reading
+their source. Aggregate: TP=74, FP=3, FN=7 — precision **0.961**, recall
+**0.914** over 35 labelled files.
 
-The Python corpus is the weakest of the three, and §4 says why: it is a
-full-featured library with the widest surface, and six of its families are still
-missed. The Go and Java corpora are JWT libraries chosen because they express
-their cryptography in the declaration shapes we had just implemented; a
-judgement panel should read those two as the favourable case, not the typical
-one.
+### Read the per-corpus rows, not the aggregate
+
+The aggregate is dominated by whichever corpus is largest, and OpenSSL
+contributes 30 of the 74 true positives at a perfect score. A perfect row in a
+hand-built table of 8 files is weak evidence on its own; the honest reading is
+**PyJWT is the only corpus with a realistic breadth of surface**, and it is the
+weakest row. The Go, Java and C corpora are each narrowly chosen — JWT
+libraries and a crypto library's own digest and cipher cores — and a panel
+should read them as the favourable case, not the typical one.
+
+### The scoring rule changed on 2026-09-29, and the old numbers are not comparable
+
+PyJWT's recall moved 0.600 → 0.727 and Go's true-positive count moved 10 → 20
+**without any change to the detectors**. The cause was the scorer: it used to
+compare at family granularity, which could not see partial coverage inside a
+family. A file declaring RS256, RS384 and RS512 scored identically whether the
+detector found one or all three. It also counted `AES-128` as disagreeing with
+`AES-128-GCM`, penalising a detection for being more specific than the label.
+
+Scoring is now per expected label: same primitive family, no conflicting
+specifier, and a label that does not name a mode or size does not constrain one.
+`AES-128` satisfies `AES-128-GCM`. `SHA-256` does not satisfy `SHA-512`;
+`HMAC-SHA256` does not satisfy `HMAC-SHA384`; `Ed25519` does not satisfy `Ed448`.
+
+This was a fix to the measuring instrument, not an improvement in the tool. Any
+comparison against a pre-2026-09-29 figure requires re-measurement. The rule and
+this warning are recorded in `docs/accuracy_report.json` under `scoring`, so they
+travel with the data rather than living only in prose.
 
 ---
 

@@ -7,18 +7,18 @@
   },
   "corpora": {
     "pyjwt-python": {
-      "precision": 0.8182,
-      "recall": 0.6,
-      "f1": 0.6923,
-      "tp": 9,
-      "fp": 2,
+      "precision": 0.8421,
+      "recall": 0.7273,
+      "f1": 0.7805,
+      "tp": 16,
+      "fp": 3,
       "fn": 6
     },
     "go:golang-jwt/jwt v5": {
       "precision": 1.0,
       "recall": 1.0,
       "f1": 1.0,
-      "tp": 10,
+      "tp": 20,
       "fp": 0,
       "fn": 0
     },
@@ -30,11 +30,19 @@
       "fp": 0,
       "fn": 1
     },
+    "c:OpenSSL 4.2.0 (C)": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 30,
+      "fp": 0,
+      "fn": 0
+    },
     "AGGREGATE": {
-      "precision": 0.931,
-      "recall": 0.7941,
-      "tp": 27,
-      "fp": 2,
+      "precision": 0.961,
+      "recall": 0.9136,
+      "tp": 74,
+      "fp": 3,
       "fn": 7
     }
   }

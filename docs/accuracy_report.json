@@ -1,17 +1,25 @@
 {
-  "generated_at": "2026-09-28T20:22:07.608382+00:00",
+  "generated_at": "2026-09-29T10:20:30.780283+00:00",
   "tool": "scripts/accuracy_real.py",
+  "scoring": {
+    "granularity": "per expected label, tolerant of extra detector specificity",
+    "rule": "A detection is a true positive when it satisfies a reviewer label: same primitive family, no conflicting specifier (AES-128 does not satisfy AES-256, SHA-256 does not satisfy SHA-512, HMAC-SHA256 does not satisfy HMAC-SHA384, Ed25519 does not satisfy Ed448), and no conflicting mode. An expected label that does not name a mode or size does not constrain one.",
+    "changed_at": "2026-09-29",
+    "previous_granularity": "per family (all SHA-2 members collapsed to one)",
+    "why_changed": "Family-granular scoring could not see partial coverage inside a family: a file declaring RS256, RS384 and RS512 scored the same whether the detector found one or all three. It also scored AES-128 as disagreeing with AES-128-GCM, penalising a detection for being more specific than the label.",
+    "effect_on_existing_numbers": "This is a change of measuring instrument, not an improvement in the detector. PyJWT recall moved 0.600 -> 0.727 and Go TP moved 10 -> 20 under the new rule with no change to the detectors. Anyone comparing against a pre-2026-09-29 baseline must re-measure; the old and new numbers are not commensurate."
+  },
   "independent": {
     "corpus": "PyJWT 2.8.0 shipped library code (jwt/)",
     "method": "manual line-by-line source review of fixtures/pyjwt_repo/jwt/*.py",
     "labelled_files": 8,
     "totals": {
-      "tp": 9,
-      "fp": 2,
+      "tp": 16,
+      "fp": 3,
       "fn": 6,
-      "precision": 0.8182,
-      "recall": 0.6,
-      "f1": 0.6923,
+      "precision": 0.8421,
+      "recall": 0.7273,
+      "f1": 0.7805,
       "note": null
     },
     "per_file": [
@@ -92,21 +100,29 @@
           "SHA-2"
         ],
         "true_positives": [
-          "ECDSA",
-          "EdDSA",
-          "HMAC",
-          "KEY-MATERIAL",
-          "PBKDF2",
-          "RSA",
+          "ECDSA-P256",
+          "ECDSA-P384",
+          "ECDSA-P521",
+          "ECDSA-secp256k1",
+          "Ed25519",
+          "HMAC-SHA256",
+          "HMAC-SHA384",
+          "HMAC-SHA512",
+          "PBKDF2-HMAC-SHA256",
+          "PRIVATE-KEY-MATERIAL",
+          "RSA-2048",
           "RSA-PSS",
-          "SHA-2"
+          "SHA-256",
+          "SHA-384",
+          "SHA-512"
         ],
         "false_positives": [
+          "Ed448",
           "JWT-ALG-NONE"
         ],
         "false_negatives": [
-          "EC",
-          "ECDH",
+          "EC-P256",
+          "ECDH-P256",
           "RSA-OAEP"
         ]
       },
@@ -141,7 +157,7 @@
         ],
         "true_positives": [],
         "false_positives": [
-          "EdDSA"
+          "Ed25519"
         ],
         "false_negatives": [
           "EC",
@@ -235,10 +251,10 @@
     {
       "corpus": "golang-jwt/jwt v5",
       "language": "go",
-      "method": "manual line-by-line review of the non-test source of each library",
+      "method": "manual line-by-line review of the non-test source of each library; for OpenSSL, of the named implementation files listed below",
       "labelled_files": 11,
       "totals": {
-        "tp": 10,
+        "tp": 20,
         "fp": 0,
         "fn": 0,
         "precision": 1.0,
@@ -274,8 +290,12 @@
             "SHA-2"
           ],
           "true_positives": [
-            "HMAC",
-            "SHA-2"
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "HMAC-SHA512",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
           ],
           "false_positives": [],
           "false_negatives": []
@@ -304,7 +324,9 @@
           ],
           "true_positives": [
             "RSA",
-            "SHA-2"
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
           ],
           "false_positives": [],
           "false_negatives": []
@@ -333,7 +355,9 @@
           ],
           "true_positives": [
             "RSA-PSS",
-            "SHA-2"
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
           ],
           "false_positives": [],
           "false_negatives": []
@@ -363,7 +387,9 @@
           ],
           "true_positives": [
             "ECDSA",
-            "SHA-2"
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
           ],
           "false_positives": [],
           "false_negatives": []
@@ -468,7 +494,7 @@
     {
       "corpus": "auth0/java-jwt",
       "language": "java",
-      "method": "manual line-by-line review of the non-test source of each library",
+      "method": "manual line-by-line review of the non-test source of each library; for OpenSSL, of the named implementation files listed below",
       "labelled_files": 8,
       "totals": {
         "tp": 8,
@@ -551,8 +577,8 @@
             "JCA-SIGNATURE"
           ],
           "true_positives": [
-            "JCA-MAC",
-            "JCA-SIGNATURE"
+            "JCA/Mac",
+            "JCA/Signature"
           ],
           "false_positives": [],
           "false_negatives": []
@@ -631,6 +657,274 @@
           "false_positives": [],
           "false_negatives": [],
           "negative_reason": "Verification driver. Same polymorphic delegation."
+        }
+      ]
+    },
+    {
+      "corpus": "OpenSSL 4.2.0 (C)",
+      "language": "c",
+      "method": "manual line-by-line review of the non-test source of each library; for OpenSSL, of the named implementation files listed below",
+      "labelled_files": 8,
+      "totals": {
+        "tp": 30,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "note": null
+      },
+      "per_file": [
+        {
+          "file_path": "crypto/md5/md5_dgst.c",
+          "expected": [
+            "MD5"
+          ],
+          "detected": [
+            "MD5"
+          ],
+          "expected_families": [
+            "MD5"
+          ],
+          "detected_families": [
+            "MD5"
+          ],
+          "true_positives": [
+            "MD5"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "crypto/sha/sha256.c",
+          "expected": [
+            "SHA-256",
+            "SHA-224"
+          ],
+          "detected": [
+            "SHA-224",
+            "SHA-256"
+          ],
+          "expected_families": [
+            "SHA-2"
+          ],
+          "detected_families": [
+            "SHA-2"
+          ],
+          "true_positives": [
+            "SHA-224",
+            "SHA-256"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "crypto/sha/sha1dgst.c",
+          "expected": [
+            "SHA-1"
+          ],
+          "detected": [
+            "SHA-1"
+          ],
+          "expected_families": [
+            "SHA-1"
+          ],
+          "detected_families": [
+            "SHA-1"
+          ],
+          "true_positives": [
+            "SHA-1"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "crypto/hmac/hmac.c",
+          "expected": [
+            "HMAC"
+          ],
+          "detected": [
+            "HMAC"
+          ],
+          "expected_families": [
+            "HMAC"
+          ],
+          "detected_families": [
+            "HMAC"
+          ],
+          "true_positives": [
+            "HMAC"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "crypto/des/des_enc.c",
+          "expected": [
+            "DES",
+            "3DES"
+          ],
+          "detected": [
+            "3DES",
+            "DES"
+          ],
+          "expected_families": [
+            "3DES",
+            "DES"
+          ],
+          "detected_families": [
+            "3DES",
+            "DES"
+          ],
+          "true_positives": [
+            "3DES",
+            "DES"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "crypto/bf/bf_enc.c",
+          "expected": [
+            "Blowfish"
+          ],
+          "detected": [
+            "Blowfish"
+          ],
+          "expected_families": [
+            "BLOWFISH"
+          ],
+          "detected_families": [
+            "BLOWFISH"
+          ],
+          "true_positives": [
+            "Blowfish"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "crypto/evp/e_aes.c",
+          "expected": [
+            "AES-128",
+            "AES-192",
+            "AES-256"
+          ],
+          "detected": [
+            "AES-128-GCM",
+            "AES-192-GCM",
+            "AES-256-GCM"
+          ],
+          "expected_families": [
+            "AES-128",
+            "AES-192",
+            "AES-256"
+          ],
+          "detected_families": [
+            "AES-192-GCM",
+            "AES-GCM"
+          ],
+          "true_positives": [
+            "AES-128",
+            "AES-192",
+            "AES-256"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "crypto/evp/digest.c",
+          "expected": [
+            "MD5",
+            "SHA-1",
+            "SHA-224",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512",
+            "SHA-512/224",
+            "SHA-512/256",
+            "SHA3-224",
+            "SHA3-256",
+            "SHA3-384",
+            "SHA3-512",
+            "HMAC",
+            "HMAC-SHA1",
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "HMAC-SHA512",
+            "HMAC-SHA512/224",
+            "HMAC-SHA512/256"
+          ],
+          "detected": [
+            "HMAC",
+            "HMAC-SHA1",
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "HMAC-SHA512",
+            "HMAC-SHA512/224",
+            "HMAC-SHA512/256",
+            "MD5",
+            "SHA-1",
+            "SHA-224",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512",
+            "SHA-512/224",
+            "SHA-512/256",
+            "SHA3-224",
+            "SHA3-256",
+            "SHA3-384",
+            "SHA3-512"
+          ],
+          "expected_families": [
+            "HMAC",
+            "HMAC-SHA512/224",
+            "HMAC-SHA512/256",
+            "MD5",
+            "SHA-1",
+            "SHA-2",
+            "SHA-3",
+            "SHA-512/224",
+            "SHA-512/256",
+            "SHA3-224",
+            "SHA3-384"
+          ],
+          "detected_families": [
+            "HMAC",
+            "HMAC-SHA512/224",
+            "HMAC-SHA512/256",
+            "MD5",
+            "SHA-1",
+            "SHA-2",
+            "SHA-3",
+            "SHA-512/224",
+            "SHA-512/256",
+            "SHA3-224",
+            "SHA3-384"
+          ],
+          "true_positives": [
+            "HMAC",
+            "HMAC-SHA1",
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "HMAC-SHA512",
+            "HMAC-SHA512/224",
+            "HMAC-SHA512/256",
+            "MD5",
+            "SHA-1",
+            "SHA-224",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512",
+            "SHA-512/224",
+            "SHA-512/256",
+            "SHA3-224",
+            "SHA3-256",
+            "SHA3-384",
+            "SHA3-512"
+          ],
+          "false_positives": [],
+          "false_negatives": []
         }
       ]
     }

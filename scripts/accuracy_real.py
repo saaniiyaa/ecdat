@@ -165,20 +165,93 @@ def family_of(label: str) -> str:
     return FAMILY.get(key, label.upper())
 
 
+_MODES = {"GCM", "CBC", "ECB", "CTR", "OFB", "CFB", "XTS", "CCM", "KW", "KEYWRAP", "XCBC"}
+_SIZES = {"128", "192", "224", "256", "384", "512", "1024", "2048", "3072", "4096"}
+
+
+def _split_label(label: str) -> tuple[str, frozenset[str], str | None]:
+    """(family, distinguishing specifiers, mode) for a label.
+
+    The family answers "what kind of primitive"; the specifiers answer "which
+    one". Both are needed, and the earlier version that tried to get by on
+    family alone was wrong in both directions: it scored SHA-256 as equivalent
+    to SHA-512, and - worse, because the tokens are single blobs -
+    HMAC-SHA256 as equivalent to HMAC-SHA384 and Ed25519 as equivalent to
+    Ed448. Those are different algorithms. Counting them as hits inflates the
+    score in exactly the direction nobody is watching for.
+    """
+    tokens = [t for t in re.split(r"[^A-Za-z0-9]+", label) if t]
+    upper = [t.upper() for t in tokens]
+    mode = next((t for t in upper if t in _MODES), None)
+
+    family = FAMILY.get(_normalise(label))
+    if family is None:
+        # "AES-128" has no FAMILY entry of its own. Drop the digits and retry,
+        # so the family comes out as "AES" and the 128 stays a specifier -
+        # otherwise the two spell a family name ("AES128") and the same
+        # algorithm in "AES-128-GCM" looks like a different one.
+        stripped = "".join(t for t, u in zip(tokens, upper) if u != mode and not u.isdigit())
+        family = FAMILY.get(_normalise(stripped)) or stripped.upper() or label.upper()
+    # FAMILY folds mode into the family name ("AES-GCM", "AES-CBC"). Compare on
+    # the primitive and keep the mode as its own constraint, so a label that
+    # simply omits the mode is not scored as disagreeing with one that names it.
+    for m_name in _MODES:
+        if family.upper().endswith("-" + m_name):
+            family = family[: -(len(m_name) + 1)]
+            break
+
+    # The family name is spelled from some of the tokens; those tokens are not
+    # specifiers. Everything else that survives is what distinguishes one
+    # member of the family from another.
+    consumed = set()
+    for fam_word in re.split(r"[^A-Za-z0-9]+", family.upper()):
+        if fam_word:
+            consumed.add(fam_word)
+    specs = frozenset(u for t, u in zip(tokens, upper)
+                      if u != mode and u not in consumed and not (family == u.upper() and len(u) > 3))
+    return family, specs, mode
+
+
+def _label_satisfies(expected: str, detected: str) -> bool:
+    """Does a detection satisfy one reviewer label?
+
+    An expected label constrains only what it actually names. "AES-128" says
+    the key size and says nothing about the mode, so a detection of
+    "AES-128-GCM" satisfies it - the detector reported more, not something
+    different. Treating extra specificity as a contradiction scores a correct
+    finding as both a false positive and a false negative, which is how a
+    measurement starts lying about a tool that is working.
+
+    What is *not* forgiven is a conflicting specifier. AES-128 does not satisfy
+    AES-256, SHA-256 does not satisfy SHA-512, HMAC-SHA256 does not satisfy
+    HMAC-SHA384, and Ed25519 does not satisfy Ed448. A detection of a family the
+    reviewer never expected is still a false positive.
+    """
+    e_fam, e_specs, e_mode = _split_label(expected)
+    d_fam, d_specs, d_mode = _split_label(detected)
+    if e_fam != d_fam:
+        return False
+    if e_specs and d_specs and e_specs != d_specs:
+        return False
+    if e_mode and d_mode and e_mode != d_mode:
+        return False
+    return True
+
+
 def score_file(expected: list[str], detected: list[str]) -> dict:
     """Score one file at family granularity.
 
-    A detection is a true positive when its family is one the reviewer
-    expected in that file, regardless of the specific bit strength. A detection
-    whose family is absent from the reviewer's list is a false positive - which
-    is the check that matters, because that is how a scanner invents
-    cryptography that is not there.
+    A detection is a true positive when it satisfies a label the reviewer wrote
+    for that file, regardless of the specific bit strength or of extra
+    specificity the detector added. A detection that satisfies no reviewer label
+    is a false positive - which is the check that matters, because that is how a
+    scanner invents cryptography that is not there.
     """
     exp_families = {family_of(e) for e in expected}
     det_families = {family_of(d) for d in detected}
-    tp = sorted(exp_families & det_families)
-    fp = sorted(det_families - exp_families)
-    fn = sorted(exp_families - det_families)
+    tp = sorted(e for e in expected if any(_label_satisfies(e, d) for d in detected))
+    fp = sorted(d for d in detected if not any(_label_satisfies(e, d) for e in expected))
+    fn = sorted(e for e in expected if not any(_label_satisfies(e, d) for d in detected))
     return {
         "expected": expected,
         "detected": detected,
@@ -372,6 +445,31 @@ def main() -> int:
             __import__("datetime").timezone.utc
         ).isoformat(),
         "tool": "scripts/accuracy_real.py",
+        "scoring": {
+            "granularity": "per expected label, tolerant of extra detector specificity",
+            "rule": (
+                "A detection is a true positive when it satisfies a reviewer label: same "
+                "primitive family, no conflicting specifier (AES-128 does not satisfy "
+                "AES-256, SHA-256 does not satisfy SHA-512, HMAC-SHA256 does not satisfy "
+                "HMAC-SHA384, Ed25519 does not satisfy Ed448), and no conflicting mode. An "
+                "expected label that does not name a mode or size does not constrain one."
+            ),
+            "changed_at": "2026-09-29",
+            "previous_granularity": "per family (all SHA-2 members collapsed to one)",
+            "why_changed": (
+                "Family-granular scoring could not see partial coverage inside a family: a "
+                "file declaring RS256, RS384 and RS512 scored the same whether the detector "
+                "found one or all three. It also scored AES-128 as disagreeing with "
+                "AES-128-GCM, penalising a detection for being more specific than the label."
+            ),
+            "effect_on_existing_numbers": (
+                "This is a change of measuring instrument, not an improvement in the "
+                "detector. PyJWT recall moved 0.600 -> 0.727 and Go TP moved 10 -> 20 under "
+                "the new rule with no change to the detectors. Anyone comparing against a "
+                "pre-2026-09-29 baseline must re-measure; the old and new numbers are not "
+                "commensurate."
+            ),
+        },
     }
 
     corpora = [("Python", "fixtures/pyjwt_repo", "PyJWT 2.8.0 shipped code")]
@@ -379,6 +477,10 @@ def main() -> int:
         corpora += [
             ("Go", "fixtures/golang_jwt_repo", "golang-jwt/jwt v5 (non-test)"),
             ("Java", "fixtures/java_jwt_repo", "auth0/java-jwt (non-test)"),
+            # C is the language where a regex tier is weakest and where the
+            # stakes are highest: OpenSSL is the library everything else is
+            # built on. A tier that cannot see it cannot claim multi-language.
+            ("C", "fixtures/openssl_repo", "OpenSSL 4.2.0 named implementation files"),
         ]
 
     all_findings = {}
@@ -394,6 +496,7 @@ def main() -> int:
         report["multilang"] = multilang_report({
             "golang-jwt/jwt v5": all_findings["Go"],
             "auth0/java-jwt": all_findings["Java"],
+            "OpenSSL 4.2.0 (C)": all_findings["C"],
         })
     if not args.independent:
         demo = ensure_scan(args.base_url, args.api_key, "fixtures/demo_repo",

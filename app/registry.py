@@ -166,8 +166,24 @@ ALGORITHMS: list[dict[str, Any]] = [
          oid="1.2.840.113549.2.5", aliases=["md5", "md-5"],
          classical_bits=0, quantum_bits=0, quantum_status="symmetric_safe",
          nist_deprecated_after=2001, nist_disallowed_after=2023, replacement_hint="SHA-256 (FIPS 180-4)"),
+    # A generic HMAC is a real thing to find: `HMAC()` in OpenSSL takes the
+    # digest as a parameter, and a JCA `Mac.getInstance("HmacSHA256")` names one
+    # explicitly. Mapping the bare name "hmac" onto HMAC-SHA256 reported a
+    # digest the source never mentioned - a false positive in the one construct
+    # where inventing a digest is least defensible.
+    dict(canonical_name="HMAC", family="HMAC", primitive="mac", purpose="integrity",
+         oid=None, aliases=["hmac"],
+         classical_bits=None, quantum_bits=128, quantum_status="symmetric_safe",
+         nist_deprecated_after=None, nist_disallowed_after=None,
+         replacement_hint="digest is not fixed by the construction; confirm the "
+                          "underlying digest (SHA-256 or SHA-384) at the call site"),
+    dict(canonical_name="HMAC-SHA1", family="HMAC", primitive="mac", purpose="integrity",
+         oid=None, aliases=["hmac-sha1", "hmacsha1", "hmacwithsha1"],
+         classical_bits=160, quantum_bits=80, quantum_status="symmetric_safe",
+         nist_deprecated_after=None, nist_disallowed_after=None,
+         replacement_hint="HMAC-SHA-256 (RFC 2104); HMAC-SHA-1 remains collision-weak"),
     dict(canonical_name="HMAC-SHA256", family="HMAC", primitive="mac", purpose="integrity",
-         oid="1.2.840.113549.2.9", aliases=["hmac-sha256", "hmacsha256", "hmac"],
+         oid="1.2.840.113549.2.9", aliases=["hmac-sha256", "hmacsha256"],
          classical_bits=256, quantum_bits=128, quantum_status="symmetric_safe",
          nist_deprecated_after=None, nist_disallowed_after=None, replacement_hint="no change required"),
     dict(canonical_name="HMAC-SHA384", family="HMAC", primitive="mac", purpose="integrity",
@@ -474,14 +490,31 @@ def canonicalise(
             continue
         if family == "AES":
             key_size = bits or (int(re.search(r"aes(\d+)", norm).group(1)) if re.search(r"aes(\d+)", norm) else 128)
-            base = asset_dict(ALIAS_INDEX[_norm(f"AES-{key_size}-GCM")])
+            # Only 128- and 256-bit AES variants are enumerated, but AES-192 and
+            # AES-512 are real and do appear in the wild (EVP_aes_192_gcm). A
+            # direct index raised KeyError and took the whole scan with it, so a
+            # legitimate finding destroyed every other finding in the file. Fall
+            # back to the generic AES entry as a template and keep the true key
+            # size and mode in the name - an unlisted variant is still a
+            # reportable fact, it just has no policy entry of its own.
+            def _aes_asset(suffix: str):
+                return ALIAS_INDEX.get(_norm(f"AES-{key_size}-{suffix}")) or ALIAS_INDEX.get(_norm("AES-ECB"))
+            # Decide the mode from the request, not from whichever template we
+            # had to fall back on - otherwise an unlisted key size inherits ECB
+            # from the generic entry and the finding reports a mode the source
+            # never used.
             if norm.endswith("ecb"):
                 base = asset_dict(ALIAS_INDEX[_norm("AES-ECB")])
+                target_mode = "ecb"
             elif (mode or "").lower() == "cbc" or "cbc" in norm:
-                base = asset_dict(ALIAS_INDEX[_norm(f"AES-{key_size}-CBC")])
+                base = asset_dict(_aes_asset("CBC"))
+                target_mode = "cbc"
+            else:
+                base = asset_dict(_aes_asset("GCM"))
+                target_mode = (mode or "gcm").lower()
             base["key_size_bits"] = key_size
-            base["mode"] = (mode or base.get("mode") or "gcm").lower()
-            base["canonical_name"] = f"AES-{key_size}-{(mode or base.get('mode') or 'gcm').upper()}"
+            base["mode"] = target_mode
+            base["canonical_name"] = f"AES-{key_size}-{target_mode.upper()}"
             return base
         key_size = bits or (int(re.search(r"(\d+)", norm).group(1)) if re.search(r"(\d+)", norm) else None)
         if family in SIZE_FALLBACK and key_size in SIZE_FALLBACK[family]:
