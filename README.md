@@ -1,7 +1,7 @@
 # ECDAT — Enterprise Cryptographic Discovery & Analysis Tool
 
 [![CI](https://github.com/saaniiyaa/ecdat/actions/workflows/ci.yml/badge.svg)](https://github.com/saaniiyaa/ecdat/actions/workflows/ci.yml)
-[![Accuracy Benchmark](https://img.shields.io/badge/Detector%20F1-1.0000%20(100%25%20P%2FR)-brightgreen)](docs/ACCURACY.md)
+[![Accuracy Benchmark](https://img.shields.io/badge/Detector%20F1-0.955%20(P%200.973%20%2F%20R%200.938)-brightgreen)](docs/ACCURACY.md)
 [![Real-World Scan](https://img.shields.io/badge/PyJWT%20Audit-223%20Findings%20(CBOM%201.7)-blue)](docs/real_world_scan/AUDIT_REPORT.md)
 [![Coverage Honesty](https://img.shields.io/badge/Coverage%20Index-0.983-purple)](docs/measurements.json)
 [![API Contract](https://img.shields.io/badge/OpenAPI-3.1.0%20Frozen-black)](openapi.json)
@@ -14,7 +14,7 @@ Mosca analysis → purpose-aware PQC migration plan → CycloneDX CBOM + signed 
 > it did not inspect.
 
 📄 Full architecture & strategy: **[`docs/BACKEND_ARCHITECTURE_AND_STRATEGY.md`](docs/BACKEND_ARCHITECTURE_AND_STRATEGY.md)** (12 sections)  
-🎯 Measured accuracy benchmark: **[`docs/ACCURACY.md`](docs/ACCURACY.md)** (100% precision, recall & F1 on labelled corpus)  
+🎯 Measured accuracy benchmark: **[`docs/ACCURACY.md`](docs/ACCURACY.md)** (5 hand-labelled corpora · 43 files · precision 0.973 / recall 0.938)  
 🌍 Real-world open-source audit: **[`docs/real_world_scan/AUDIT_REPORT.md`](docs/real_world_scan/AUDIT_REPORT.md)** (PyJWT production scan)  
 📊 Measured runtime performance: **[`docs/measurements.json`](docs/measurements.json)** (regenerate with `make benchmark`)  
 🔌 API contract: **`openapi.json`** · live docs at `/docs` · [`COORDINATION.md`](COORDINATION.md)  
@@ -80,7 +80,7 @@ Open the interactive contract at <http://localhost:8000/docs>.
 make install      # venv + pinned requirements
 make init-db      # create schema (idempotent)
 make serve        # uvicorn on :8000
-make test         # 162 tests
+make test         # 185 tests
 make demo         # scan the demo estate through the live API and print the summary
 ```
 
@@ -248,7 +248,7 @@ python -m app.manage backup --out-dir backups      # consistent snapshot (SQLite
 python -m app.manage restore backups/ecdat-*.sqlite3
 python -m app.manage demo-scan --api-key dev-ecdat-key
 python -m app.manage verify <attestation_id>
-python -m pytest tests/ -q                         # 162 tests
+python -m pytest tests/ -q                         # 185 tests
 python scripts/measure_all.py --api-key dev-ecdat-key   # regenerate docs/measurements.json
 python scripts/scale_benchmark.py --copies 100          # throughput measurement
 ```
@@ -270,8 +270,10 @@ app/
   scanners/  python_ast  source_text  manifests  configs  certs  binaries  containers  tls_live(opt-in)
   services/  scan_runner  risk  mosca  recommend  coverage  attestation  exports  diff  serialize
   api/       routes_scans  routes_analysis  routes_evidence  routes_meta  serializers  deps
-tests/       test_detectors.py  test_risk_engine.py  test_api.py  conftest.py   (162 tests)
+tests/       185 tests: test_api.py  test_detectors.py  test_declarations.py
+            test_c_tier_and_scoring.py  test_rust_tier.py  test_risk_engine.py  …
 fixtures/demo_repo/      22-file multi-language demo estate
+fixtures/*_repo/         hand-labelled upstream corpora (PyJWT, Go, Java, OpenSSL, rustls)
 migrations/              Alembic env + 0001_baseline
 scripts/                 measure_all.py  scale_benchmark.py
 docs/                    BACKEND_ARCHITECTURE_AND_STRATEGY.md  measurements.json
@@ -282,7 +284,7 @@ docs/                    BACKEND_ARCHITECTURE_AND_STRATEGY.md  measurements.json
 <!-- COORDINATION:BEGIN -->
 ## 🤝 Coordination block (AI #1 backend ⇄ Saniya's AI frontend)
 
-**Backend status:** ✅ P0–P6 complete · 34 paths / 39 operations · 162 tests green · API `1.0.0`
+**Backend status:** ✅ P0–P6 complete · 34 paths / 39 operations · 185 tests green · API `1.0.0`
 **Contract version:** `openapi.json` @ 2026-09-26 · **0 breaking changes**
 **Local base URL:** `http://127.0.0.1:8000/api/v1` · **API key:** `dev-ecdat-key` (header `X-API-Key`)
 

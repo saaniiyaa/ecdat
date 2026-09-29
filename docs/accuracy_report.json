@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T10:20:30.780283+00:00",
+  "generated_at": "2026-09-29T14:01:58.503681+00:00",
   "tool": "scripts/accuracy_real.py",
   "scoring": {
     "granularity": "per expected label, tolerant of extra detector specificity",
@@ -251,7 +251,7 @@
     {
       "corpus": "golang-jwt/jwt v5",
       "language": "go",
-      "method": "manual line-by-line review of the non-test source of each library; for OpenSSL, of the named implementation files listed below",
+      "method": "Each labelled file is read by a human reviewer and the expected set of algorithms is written down from the source, before any detector runs. A label states what the FILE uses, at the granularity the source actually states: where a construction is generic over its digest (an HMAC over a caller-chosen hash, an HKDF over a generic MAC) the label names the construction WITHOUT a digest, because naming one would be a claim the file does not make. Where a source states a key size the size is part of the label. Labels are never edited to match detector output; a disagreement is recorded as a disagreement.",
       "labelled_files": 11,
       "totals": {
         "tp": 20,
@@ -494,7 +494,7 @@
     {
       "corpus": "auth0/java-jwt",
       "language": "java",
-      "method": "manual line-by-line review of the non-test source of each library; for OpenSSL, of the named implementation files listed below",
+      "method": "Each labelled file is read by a human reviewer and the expected set of algorithms is written down from the source, before any detector runs. A label states what the FILE uses, at the granularity the source actually states: where a construction is generic over its digest (an HMAC over a caller-chosen hash, an HKDF over a generic MAC) the label names the construction WITHOUT a digest, because naming one would be a claim the file does not make. Where a source states a key size the size is part of the label. Labels are never edited to match detector output; a disagreement is recorded as a disagreement.",
       "labelled_files": 8,
       "totals": {
         "tp": 8,
@@ -663,7 +663,7 @@
     {
       "corpus": "OpenSSL 4.2.0 (C)",
       "language": "c",
-      "method": "manual line-by-line review of the non-test source of each library; for OpenSSL, of the named implementation files listed below",
+      "method": "Each labelled file is read by a human reviewer and the expected set of algorithms is written down from the source, before any detector runs. A label states what the FILE uses, at the granularity the source actually states: where a construction is generic over its digest (an HMAC over a caller-chosen hash, an HKDF over a generic MAC) the label names the construction WITHOUT a digest, because naming one would be a claim the file does not make. Where a source states a key size the size is part of the label. Labels are never edited to match detector output; a disagreement is recorded as a disagreement.",
       "labelled_files": 8,
       "totals": {
         "tp": 30,
@@ -922,6 +922,271 @@
             "SHA3-256",
             "SHA3-384",
             "SHA3-512"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        }
+      ]
+    },
+    {
+      "corpus": "rustls 0.24.0-dev (Rust)",
+      "language": "rust",
+      "method": "Each labelled file is read by a human reviewer and the expected set of algorithms is written down from the source, before any detector runs. A label states what the FILE uses, at the granularity the source actually states: where a construction is generic over its digest (an HMAC over a caller-chosen hash, an HKDF over a generic MAC) the label names the construction WITHOUT a digest, because naming one would be a claim the file does not make. Where a source states a key size the size is part of the label. Labels are never edited to match detector output; a disagreement is recorded as a disagreement.",
+      "labelled_files": 8,
+      "totals": {
+        "tp": 32,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "note": null
+      },
+      "per_file": [
+        {
+          "file_path": "rustls/src/crypto/hash.rs",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "Interface only. The file declares `pub trait Hash` and the `Output`/`Context` value types. It never binds a digest - the algorithm arrives as a return value of `Hash::algorithm()`. A trait declaration that names no algorithm is not a selection of one, so a detector that reported a digest here would be inventing it."
+        },
+        {
+          "file_path": "rustls/src/crypto/hmac.rs",
+          "expected": [],
+          "detected": [],
+          "expected_families": [],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [],
+          "negative_reason": "Interface only. The file declares `pub trait Hmac`, `Key`, and the `Tag` value types. No HMAC is constructed here and no digest is bound: `Key::sign_concat` is a method the provider must implement. The doc comment naming HMAC-SHA256/SHA384 is prose, not a binding."
+        },
+        {
+          "file_path": "rustls/src/crypto/tls13.rs",
+          "expected": [
+            "HKDF"
+          ],
+          "detected": [
+            "HKDF"
+          ],
+          "expected_families": [
+            "KDF"
+          ],
+          "detected_families": [
+            "KDF"
+          ],
+          "true_positives": [
+            "HKDF"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "rustls-ring/src/hash.rs",
+          "expected": [
+            "SHA-256",
+            "SHA-384"
+          ],
+          "detected": [
+            "SHA-256",
+            "SHA-384"
+          ],
+          "expected_families": [
+            "SHA-2"
+          ],
+          "detected_families": [
+            "SHA-2"
+          ],
+          "true_positives": [
+            "SHA-256",
+            "SHA-384"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "rustls-ring/src/hmac.rs",
+          "expected": [
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "HMAC-SHA512"
+          ],
+          "detected": [
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "HMAC-SHA512"
+          ],
+          "expected_families": [
+            "HMAC"
+          ],
+          "detected_families": [
+            "HMAC"
+          ],
+          "true_positives": [
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "HMAC-SHA512"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "rustls-ring/src/sign.rs",
+          "expected": [
+            "RSA",
+            "RSA-PSS",
+            "ECDSA-P256",
+            "ECDSA-P384",
+            "Ed25519"
+          ],
+          "detected": [
+            "ECDSA-P256",
+            "ECDSA-P384",
+            "Ed25519",
+            "RSA-2048",
+            "RSA-PSS"
+          ],
+          "expected_families": [
+            "ECDSA",
+            "EdDSA",
+            "RSA",
+            "RSA-PSS"
+          ],
+          "detected_families": [
+            "ECDSA",
+            "EdDSA",
+            "RSA",
+            "RSA-PSS"
+          ],
+          "true_positives": [
+            "ECDSA-P256",
+            "ECDSA-P384",
+            "Ed25519",
+            "RSA",
+            "RSA-PSS"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "rustls-ring/src/tls12.rs",
+          "expected": [
+            "SHA-256",
+            "SHA-384",
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "AES-128-GCM",
+            "AES-256-GCM",
+            "ChaCha20-Poly1305",
+            "ECDSA-P256",
+            "ECDSA-P384",
+            "ECDSA-P521",
+            "Ed25519",
+            "RSA",
+            "RSA-PSS"
+          ],
+          "detected": [
+            "AES-128-GCM",
+            "AES-256-GCM",
+            "ChaCha20-Poly1305",
+            "ECDSA-P256",
+            "ECDSA-P384",
+            "ECDSA-P521",
+            "Ed25519",
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "RSA-2048",
+            "RSA-PSS",
+            "SHA-256",
+            "SHA-384"
+          ],
+          "expected_families": [
+            "AES-GCM",
+            "ChaCha20-Poly1305",
+            "ECDSA",
+            "EdDSA",
+            "HMAC",
+            "RSA",
+            "RSA-PSS",
+            "SHA-2"
+          ],
+          "detected_families": [
+            "AES-GCM",
+            "ChaCha20-Poly1305",
+            "ECDSA",
+            "EdDSA",
+            "HMAC",
+            "RSA",
+            "RSA-PSS",
+            "SHA-2"
+          ],
+          "true_positives": [
+            "AES-128-GCM",
+            "AES-256-GCM",
+            "ChaCha20-Poly1305",
+            "ECDSA-P256",
+            "ECDSA-P384",
+            "ECDSA-P521",
+            "Ed25519",
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "RSA",
+            "RSA-PSS",
+            "SHA-256",
+            "SHA-384"
+          ],
+          "false_positives": [],
+          "false_negatives": []
+        },
+        {
+          "file_path": "rustls-ring/src/tls13.rs",
+          "expected": [
+            "SHA-256",
+            "SHA-384",
+            "HKDF",
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "AES-128-GCM",
+            "AES-256-GCM",
+            "ChaCha20-Poly1305"
+          ],
+          "detected": [
+            "AES-128-GCM",
+            "AES-256-GCM",
+            "ChaCha20-Poly1305",
+            "HKDF",
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "SHA-256",
+            "SHA-384"
+          ],
+          "expected_families": [
+            "AES-GCM",
+            "ChaCha20-Poly1305",
+            "HMAC",
+            "KDF",
+            "SHA-2"
+          ],
+          "detected_families": [
+            "AES-GCM",
+            "ChaCha20-Poly1305",
+            "HMAC",
+            "KDF",
+            "SHA-2"
+          ],
+          "true_positives": [
+            "AES-128-GCM",
+            "AES-256-GCM",
+            "ChaCha20-Poly1305",
+            "HKDF",
+            "HMAC-SHA256",
+            "HMAC-SHA384",
+            "SHA-256",
+            "SHA-384"
           ],
           "false_positives": [],
           "false_negatives": []

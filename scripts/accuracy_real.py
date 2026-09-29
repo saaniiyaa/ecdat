@@ -481,6 +481,11 @@ def main() -> int:
             # stakes are highest: OpenSSL is the library everything else is
             # built on. A tier that cannot see it cannot claim multi-language.
             ("C", "fixtures/openssl_repo", "OpenSSL 4.2.0 named implementation files"),
+            # Rust has no algorithm strings at all: rustls selects primitives
+            # through constant paths and type names. A tier that has never been
+            # measured against a real Rust TLS stack has not earned the word
+            # "multi-language".
+            ("Rust", "fixtures/rustls_repo", "rustls 0.24.0-dev non-test source"),
         ]
 
     all_findings = {}
@@ -497,6 +502,7 @@ def main() -> int:
             "golang-jwt/jwt v5": all_findings["Go"],
             "auth0/java-jwt": all_findings["Java"],
             "OpenSSL 4.2.0 (C)": all_findings["C"],
+            "rustls 0.24.0-dev (Rust)": all_findings["Rust"],
         })
     if not args.independent:
         demo = ensure_scan(args.base_url, args.api_key, "fixtures/demo_repo",

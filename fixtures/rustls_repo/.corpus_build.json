@@ -1,0 +1,42 @@
+{
+ "rustls/src/crypto/hash.rs": {
+  "upstream_lines": 83,
+  "fixture_lines": 83,
+  "test_modules_removed": 0
+ },
+ "rustls/src/crypto/hmac.rs": {
+  "upstream_lines": 118,
+  "fixture_lines": 118,
+  "test_modules_removed": 0
+ },
+ "rustls/src/crypto/tls13.rs": {
+  "upstream_lines": 269,
+  "fixture_lines": 269,
+  "test_modules_removed": 0
+ },
+ "rustls-ring/src/hash.rs": {
+  "upstream_lines": 58,
+  "fixture_lines": 58,
+  "test_modules_removed": 0
+ },
+ "rustls-ring/src/hmac.rs": {
+  "upstream_lines": 47,
+  "fixture_lines": 47,
+  "test_modules_removed": 0
+ },
+ "rustls-ring/src/sign.rs": {
+  "upstream_lines": 805,
+  "fixture_lines": 571,
+  "test_modules_removed": 1
+ },
+ "rustls-ring/src/tls12.rs": {
+  "upstream_lines": 537,
+  "fixture_lines": 475,
+  "test_modules_removed": 1
+ },
+ "rustls-ring/src/tls13.rs": {
+  "upstream_lines": 494,
+  "fixture_lines": 353,
+  "test_modules_removed": 1
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "upstream": "https://github.com/rustls/rustls",
+ "upstream_commit": "99f2358cae2954837dbb866faf6727de75489ab9",
+ "note": "sha256 of the ORIGINAL upstream files, before #[cfg(test)] modules were stripped for the non-test corpus convention.",
+ "files": {
+  "rustls/src/crypto/hash.rs": "a2d90b9fc9b14601b867352ffb22b01a37fe71e87e453c971bc263cb1fcf9c6b",
+  "rustls/src/crypto/hmac.rs": "49fe32e144f1700c04c8c735b18019004b61212051e5da725cf8a49c53297552",
+  "rustls/src/crypto/tls13.rs": "6fc0fcf9150ee4014a938c804e072db60880ce98b19ab0132305f5c41bc13655",
+  "rustls-ring/src/hash.rs": "8bda6c81355de6cdc4c5ee5e87936d97ae73fd5fef5d58e07ff88184624d9ea6",
+  "rustls-ring/src/hmac.rs": "101a420437a2a2ed473f0a88a8bd628a923ef05e70c9aae6b109ae4d1cf0bc93",
+  "rustls-ring/src/sign.rs": "bc7eb8259652042a1c92259c5e236d792d0ded55b3db6704ffd4a125eced3014",
+  "rustls-ring/src/tls12.rs": "703a785767929cfe46687a4540babb0a028c7e856b2925eebc12fca1cec994f1",
+  "rustls-ring/src/tls13.rs": "5c873e281e5d0095c52d2bbd266d7d2e6b3aa00ee1d13f7ecb89c8f060506811"
+ }
+}

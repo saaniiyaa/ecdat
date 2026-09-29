@@ -38,10 +38,18 @@
       "fp": 0,
       "fn": 0
     },
+    "rust:rustls 0.24.0-dev (Rust)": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tp": 32,
+      "fp": 0,
+      "fn": 0
+    },
     "AGGREGATE": {
-      "precision": 0.961,
-      "recall": 0.9136,
-      "tp": 74,
+      "precision": 0.9725,
+      "recall": 0.9381,
+      "tp": 106,
       "fp": 3,
       "fn": 7
     }

@@ -57,6 +57,15 @@ HISTORICAL = re.compile(
 )
 # A three-decimal or two-decimal float.
 FLOAT = re.compile(r"(?<![\w.])(\d\.\d{2,3})(?![\w.])")
+# A percentage in a metric context is the same kind of claim, and the float
+# pattern above can never see one: "100% precision" is not "1.00". This is not
+# hypothetical - the README really did say "100% precision, recall & F1" while
+# the measured aggregate was 0.973 / 0.938, and the checker stayed silent
+# because there was no decimal to disagree with.
+PERCENT = re.compile(r"(?<![\w.])(\d{1,3}(?:\.\d+)?)\s*%")
+# A percent-escape inside a URL. Stripped before scanning, so that the badge
+# text a reader sees is the text that gets checked.
+URL_ESCAPE = re.compile(r"%[0-9A-Fa-f]{2}")
 
 # Numbers that are measurements but are not detector metrics. Listed so the
 # checker knows they are expected to vary and should not be demanded.
@@ -100,6 +109,14 @@ def measured_values(report: dict) -> set[float]:
     if tp + fn:
         values.add(round(tp / (tp + fn), 3))
         values.add(round(tp / (tp + fn), 2))
+    # F1 of that same aggregate. A document may quote the combined F1 as well
+    # as precision and recall, and the badge does.
+    if tp + fp and tp + fn:
+        p, r = tp / (tp + fp), tp / (tp + fn)
+        if p + r:
+            f1 = round(2 * p * r / (p + r), 3)
+            values.add(f1)
+            values.add(round(f1, 2))
     return values
 
 
@@ -120,6 +137,12 @@ def check(path: pathlib.Path, allowed: set[float]) -> list[str]:
         # the measurement owns and markdown does not.
         if in_code_block or set(stripped) <= set("-| :"):
             continue
+        # Badge URLs are percent-encoded, so the text of a shields.io badge
+        # arrives as "F1-1.0000%20(100%25%20P%2FR)". Those are escape
+        # sequences, not claims; strip them before looking for a number. The
+        # badge's own wording is still checked, and it was the badge that
+        # carried the one stale "100%" in this repository.
+        text = URL_ESCAPE.sub(" ", text)
         if not METRIC_CONTEXT.search(text):
             continue
         if HISTORICAL.search(text):
@@ -131,6 +154,14 @@ def check(path: pathlib.Path, allowed: set[float]) -> list[str]:
             problems.append(
                 f"{path}:{number}: quotes {value} in a metric context, but the "
                 f"current measurement does not produce it"
+            )
+        for token in PERCENT.finditer(text):
+            value = float(token.group(1))
+            if round(value / 100, 3) in allowed or round(value / 100, 2) in allowed:
+                continue
+            problems.append(
+                f"{path}:{number}: claims {token.group(1)}% in a metric context, but "
+                f"the current measurement does not produce it"
             )
     return problems
 

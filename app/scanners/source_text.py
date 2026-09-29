@@ -251,6 +251,92 @@ def _c_resolve_nid(alg: str) -> str | None:
             return resolve(m)
     return None
 
+# --------------------------------------------------------------------------- #
+# Rust / ring tier
+#
+# Rust has no string literals and no method calls to match. A crypto provider
+# names its primitives as module-qualified constants:
+#
+#     static SHA256: Hash = Hash(&digest::SHA256, HashAlgorithm::SHA256);
+#     hkdf_provider: &RingHkdf(hkdf::HKDF_SHA256, hmac::HMAC_SHA256)
+#     packet_alg: &aead::AES_128_GCM
+#
+# The shape is "an all-caps constant reached through a module path", and the
+# namespaces that carry them are ring's: digest, hmac, hkdf, aead, signature,
+# cipher, ec, ecdsa, rsa. Recognising the namespace rather than enumerating
+# constants is what keeps this from becoming another list of names we happened
+# to remember.
+# --------------------------------------------------------------------------- #
+
+C_RUST_CONST = re.compile(
+    r"\b(?P<ns>[A-Za-z_][A-Za-z0-9_]*)::(?P<name>[A-Z][A-Z0-9_]{2,})\b"
+)
+_C_RUST_NAMESPACES = frozenset({
+    "digest", "hmac", "hkdf", "aead", "signature", "cipher", "ec", "ecdsa",
+    "rsa", "hash", "hashalg", "p256", "p384", "ed25519", "rand",
+})
+# The HKDF construction itself, which in Rust is named by the type that
+# implements it (HkdfUsingHmac) rather than by a constant path. This is the
+# Rust analogue of C_HMAC_FN matching HMAC_Init_ex: the construction is
+# implemented in the file, generic over the digest, so the KDF is named
+# without a digest -- exactly as crypto/hmac/hmac.c is labelled.
+RUST_KDF_CONSTRUCTION = re.compile(
+    r"\b(?P<kind>HkdfUsingHmac|HkdfExpanderUsingHmac|HkdfPrkExtract|HkdfExpander|Hkdf)\b"
+)
+
+
+_RUST_EXACT = {
+    "ED25519": "Ed25519", "ED448": "Ed448",
+    "X25519": "X25519", "X448": "X448",
+    "CHACHA20_POLY1305": "ChaCha20-Poly1305", "XCHACHA20_POLY1305": "XChaCha20-Poly1305",
+    "AES128GCM": "AES-128", "AES256GCM": "AES-256",
+    "AES128CBC": "AES-128", "AES256CBC": "AES-256",
+}
+_RUST_PREFIX = [
+    (r"^CHACHA20", "ChaCha20-Poly1305"),
+    (r"^XCHACHA20", "XChaCha20-Poly1305"),
+    (r"^HMAC_SHA(\d+)$", "HMAC-SHA{g}"),
+    (r"^HKDF_SHA\d+$", "HKDF"),
+    (r"^HKDF", "HKDF"),
+    (r"^RSA_PSS", "RSA-PSS"),
+    (r"^RSA_PKCS1", "RSA"),
+    (r"^RSA_ENCRYPTION", "RSA"),
+    (r"^ECDSA_NISTP(256|384|521)", "ECDSA-P{g}"),
+    (r"^ECDSA_SECP256R1", "ECDSA-P256"),
+    (r"^ECDSA_SECP384R1", "ECDSA-P384"),
+    (r"^ECDSA_SECP521R1", "ECDSA-P521"),
+    # rustls names curves as ECDSA_P384 and as ECDSA_P384_SHA384_ASN1_SIGNING.
+    # Without these the bare `^ECDSA` catch-all resolved both to the registry
+    # default of P256, so a file that only ever names P384 was reported as P256.
+    (r"^ECDSA_P(256|384|521)", "ECDSA-P{g}"),
+    (r"^ECDSA", "ECDSA"),
+    (r"^ED25519", "Ed25519"),
+    (r"^X25519", "X25519"),
+]
+
+
+def _c_resolve_rust_const(match: re.Match) -> str | None:
+    """Resolve a module-qualified crypto constant, e.g. `hmac::HMAC_SHA256`.
+
+    Resolution is by shape: a recognised namespace, or a name that begins with
+    a recognised algorithm stem. An unrecognised name returns None rather than a
+    guess, so an unmodelled primitive stays visible as an absence of our model
+    instead of acquiring a confident wrong label.
+    """
+    ns = match.group("ns").lower()
+    name = match.group("name")
+    if ns not in _C_RUST_NAMESPACES and not re.match(
+        r"(AES|SHA|HMAC|HKDF|CHACHA|ECDSA|RSA|ED25519|ED448|X25519|X448)", name
+    ):
+        return None
+    if name in _RUST_EXACT:
+        return _RUST_EXACT[name]
+    for pattern, family in _RUST_PREFIX:
+        m = re.match(pattern, name)
+        if m:
+            return family.format(g=m.group(1)) if "{g}" in family else family
+    return _c_resolve_evp(name.lower()) or _c_resolve_digest(name)
+
 # Resolvers turn a matched JCA token into an ECDAT asset. Split out so the
 # mapping is testable on its own rather than buried in the scan loop.
 _JCA_SIG = re.compile(r"(MD5|SHA1|SHA224|SHA256|SHA384|SHA512)with(RSASSA-PSS|RSA|DSA|ECDSA)", re.I)
@@ -311,7 +397,14 @@ def _resolve_jca_explicit(match: re.Match) -> dict | None:
     return None
 KEY_SIZE = re.compile(r"[\"']?(key_size|keySize|keysize|KEY_SIZE|keyLength|key_length)[\"']?\s*[:=]\s*(\d{3,4})")
 CURVE = re.compile(r"[\"']?(secp256r1|secp384r1|secp521r1|prime256v1|curve25519|x25519|P-256|P-384)[\"']?", re.I)
-TLS_OLD = re.compile(r"[\"']?(TLSv1(?:\.\d)?|SSLv3|SSLv2)[\"']?")
+# `TLSv1_3` is TLS 1.3, not TLS 1.0. Without the lookahead the optional `\.\d`
+# branch stopped at the underscore and reported a TLS1.3-only code path as using
+# the deprecated TLS 1.0 - a false alarm about the most secure version in
+# common use, which is worse than no finding because it teaches people to
+# dismiss the ones that matter.
+TLS_OLD = re.compile(
+    r"[\"']?(TLSv1(?:\.(?:0|1|2|3))?(?!\d|_)|SSLv3|SSLv2)[\"']?"
+)
 # Java/C# style key sizing: KeyPairGenerator.getInstance("RSA"); g.initialize(1024)
 INIT_SIZE = re.compile(r"(?:initialize|generateKey|Init)\s*\(\s*(\d{3,4})\s*\)")
 RSA_CONTEXT = re.compile(r"RSA|DSA|KeyPairGenerator|KeyGenerator|CryptoServiceProvider|ECDsa", re.I)
@@ -506,6 +599,43 @@ class SourceTextScanner:
                     rel_path, asset, idx, match.group(0), snippet,
                     declaration="HMAC construction invoked; the underlying digest is a "
                                "parameter, so the MAC is reported without a digest",
+                ))
+
+            # ---- Rust / rustls ------------------------------------------------
+            # Rust has no string-literal algorithm selection: the primitive is
+            # named by a constant path like `hmac::HMAC_SHA256` or a variant
+            # like `SignatureScheme::ED25519`. The path itself is the
+            # selection, so a match is the evidence.
+            for match in C_RUST_CONST.finditer(line):
+                family = _c_resolve_rust_const(match)
+                if not family:
+                    continue
+                asset = canonicalise(family)
+                if not asset:
+                    continue
+                kc = (idx, asset["canonical_name"])
+                if kc in seen:
+                    continue
+                seen.add(kc)
+                out.append(self._f(
+                    rel_path, asset, idx, match.group(0), snippet,
+                    declaration=f"Rust constant path {match.group(0)} selects {family}; "
+                               f"the primitive is bound at compile time rather than by string lookup",
+                ))
+
+            for match in RUST_KDF_CONSTRUCTION.finditer(line):
+                asset = canonicalise("HKDF")
+                if not asset:
+                    continue
+                kc = (idx, asset["canonical_name"])
+                if kc in seen:
+                    continue
+                seen.add(kc)
+                out.append(self._f(
+                    rel_path, asset, idx, match.group(0), snippet,
+                    declaration=f"Rust type {match.group(0)} implements the HKDF construction; "
+                               f"the underlying digest is a generic parameter, so the KDF is "
+                               f"reported without a digest",
                 ))
 
             for pattern, family, label in (
