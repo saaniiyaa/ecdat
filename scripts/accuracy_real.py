@@ -486,6 +486,7 @@ def main() -> int:
             # measured against a real Rust TLS stack has not earned the word
             # "multi-language".
             ("Rust", "fixtures/rustls_repo", "rustls 0.24.0-dev non-test source"),
+            ("Binary", "fixtures/tier6_binary_cert", "Binary & Cert Tier"),
         ]
 
     all_findings = {}
@@ -503,6 +504,7 @@ def main() -> int:
             "auth0/java-jwt": all_findings["Java"],
             "OpenSSL 4.2.0 (C)": all_findings["C"],
             "rustls 0.24.0-dev (Rust)": all_findings["Rust"],
+            "Binary & Cert Tier": all_findings["Binary"],
         })
     if not args.independent:
         demo = ensure_scan(args.base_url, args.api_key, "fixtures/demo_repo",

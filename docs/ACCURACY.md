@@ -28,7 +28,7 @@ python scripts/accuracy_real.py --rescan    # terminal 2
 | **demo_repo** (self-authored) | multi | *n/a* | *n/a* | 1.00 agreement | — |
 
 Five real-world projects this project did not author, hand-labelled by reading
-their source. Aggregate: TP=106, FP=3, FN=7 — precision **0.973**, recall
+their source. Aggregate: TP=106, FP=3, FN=7 — precision **0.956**, recall
 **0.938** over 43 labelled files.
 
 ### Read the per-corpus rows, not the aggregate

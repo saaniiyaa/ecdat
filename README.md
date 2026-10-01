@@ -1,7 +1,7 @@
 # ECDAT — Enterprise Cryptographic Discovery & Analysis Tool
 
 [![CI](https://github.com/saaniiyaa/ecdat/actions/workflows/ci.yml/badge.svg)](https://github.com/saaniiyaa/ecdat/actions/workflows/ci.yml)
-[![Accuracy Benchmark](https://img.shields.io/badge/Detector%20F1-0.955%20(P%200.973%20%2F%20R%200.938)-brightgreen)](docs/ACCURACY.md)
+[![Accuracy Benchmark](https://img.shields.io/badge/Detector%20F1-0.915%20(P%200.956%20%2F%20R%200.938)-brightgreen)](docs/ACCURACY.md)
 [![Real-World Scan](https://img.shields.io/badge/PyJWT%20Audit-223%20Findings%20(CBOM%201.7)-blue)](docs/real_world_scan/AUDIT_REPORT.md)
 [![Coverage Honesty](https://img.shields.io/badge/Coverage%20Index-0.983-purple)](docs/measurements.json)
 [![API Contract](https://img.shields.io/badge/OpenAPI-3.1.0%20Frozen-black)](openapi.json)
@@ -14,7 +14,7 @@ Mosca analysis → purpose-aware PQC migration plan → CycloneDX CBOM + signed 
 > it did not inspect.
 
 📄 Full architecture & strategy: **[`docs/BACKEND_ARCHITECTURE_AND_STRATEGY.md`](docs/BACKEND_ARCHITECTURE_AND_STRATEGY.md)** (12 sections)  
-🎯 Measured accuracy benchmark: **[`docs/ACCURACY.md`](docs/ACCURACY.md)** (5 hand-labelled corpora · 43 files · precision 0.973 / recall 0.938)  
+🎯 Measured accuracy benchmark: **[`docs/ACCURACY.md`](docs/ACCURACY.md)** (5 hand-labelled corpora · 43 files · precision 0.956 / recall 0.938)  
 🌍 Real-world open-source audit: **[`docs/real_world_scan/AUDIT_REPORT.md`](docs/real_world_scan/AUDIT_REPORT.md)** (PyJWT production scan)  
 📊 Measured runtime performance: **[`docs/measurements.json`](docs/measurements.json)** (regenerate with `make benchmark`)  
 🔌 API contract: **`openapi.json`** · live docs at `/docs` · [`COORDINATION.md`](COORDINATION.md)  

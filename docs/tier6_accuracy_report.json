@@ -1,0 +1,9 @@
+{
+  "tier": "Binary and Certificate Tier (SYMBOL_INFERRED & CERTIFICATE_DECLARED)",
+  "tp": 3,
+  "fp": 0,
+  "fn": 0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "status": "Validated"
+}

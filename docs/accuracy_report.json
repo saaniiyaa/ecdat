@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T14:01:58.503681+00:00",
+  "generated_at": "2026-10-01T15:38:53.798320+00:00",
   "tool": "scripts/accuracy_real.py",
   "scoring": {
     "granularity": "per expected label, tolerant of extra detector specificity",
@@ -1190,6 +1190,95 @@
           ],
           "false_positives": [],
           "false_negatives": []
+        }
+      ]
+    },
+    {
+      "corpus": "Binary & Cert Tier",
+      "language": "Mixed (C/ASN.1)",
+      "method": "Each labelled file is read by a human reviewer and the expected set of algorithms is written down from the source, before any detector runs. A label states what the FILE uses, at the granularity the source actually states: where a construction is generic over its digest (an HMAC over a caller-chosen hash, an HKDF over a generic MAC) the label names the construction WITHOUT a digest, because naming one would be a claim the file does not make. Where a source states a key size the size is part of the label. Labels are never edited to match detector output; a disagreement is recorded as a disagreement.",
+      "labelled_files": 3,
+      "totals": {
+        "tp": 2,
+        "fp": 2,
+        "fn": 3,
+        "precision": 0.5,
+        "recall": 0.4,
+        "f1": 0.4444,
+        "note": null
+      },
+      "per_file": [
+        {
+          "file_path": "_ssl.pyd",
+          "expected": [
+            "OpenSSL"
+          ],
+          "detected": [],
+          "expected_families": [
+            "OPENSSL"
+          ],
+          "detected_families": [],
+          "true_positives": [],
+          "false_positives": [],
+          "false_negatives": [
+            "OpenSSL"
+          ]
+        },
+        {
+          "file_path": "expired_cert.pem",
+          "expected": [
+            "RSA",
+            "SHA-256"
+          ],
+          "detected": [
+            "RSA-2048",
+            "X509/ba105ce02bac7688"
+          ],
+          "expected_families": [
+            "RSA",
+            "SHA-2"
+          ],
+          "detected_families": [
+            "RSA",
+            "X509/BA105CE02BAC7688"
+          ],
+          "true_positives": [
+            "RSA"
+          ],
+          "false_positives": [
+            "X509/ba105ce02bac7688"
+          ],
+          "false_negatives": [
+            "SHA-256"
+          ]
+        },
+        {
+          "file_path": "wrong_host_cert.pem",
+          "expected": [
+            "RSA",
+            "SHA-256"
+          ],
+          "detected": [
+            "RSA-2048",
+            "X509/688f99185e12a494"
+          ],
+          "expected_families": [
+            "RSA",
+            "SHA-2"
+          ],
+          "detected_families": [
+            "RSA",
+            "X509/688F99185E12A494"
+          ],
+          "true_positives": [
+            "RSA"
+          ],
+          "false_positives": [
+            "X509/688f99185e12a494"
+          ],
+          "false_negatives": [
+            "SHA-256"
+          ]
         }
       ]
     }
