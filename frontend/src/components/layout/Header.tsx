@@ -4,22 +4,36 @@ import { getApiKey, setApiKey, getBaseUrl, setBaseUrl } from '../../api/client';
 import {
   Shield,
   Activity,
-  Layers,
   Settings,
   RefreshCw,
   Plus,
-  Server,
-  AlertTriangle,
+  Search,
+  Sun,
+  Moon,
+  HelpCircle,
+  Menu,
   ChevronDown,
+  Layers,
+  Lock,
 } from 'lucide-react';
 
 interface HeaderProps {
   onOpenLauncher: () => void;
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
+  onOpenCommandPalette: () => void;
+  onOpenHelp: () => void;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
+  onToggleMobileSidebar: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenLauncher, activeTab, setActiveTab }) => {
+export const Header: React.FC<HeaderProps> = ({
+  onOpenLauncher,
+  onOpenCommandPalette,
+  onOpenHelp,
+  theme,
+  onToggleTheme,
+  onToggleMobileSidebar,
+}) => {
   const {
     health,
     systemOnline,
@@ -40,183 +54,174 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLauncher, activeTab, setAc
     e.preventDefault();
     setApiKey(apiKeyInput.trim());
     setBaseUrl(baseUrlInput.trim());
-    setSaveMessage('Settings saved. Refreshing...');
+    setSaveMessage('Settings saved. Refreshing engine connection...');
     setTimeout(() => {
       window.location.reload();
     }, 600);
   };
 
-  const navItems = [
-    { id: 'dashboard', label: 'Executive Dashboard' },
-    { id: 'findings', label: 'Findings Explorer' },
-    { id: 'mosca', label: 'Mosca Simulator' },
-    { id: 'migration', label: 'Migration Plan' },
-    { id: 'evidence', label: 'Evidence & Exports' },
-    { id: 'certificates', label: 'Certificates' },
-    { id: 'registry', label: 'Registry Catalogue' },
-    { id: 'diff', label: 'Scan Diff' },
-  ];
-
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-slate-200">
-      {/* Top Bar: Brand, Health, Scan Selector, Quick Actions */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
-          {/* Brand */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-indigo-600 flex items-center justify-center shadow-sm">
-              <Shield className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-base font-bold tracking-tight text-slate-900">ECDAT</span>
-                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-200 text-indigo-700">
-                  NTRO PS 26164
-                </span>
-                <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 border border-slate-200 hidden sm:inline-block">
-                  v1.0.0
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500 hidden md:block">
-                Enterprise Cryptographic Discovery & Quantum Risk Engine
-              </p>
-            </div>
-          </div>
-
-          {/* Active Scan Selector */}
-          <div className="flex items-center gap-2 flex-1 max-w-md justify-center">
-            <div className="relative w-full max-w-xs">
-              <select
-                value={activeScanId || ''}
-                onChange={(e) => setActiveScanId(e.target.value || null)}
-                disabled={loadingScans || scans.length === 0}
-                className="w-full pl-3 pr-8 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 appearance-none cursor-pointer truncate shadow-sm transition"
-              >
-                {scans.length === 0 ? (
-                  <option value="">No scans available</option>
-                ) : (
-                  scans.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name || s.id.substring(0, 8)} ({s.finding_count} findings · {s.status})
-                    </option>
-                  ))
-                )}
-              </select>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-3 top-3 pointer-events-none" />
-            </div>
-
-            <button
-              onClick={() => refreshScans()}
-              title="Refresh scans"
-              disabled={loadingScans}
-              className="p-2 rounded-xl border border-slate-300 bg-white text-slate-500 hover:text-slate-700 hover:bg-slate-50 shadow-sm transition"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${loadingScans ? 'animate-spin text-indigo-600' : ''}`} />
-            </button>
-          </div>
-
-          {/* Right Actions: System Health & New Scan */}
-          <div className="flex items-center gap-3">
-            {/* System Health */}
-            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  systemOnline ? 'bg-emerald-400 shadow-sm shadow-emerald-400/50' : 'bg-rose-500'
-                }`}
-              />
-              <span className="text-slate-600 font-medium">
-                {systemOnline ? 'API Online' : 'API Offline'}
-              </span>
-              {health?.dialect && (
-                <span className="text-[10px] text-slate-400 uppercase">({health.dialect})</span>
-              )}
-            </div>
-
-            {/* Launch Scan Button */}
-            <button
-              onClick={onOpenLauncher}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs shadow-sm transition cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Launch Scan</span>
-            </button>
-
-            {/* Settings */}
-            <button
-              onClick={() => setShowSettings(!showSettings)}
-              title="API Configuration"
-              className="p-2 rounded-xl border border-slate-300 bg-white text-slate-500 hover:text-slate-700 hover:bg-slate-50 shadow-sm transition"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
-          </div>
+    <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur-md border-b border-border cipher-grid">
+      <div className="px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+        {/* Mobile menu trigger */}
+        <div className="flex items-center gap-3 md:hidden">
+          <button
+            onClick={onToggleMobileSidebar}
+            className="p-2 rounded-lg text-text-muted hover:text-text-main hover:bg-surface-2 transition"
+            aria-label="Toggle navigation menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <span className="font-bold text-sm text-text-main">ECDAT</span>
         </div>
 
-        {/* Navigation Tabs */}
-        <nav className="flex space-x-1.5 overflow-x-auto py-2 scrollbar-none border-t border-slate-200/60">
-          {navItems.map((item) => {
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`px-3.5 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-all duration-150 ${
-                  isActive
-                    ? 'bg-indigo-50 text-indigo-700 font-medium border border-indigo-100 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                {item.label}
-              </button>
-            );
-          })}
-        </nav>
+        {/* Global Search / Command Palette Bar */}
+        <div className="hidden sm:flex items-center flex-1 max-w-md">
+          <button
+            type="button"
+            onClick={onOpenCommandPalette}
+            className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-surface-2 border border-border text-xs text-text-muted hover:border-accent/40 hover:text-text-main transition shadow-sm group cursor-pointer"
+          >
+            <div className="flex items-center gap-2.5">
+              <Search className="w-4 h-4 text-text-dim group-hover:text-accent transition-colors" />
+              <span className="font-medium">Search findings, algorithms, tabs...</span>
+            </div>
+            <kbd className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-surface border border-border text-text-dim">
+              Ctrl+K
+            </kbd>
+          </button>
+        </div>
+
+        {/* Center: Active Scan Selector */}
+        <div className="flex items-center gap-2 max-w-xs sm:max-w-sm flex-1 sm:flex-none justify-end sm:justify-start">
+          <div className="relative w-full min-w-[180px]">
+            <select
+              value={activeScanId || ''}
+              onChange={(e) => setActiveScanId(e.target.value || null)}
+              disabled={loadingScans || scans.length === 0}
+              aria-label="Active Scan Target"
+              className="w-full pl-3 pr-8 py-1.5 bg-surface-2 border border-border rounded-xl text-xs font-semibold text-text-main focus:outline-none focus:border-accent appearance-none cursor-pointer truncate shadow-sm transition"
+            >
+              {scans.length === 0 ? (
+                <option value="">No scans registered</option>
+              ) : (
+                scans.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name || s.id.substring(0, 8)} ({s.finding_count} findings · {s.status})
+                  </option>
+                ))
+              )}
+            </select>
+            <ChevronDown className="w-3.5 h-3.5 text-text-dim absolute right-3 top-2.5 pointer-events-none" />
+          </div>
+
+          <button
+            onClick={() => refreshScans()}
+            title="Refresh active scans list"
+            disabled={loadingScans}
+            className="p-2 rounded-xl border border-border bg-surface-2 text-text-muted hover:text-text-main hover:bg-surface-3 shadow-sm transition cursor-pointer"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loadingScans ? 'animate-spin text-accent' : ''}`} />
+          </button>
+        </div>
+
+        {/* Right Action Icons: Status, Theme Toggle, Help, Settings */}
+        <div className="flex items-center gap-2">
+          {/* Engine Status indicator */}
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-2 border border-border text-xs">
+            <span
+              className={`w-2 h-2 rounded-full ${
+                systemOnline ? 'bg-accent shadow-glow-accent' : 'bg-danger'
+              }`}
+            />
+            <span className="text-text-main font-semibold">
+              {systemOnline ? 'Engine Online' : 'Engine Offline'}
+            </span>
+            {health?.dialect && (
+              <span className="text-[10px] text-text-dim uppercase font-mono">({health.dialect})</span>
+            )}
+          </div>
+
+          {/* Theme Toggle Button */}
+          <button
+            onClick={onToggleTheme}
+            title={theme === 'dark' ? 'Switch to Soft Light Theme' : 'Switch to Secure Dark Theme'}
+            className="p-2 rounded-xl border border-border bg-surface-2 text-text-muted hover:text-accent hover:bg-surface-3 shadow-sm transition cursor-pointer"
+            aria-label="Toggle visual theme"
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4 text-warning" /> : <Moon className="w-4 h-4 text-accent-2" />}
+          </button>
+
+          {/* Help Button */}
+          <button
+            onClick={onOpenHelp}
+            title="Cryptographic Guidelines & Jargon Reference"
+            className="p-2 rounded-xl border border-border bg-surface-2 text-text-muted hover:text-accent hover:bg-surface-3 shadow-sm transition cursor-pointer"
+            aria-label="Help reference"
+          >
+            <HelpCircle className="w-4 h-4" />
+          </button>
+
+          {/* Settings Button */}
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            title="API Configuration"
+            className="p-2 rounded-xl border border-border bg-surface-2 text-text-muted hover:text-accent hover:bg-surface-3 shadow-sm transition cursor-pointer"
+            aria-label="Settings"
+          >
+            <Settings className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Settings Modal */}
       {showSettings && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white border border-slate-200 rounded-xl p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-mono font-bold text-slate-900 flex items-center gap-2 text-sm">
-                <Settings className="w-4 h-4 text-indigo-600" />
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-surface border border-border rounded-xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h3 className="font-bold text-text-main flex items-center gap-2 text-sm">
+                <Settings className="w-4 h-4 text-accent" />
                 ECDAT Console Configuration
               </h3>
               <button
                 onClick={() => setShowSettings(false)}
-                className="text-slate-500 hover:text-slate-900 text-xs font-mono"
+                className="text-text-dim hover:text-text-main text-xs font-mono"
               >
                 Close
               </button>
             </div>
 
-            <form onSubmit={handleSaveSettings} className="space-y-4 font-mono text-xs">
+            <form onSubmit={handleSaveSettings} className="space-y-4 text-xs">
               <div>
-                <label className="block text-slate-600 mb-1">Backend Base URL:</label>
+                <label className="block text-text-muted mb-1 font-semibold">Backend Base URL:</label>
                 <input
                   type="text"
                   value={baseUrlInput}
                   onChange={(e) => setBaseUrlInput(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-indigo-500"
+                  className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-main font-mono text-xs focus:outline-none focus:border-accent"
                   placeholder="http://127.0.0.1:8000/api/v1"
                 />
-                <span className="text-[10px] text-slate-400 mt-1 block">Default: http://127.0.0.1:8000/api/v1</span>
+                <span className="text-[10px] text-text-dim mt-1 block font-mono">
+                  Default: http://127.0.0.1:8000/api/v1
+                </span>
               </div>
 
               <div>
-                <label className="block text-slate-600 mb-1">X-API-Key:</label>
+                <label className="block text-text-muted mb-1 font-semibold">X-API-Key:</label>
                 <input
                   type="text"
                   value={apiKeyInput}
                   onChange={(e) => setApiKeyInput(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-indigo-500"
+                  className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-main font-mono text-xs focus:outline-none focus:border-accent"
                   placeholder="dev-ecdat-key"
                 />
-                <span className="text-[10px] text-slate-400 mt-1 block">Default: dev-ecdat-key</span>
+                <span className="text-[10px] text-text-dim mt-1 block font-mono">
+                  Default: dev-ecdat-key
+                </span>
               </div>
 
               {saveMessage && (
-                <div className="p-2 rounded bg-emerald-50 border border-emerald-200/60 text-emerald-700 text-center">
+                <div className="p-2.5 rounded-lg bg-success-subtle border border-success-border text-success text-center font-semibold">
                   {saveMessage}
                 </div>
               )}
@@ -225,13 +230,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLauncher, activeTab, setAc
                 <button
                   type="button"
                   onClick={() => setShowSettings(false)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50"
+                  className="px-3.5 py-2 rounded-lg border border-border text-text-muted hover:text-text-main hover:bg-surface-2 transition font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold"
+                  className="px-4 py-2 rounded-lg bg-accent hover:bg-accent-hover text-bg font-bold transition shadow-sm"
                 >
                   Save & Reload
                 </button>

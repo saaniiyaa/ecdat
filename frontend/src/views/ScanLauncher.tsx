@@ -13,7 +13,7 @@ import {
   CheckCircle,
   AlertCircle,
   RefreshCw,
-  XCircle,
+  Sparkles,
 } from 'lucide-react';
 
 interface ScanLauncherProps {
@@ -22,7 +22,7 @@ interface ScanLauncherProps {
 }
 
 export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onClose }) => {
-  const { workspaces, startNewScan, cancelCurrentScan, activeScan } = useScan();
+  const { workspaces, startNewScan } = useScan();
 
   const [mode, setMode] = useState<'path' | 'upload'>('path');
   const [targetUri, setTargetUri] = useState('fixtures/demo_repo');
@@ -48,6 +48,9 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
   const [launchedScan, setLaunchedScan] = useState<ScanOut | null>(null);
   const [liveEvents, setLiveEvents] = useState<ScanEventOut[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Active step calculation
+  const currentStep = launchedScan?.status === 'completed' ? 4 : isLaunching || launchedScan ? 3 : 1;
 
   // Poll progress if launched scan is running
   useEffect(() => {
@@ -115,7 +118,6 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
     };
 
     try {
-      // Prompt §3: wait_seconds=120 or queued
       const scan = await startNewScan(payload, 120);
       setLaunchedScan(scan);
       if (scan.status === 'completed' && onScanCompleted) {
@@ -142,51 +144,81 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold font-mono text-slate-900 flex items-center gap-2">
-            <Play className="w-6 h-6 text-emerald-600" />
-            Cryptographic Scan Launcher
+          <h1 className="text-xl sm:text-2xl font-bold text-text-main flex items-center gap-2">
+            <Play className="w-6 h-6 text-accent" />
+            Cryptographic Scan Orchestrator
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Initiate multi-tier discovery (Python AST, Java, Go, C/C++, Manifests, X.509, Binaries, Containers)
+          <p className="text-xs sm:text-sm text-text-muted mt-1">
+            Deterministic discovery across AST, Manifests, X.509, Binaries, and Containers.
           </p>
         </div>
 
         <button
           onClick={handleFillDemo}
-          className="px-3 py-1.5 rounded-lg border border-indigo-200/60 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-xs font-mono font-medium transition"
+          className="self-start sm:self-auto px-3.5 py-1.5 rounded-xl border border-accent-border bg-accent-subtle text-accent hover:opacity-90 text-xs font-bold font-mono transition flex items-center gap-1.5 cursor-pointer shadow-sm"
         >
-          Load NTRO Demo Presets
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Load NTRO Demo Presets</span>
         </button>
       </div>
 
+      {/* Stepper (Select target → Configure → Scan → Results) */}
+      <div className="grid grid-cols-4 gap-2 border-y border-border py-3 text-xs font-semibold">
+        <div className={`flex items-center gap-2 ${currentStep >= 1 ? 'text-accent' : 'text-text-dim'}`}>
+          <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[11px] ${currentStep >= 1 ? 'bg-accent text-bg' : 'bg-surface-2 text-text-dim'}`}>
+            1
+          </span>
+          <span className="hidden sm:inline">Target</span>
+        </div>
+        <div className={`flex items-center gap-2 ${currentStep >= 2 ? 'text-accent' : 'text-text-dim'}`}>
+          <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[11px] ${currentStep >= 2 ? 'bg-accent text-bg' : 'bg-surface-2 text-text-dim'}`}>
+            2
+          </span>
+          <span className="hidden sm:inline">Configure</span>
+        </div>
+        <div className={`flex items-center gap-2 ${currentStep >= 3 ? 'text-accent' : 'text-text-dim'}`}>
+          <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[11px] ${currentStep >= 3 ? 'bg-accent text-bg' : 'bg-surface-2 text-text-dim'}`}>
+            3
+          </span>
+          <span className="hidden sm:inline">Execute</span>
+        </div>
+        <div className={`flex items-center gap-2 ${currentStep >= 4 ? 'text-accent' : 'text-text-dim'}`}>
+          <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[11px] ${currentStep >= 4 ? 'bg-accent text-bg' : 'bg-surface-2 text-text-dim'}`}>
+            4
+          </span>
+          <span className="hidden sm:inline">Results</span>
+        </div>
+      </div>
+
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-3 text-xs font-mono text-rose-700">
-          <AlertCircle className="w-5 h-5 text-rose-700 shrink-0 mt-0.5" />
+        <div className="p-4 rounded-xl bg-danger-subtle border border-danger-border flex items-start gap-3 text-xs font-mono text-danger">
+          <AlertCircle className="w-5 h-5 text-danger shrink-0 mt-0.5" />
           <div className="flex-1">
-            <span className="font-bold">Error:</span> {errorMsg}
+            <strong>Error:</strong> {errorMsg}
           </div>
         </div>
       )}
 
       {/* Launcher Form */}
       <form onSubmit={handleLaunch} className="space-y-6">
-        {/* Target Selector */}
-        <div className="p-5 rounded-xl bg-white border border-slate-200 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-            <span className="text-xs uppercase font-mono font-semibold text-slate-700 flex items-center gap-2">
-              <FolderOpen className="w-4 h-4 text-indigo-600" />
+        {/* Step 1: Target Selector */}
+        <div className="p-5 rounded-card bg-surface border border-border shadow-card space-y-4">
+          <div className="flex items-center justify-between border-b border-border pb-3">
+            <h2 className="text-xs uppercase font-bold text-text-main flex items-center gap-2">
+              <FolderOpen className="w-4 h-4 text-accent" />
               1. Scan Target Selection
-            </span>
+            </h2>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setMode('path')}
-                className={`px-3 py-1 rounded text-xs font-mono transition ${
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
                   mode === 'path'
-                    ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-surface-2 text-accent border border-accent-border'
+                    : 'text-text-muted hover:text-text-main'
                 }`}
               >
                 Local Path / URI
@@ -194,10 +226,10 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
               <button
                 type="button"
                 onClick={() => setMode('upload')}
-                className={`px-3 py-1 rounded text-xs font-mono transition ${
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
                   mode === 'upload'
-                    ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-surface-2 text-accent border border-accent-border'
+                    : 'text-text-muted hover:text-text-main'
                 }`}
               >
                 Upload Archive
@@ -207,7 +239,7 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
 
           {mode === 'path' ? (
             <div>
-              <label className="block text-xs font-mono text-slate-500 mb-1">
+              <label className="block text-xs font-bold text-text-muted mb-1">
                 Target URI or Filesystem Path:
               </label>
               <input
@@ -216,18 +248,18 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
                 value={targetUri}
                 onChange={(e) => setTargetUri(e.target.value)}
                 placeholder="fixtures/demo_repo or /path/to/repo"
-                className="w-full px-3.5 py-2.5 rounded-lg bg-white border border-slate-300 font-mono text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-surface-2 border border-border font-mono text-xs text-text-main focus:outline-none focus:border-accent"
               />
-              <span className="text-[11px] text-slate-400 mt-1 block font-mono">
-                Tip: Use <code className="text-indigo-600">fixtures/demo_repo</code> for the official 22-file demo estate.
+              <span className="text-[11px] text-text-dim mt-1.5 block font-mono">
+                Tip: Use <code className="text-accent font-bold">fixtures/demo_repo</code> for the official 22-file demo estate.
               </span>
             </div>
           ) : (
             <div>
-              <label className="block text-xs font-mono text-slate-500 mb-1">
+              <label className="block text-xs font-bold text-text-muted mb-1">
                 Upload Target (ZIP, TAR.GZ, or Certificate Bundle):
               </label>
-              <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-indigo-400 transition">
+              <div className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-accent transition bg-surface-2/40">
                 <input
                   type="file"
                   id="target-upload"
@@ -239,10 +271,10 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
                   htmlFor="target-upload"
                   className="cursor-pointer flex flex-col items-center gap-2"
                 >
-                  <Upload className="w-8 h-8 text-indigo-500" />
-                  <span className="text-xs font-mono text-slate-600">
+                  <Upload className="w-8 h-8 text-accent" />
+                  <span className="text-xs font-semibold text-text-main">
                     {uploading
-                      ? 'Uploading to ECDAT backend...'
+                      ? 'Uploading to ECDAT engine...'
                       : uploadedPath
                       ? `Uploaded: ${uploadedPath}`
                       : 'Click to select target bundle'}
@@ -254,21 +286,21 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div>
-              <label className="block text-xs font-mono text-slate-500 mb-1">Scan Name:</label>
+              <label className="block text-xs font-bold text-text-muted mb-1">Scan Name:</label>
               <input
                 type="text"
                 value={scanName}
                 onChange={(e) => setScanName(e.target.value)}
                 placeholder="e.g. vajra-payments"
-                className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 font-mono text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-surface-2 border border-border font-mono text-xs text-text-main focus:outline-none focus:border-accent"
               />
             </div>
             <div>
-              <label className="block text-xs font-mono text-slate-500 mb-1">Workspace:</label>
+              <label className="block text-xs font-bold text-text-muted mb-1">Workspace:</label>
               <select
                 value={selectedWorkspace}
                 onChange={(e) => setSelectedWorkspace(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 font-mono text-xs text-slate-800 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-surface-2 border border-border font-semibold text-xs text-text-main focus:outline-none focus:border-accent cursor-pointer"
               >
                 <option value="">Default Workspace</option>
                 {workspaces.map((w) => (
@@ -281,20 +313,20 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
           </div>
         </div>
 
-        {/* Operational Context Form */}
-        <div className="p-5 rounded-xl bg-white border border-slate-200 space-y-4">
-          <span className="text-xs uppercase font-mono font-semibold text-slate-700 flex items-center gap-2 border-b border-slate-200 pb-3">
-            <Shield className="w-4 h-4 text-emerald-600" />
+        {/* Step 2: Operational Context Form */}
+        <div className="p-5 rounded-card bg-surface border border-border shadow-card space-y-4">
+          <h2 className="text-xs uppercase font-bold text-text-main flex items-center gap-2 border-b border-border pb-3">
+            <Shield className="w-4 h-4 text-accent" />
             2. Operational Risk Context (Feeds Server-Side Scoring)
-          </span>
+          </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="block text-xs font-mono text-slate-500 mb-1">Exposure:</label>
+              <label className="block text-xs font-bold text-text-muted mb-1">Exposure:</label>
               <select
                 value={exposure}
                 onChange={(e) => setExposure(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 font-mono text-xs text-slate-800 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-surface-2 border border-border font-semibold text-xs text-text-main focus:outline-none focus:border-accent cursor-pointer"
               >
                 <option value="internet_facing">internet_facing</option>
                 <option value="internal">internal</option>
@@ -303,11 +335,11 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-500 mb-1">Criticality:</label>
+              <label className="block text-xs font-bold text-text-muted mb-1">Criticality:</label>
               <select
                 value={criticality}
                 onChange={(e) => setCriticality(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 font-mono text-xs text-slate-800 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-surface-2 border border-border font-semibold text-xs text-text-main focus:outline-none focus:border-accent cursor-pointer"
               >
                 <option value="sovereign_critical">sovereign_critical</option>
                 <option value="business_critical">business_critical</option>
@@ -316,11 +348,11 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-500 mb-1">Classification:</label>
+              <label className="block text-xs font-bold text-text-muted mb-1">Classification:</label>
               <select
                 value={classification}
                 onChange={(e) => setClassification(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 font-mono text-xs text-slate-800 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-surface-2 border border-border font-semibold text-xs text-text-main focus:outline-none focus:border-accent cursor-pointer"
               >
                 <option value="secret">secret</option>
                 <option value="confidential">confidential</option>
@@ -330,35 +362,35 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-500 mb-1">Data Lifetime (X yrs):</label>
+              <label className="block text-xs font-bold text-text-muted mb-1">Data Lifetime (X yrs):</label>
               <input
                 type="number"
                 min="1"
                 max="50"
                 value={dataLifetimeYears}
                 onChange={(e) => setDataLifetimeYears(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 font-mono text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-xl bg-surface-2 border border-border font-mono text-xs text-text-main focus:outline-none focus:border-accent"
               />
             </div>
           </div>
         </div>
 
-        {/* Mosca Horizon Setting */}
-        <div className="p-5 rounded-xl bg-white border border-slate-200 space-y-4">
-          <span className="text-xs uppercase font-mono font-semibold text-slate-700 flex items-center gap-2 border-b border-slate-200 pb-3">
-            <Clock className="w-4 h-4 text-indigo-600" />
+        {/* Step 3: Mosca Horizon Scenario */}
+        <div className="p-5 rounded-card bg-surface border border-border shadow-card space-y-4">
+          <h2 className="text-xs uppercase font-bold text-text-main flex items-center gap-2 border-b border-border pb-3">
+            <Clock className="w-4 h-4 text-accent" />
             3. Mosca Inequality Horizon (X + Y &gt; Z)
-          </span>
+          </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {(['baseline', 'conservative', 'accelerated'] as const).map((sc) => (
               <label
                 key={sc}
                 onClick={() => setMoscaScenario(sc)}
-                className={`p-3.5 rounded-lg border cursor-pointer transition flex flex-col justify-between ${
+                className={`p-3.5 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
                   moscaScenario === sc
-                    ? 'border-indigo-500 bg-indigo-50 text-indigo-800 shadow-sm'
-                    : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300'
+                    ? 'border-accent bg-accent-subtle text-text-main shadow-sm'
+                    : 'border-border bg-surface-2 text-text-muted hover:border-border'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
@@ -368,7 +400,7 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
                     name="moscaScenario"
                     checked={moscaScenario === sc}
                     onChange={() => setMoscaScenario(sc)}
-                    className="text-indigo-600"
+                    className="accent-accent"
                   />
                 </div>
                 <p className="text-[11px] font-mono opacity-80">
@@ -381,13 +413,13 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* Action Buttons */}
         <div className="flex items-center justify-between pt-2">
           {onClose && (
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-xs font-mono hover:bg-slate-50"
+              className="px-4 py-2 rounded-xl border border-border text-text-muted text-xs font-bold hover:bg-surface-2 cursor-pointer"
             >
               Cancel
             </button>
@@ -396,16 +428,16 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
           <button
             type="submit"
             disabled={isLaunching}
-            className="ml-auto inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs shadow-sm transition disabled:opacity-50 cursor-pointer"
+            className="ml-auto inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-bg font-bold text-xs shadow-sm transition disabled:opacity-50 cursor-pointer"
           >
             {isLaunching ? (
               <>
-                <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                <RefreshCw className="w-4 h-4 animate-spin text-bg" />
                 <span>Scanning Estate (Deterministic Engine)...</span>
               </>
             ) : (
               <>
-                <Play className="w-4 h-4 fill-current text-white" />
+                <Play className="w-4 h-4 fill-current text-bg" />
                 <span>Execute Discovery Scan</span>
               </>
             )}
@@ -415,57 +447,57 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
 
       {/* Live Event Progress Stream */}
       {(launchedScan || isLaunching || liveEvents.length > 0) && (
-        <div className="p-5 rounded-xl bg-white border border-slate-200 space-y-4 font-mono">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-            <span className="text-xs font-semibold uppercase text-slate-700 flex items-center gap-2">
-              <Terminal className="w-4 h-4 text-indigo-600" />
+        <div className="p-5 rounded-card bg-surface border border-border space-y-4 font-mono shadow-card">
+          <div className="flex items-center justify-between border-b border-border pb-3">
+            <span className="text-xs font-bold uppercase text-text-main flex items-center gap-2 font-sans">
+              <Terminal className="w-4 h-4 text-accent" />
               Scan Progress Ledger ({launchedScan?.status || 'evaluating'})
             </span>
             {launchedScan?.progress_pct !== undefined && (
-              <span className="text-xs text-indigo-600 font-bold">
+              <span className="text-xs text-accent font-bold font-mono">
                 {launchedScan.progress_pct}%
               </span>
             )}
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-surface-2 rounded-full h-2.5 overflow-hidden border border-border/60">
             <div
-              className={`h-2 rounded-full transition-all duration-300 ${
+              className={`h-2.5 rounded-full transition-all duration-300 ${
                 launchedScan?.status === 'completed'
-                  ? 'bg-emerald-500'
+                  ? 'bg-accent'
                   : launchedScan?.status === 'failed'
-                  ? 'bg-rose-500'
-                  : 'bg-indigo-500'
+                  ? 'bg-danger'
+                  : 'bg-accent shimmer'
               }`}
               style={{ width: `${launchedScan?.progress_pct ?? (isLaunching ? 70 : 0)}%` }}
             />
           </div>
 
           {/* Events Log Console */}
-          <div className="bg-slate-50 rounded-lg p-3 max-h-48 overflow-y-auto space-y-1.5 text-[11px] text-slate-700 border border-slate-200">
+          <div className="bg-surface-2 rounded-xl p-3.5 max-h-48 overflow-y-auto space-y-1.5 text-[11px] text-text-main border border-border">
             {liveEvents.length === 0 ? (
-              <div className="text-slate-400 italic">Waiting for scan runner event signals...</div>
+              <div className="text-text-dim italic">Waiting for scan runner event signals...</div>
             ) : (
               liveEvents.map((ev, i) => (
                 <div key={i} className="flex items-start gap-2">
-                  <span className="text-slate-400 shrink-0">[{ev.phase}]</span>
-                  <span className="text-slate-700">{ev.message}</span>
+                  <span className="text-accent shrink-0 font-bold">[{ev.phase}]</span>
+                  <span className="text-text-muted">{ev.message}</span>
                 </div>
               ))
             )}
           </div>
 
           {launchedScan?.status === 'completed' && (
-            <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200/60 text-emerald-700 text-xs flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4" />
+            <div className="p-3.5 rounded-xl bg-accent-subtle border border-accent-border text-accent text-xs flex items-center justify-between font-sans">
+              <span className="flex items-center gap-2 font-semibold">
+                <CheckCircle className="w-4 h-4 shrink-0" />
                 Scan complete: {launchedScan.finding_count} findings, {launchedScan.file_count} files in {launchedScan.duration_ms} ms.
               </span>
               {onClose && (
                 <button
                   onClick={onClose}
-                  className="px-3 py-1 rounded bg-indigo-600 hover:bg-indigo-700 text-white font-bold font-mono text-[11px]"
+                  className="px-3 py-1 rounded-lg bg-accent text-bg font-bold font-mono text-[11px] hover:bg-accent-hover cursor-pointer"
                 >
                   View Dashboard
                 </button>
