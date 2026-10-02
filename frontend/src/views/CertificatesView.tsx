@@ -51,38 +51,38 @@ export const CertificatesView: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 font-mono">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Title */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div className="flex items-center justify-between border-b border-slate-800/80 pb-5">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <Award className="w-6 h-6 text-amber-400" />
-            <h1 className="text-2xl font-bold text-slate-100">
+            <h1 className="text-2xl font-bold text-slate-100 tracking-tight">
               X.509 Certificate Inventory & Validity
             </h1>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Parsed leaf, intermediate and root certificates with validity windows and signature algorithms
           </p>
         </div>
 
         <button
           onClick={loadCerts}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900 text-slate-300 hover:text-white text-xs"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-700/70 bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 text-xs font-medium shadow-sm transition cursor-pointer"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-sky-400' : ''}`} />
           <span>Refresh</span>
         </button>
       </div>
 
       {/* Certificates Cards */}
       {loading ? (
-        <div className="p-12 text-center text-slate-500">
-          <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-cyan-400" />
+        <div className="p-12 text-center text-slate-400">
+          <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-sky-400" />
           Loading certificate assets...
         </div>
       ) : certs.length === 0 ? (
-        <div className="p-12 text-center text-slate-500 border border-dashed border-slate-800 rounded-xl">
+        <div className="p-12 text-center text-slate-400 border border-dashed border-slate-700/60 rounded-2xl">
           No X.509 certificates detected in this scan target.
         </div>
       ) : (
@@ -91,21 +91,21 @@ export const CertificatesView: React.FC = () => {
             return (
               <div
                 key={c.id}
-                className="p-5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition space-y-4 flex flex-col justify-between"
+                className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm space-y-4 flex flex-col justify-between"
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <span
-                      className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase border ${
+                      className={`px-2.5 py-0.5 rounded-md text-[11px] font-medium border ${
                         c.expired
-                          ? 'bg-rose-950/60 text-rose-400 border-rose-500/40'
-                          : 'bg-emerald-950/60 text-emerald-400 border-emerald-500/40'
+                          ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                          : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                       }`}
                     >
                       {c.expired ? 'Expired Certificate' : 'Active / Valid'}
                     </span>
                     {c.is_ca && (
-                      <span className="px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/40 text-[10px]">
+                      <span className="px-2 py-0.5 rounded-md bg-sky-500/10 text-sky-400 border border-sky-500/30 text-[10px] font-medium">
                         CA Root
                       </span>
                     )}

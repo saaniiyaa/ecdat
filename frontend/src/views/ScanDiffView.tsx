@@ -61,36 +61,36 @@ export const ScanDiffView: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 font-mono">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Title */}
-      <div className="border-b border-slate-800 pb-4">
-        <div className="flex items-center gap-2">
-          <GitCompare className="w-6 h-6 text-cyan-400" />
-          <h1 className="text-2xl font-bold text-slate-100">
+      <div className="border-b border-slate-800/80 pb-5">
+        <div className="flex items-center gap-2.5">
+          <GitCompare className="w-6 h-6 text-sky-400" />
+          <h1 className="text-2xl font-bold text-slate-100 tracking-tight">
             Scan-over-Scan Cryptographic Diff
           </h1>
         </div>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs sm:text-sm text-slate-400 mt-1">
           Detect cryptographic drift, newly introduced vulnerabilities, and remediated debt
         </p>
       </div>
 
       {/* Selectors */}
-      <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <span className="text-slate-400 font-semibold">Active Scan:</span>
-          <span className="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-cyan-300 font-bold">
+          <span className="text-slate-400 font-medium">Active Scan:</span>
+          <span className="px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-700/60 text-sky-300 font-semibold font-mono">
             {activeScan?.name || activeScanId.substring(0, 8)}
           </span>
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <ArrowRight className="w-4 h-4 text-slate-500 hidden sm:block" />
-          <span className="text-slate-400 font-semibold">Compare Against:</span>
+          <span className="text-slate-400 font-medium">Compare Against:</span>
           <select
             value={againstId}
             onChange={(e) => setAgainstId(e.target.value)}
-            className="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500"
+            className="px-3 py-2 rounded-xl bg-slate-900/80 border border-slate-700/70 text-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-500 text-xs transition cursor-pointer"
           >
             {otherScans.length === 0 ? (
               <option value="">No other scans found</option>
@@ -106,7 +106,7 @@ export const ScanDiffView: React.FC = () => {
           <button
             onClick={runDiff}
             disabled={!againstId || loading}
-            className="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold transition disabled:opacity-50"
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium transition disabled:opacity-50 shadow-md shadow-sky-500/20 cursor-pointer"
           >
             {loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : 'Compare'}
           </button>
@@ -114,30 +114,30 @@ export const ScanDiffView: React.FC = () => {
       </div>
 
       {error ? (
-        <div className="p-4 rounded-xl bg-rose-950/30 border border-rose-500/40 text-rose-300 text-xs">
+        <div className="p-4 rounded-xl bg-rose-950/20 border border-rose-500/30 text-rose-300 text-xs">
           {error}
         </div>
       ) : loading ? (
-        <div className="p-12 text-center text-slate-500">
-          <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-cyan-400" />
+        <div className="p-12 text-center text-slate-400">
+          <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-sky-400" />
           Calculating cryptographic delta...
         </div>
       ) : !diff ? (
-        <div className="p-12 text-center text-slate-500 border border-dashed border-slate-800 rounded-xl">
+        <div className="p-12 text-center text-slate-400 border border-dashed border-slate-700/60 rounded-2xl">
           Select a baseline scan above to compare differences.
         </div>
       ) : (
         <div className="space-y-6">
           {/* Summary Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800">
-              <span className="text-slate-400 text-xs block">Added Findings</span>
-              <span className="text-2xl font-bold text-rose-400 mt-1 block">
+            <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm">
+              <span className="text-slate-400 text-xs block font-medium">Added Findings</span>
+              <span className="text-2xl font-bold text-rose-400 mt-1 block tracking-tight font-mono">
                 +{diff.summary?.added_count ?? (diff.findings?.added?.length || 0)}
               </span>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800">
+            <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm">
               <span className="text-slate-400 text-xs block">Removed / Remediated</span>
               <span className="text-2xl font-bold text-emerald-400 mt-1 block">
                 -{diff.summary?.removed_count ?? (diff.findings?.removed?.length || 0)}

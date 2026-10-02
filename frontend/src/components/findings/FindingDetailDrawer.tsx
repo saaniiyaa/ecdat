@@ -69,11 +69,11 @@ export const FindingDetailDrawer: React.FC<FindingDetailDrawerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm flex justify-end">
-      <div className="w-full max-w-2xl bg-slate-900 border-l border-slate-700/80 h-full flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-right duration-200">
+    <div className="fixed inset-0 z-50 overflow-hidden bg-slate-950/70 backdrop-blur-sm flex justify-end">
+      <div className="w-full max-w-2xl bg-slate-900 border-l border-slate-700/60 h-full flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-right duration-200">
         {/* Drawer Header */}
-        <div className="p-5 border-b border-slate-800 bg-slate-900/90 flex items-start justify-between gap-4">
-          <div className="space-y-1.5 flex-1 min-w-0">
+        <div className="p-6 border-b border-slate-800/80 bg-slate-900/95 flex items-start justify-between gap-4">
+          <div className="space-y-2 flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               {risk && <BandBadge band={risk.band} size="lg" />}
               <EvidenceBadge
@@ -83,13 +83,13 @@ export const FindingDetailDrawer: React.FC<FindingDetailDrawerProps> = ({
               />
               {asset && <QuantumBadge status={asset.quantum_status} isPostQuantum={asset.is_post_quantum} />}
             </div>
-            <h2 className="text-lg font-bold text-slate-100 font-mono truncate">
+            <h2 className="text-xl font-bold text-slate-100 truncate">
               {asset?.canonical_name || activeFinding.symbol || 'Cryptographic Finding'}
             </h2>
-            <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
-              <span className="truncate">{activeFinding.file_path}</span>
+            <div className="flex items-center gap-2 text-xs text-slate-400">
+              <span className="truncate font-mono">{activeFinding.file_path}</span>
               {activeFinding.line_start && (
-                <span className="text-cyan-400 font-semibold">L{activeFinding.line_start}{activeFinding.line_end ? `-${activeFinding.line_end}` : ''}</span>
+                <span className="text-sky-400 font-semibold font-mono">L{activeFinding.line_start}{activeFinding.line_end ? `-${activeFinding.line_end}` : ''}</span>
               )}
               <button
                 onClick={handleCopyPath}
@@ -103,7 +103,7 @@ export const FindingDetailDrawer: React.FC<FindingDetailDrawerProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -112,19 +112,19 @@ export const FindingDetailDrawer: React.FC<FindingDetailDrawerProps> = ({
         {/* Drawer Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Rule 6.3: Dual Track Risk Comparison (Classical vs Quantum) */}
-          <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+          <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm space-y-3">
+            <div className="flex items-center justify-between text-xs text-slate-400">
               <span className="font-semibold uppercase tracking-wider text-slate-300">
                 Dual-Track Risk Accounting (Rule 6.3)
               </span>
-              <span>Composite Score: {risk?.composite_risk ?? 0}/100</span>
+              <span className="font-mono">Composite Score: {risk?.composite_risk ?? 0}/100</span>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               {/* Classical Track */}
-              <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1.5">
+              <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-700/50 space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400 font-medium">Classical Track</span>
+                  <span className="text-slate-300 font-medium">Classical Track</span>
                   <span className="font-mono font-bold text-amber-400">{risk?.classical_risk ?? 0}/100</span>
                 </div>
                 <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
@@ -133,15 +133,15 @@ export const FindingDetailDrawer: React.FC<FindingDetailDrawerProps> = ({
                     style={{ width: `${Math.min(100, risk?.classical_risk ?? 0)}%` }}
                   />
                 </div>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-slate-400">
                   Sec bits: {asset?.classical_security_bits ?? 'N/A'} · NIST deprecated: {asset?.nist_deprecated_after ?? 'N/A'}
                 </p>
               </div>
 
               {/* Quantum Track */}
-              <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1.5">
+              <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-700/50 space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400 font-medium">Quantum Track</span>
+                  <span className="text-slate-300 font-medium">Quantum Track</span>
                   <span className="font-mono font-bold text-indigo-400">{risk?.quantum_risk ?? 0}/100</span>
                 </div>
                 <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
@@ -150,7 +150,7 @@ export const FindingDetailDrawer: React.FC<FindingDetailDrawerProps> = ({
                     style={{ width: `${Math.min(100, risk?.quantum_risk ?? 0)}%` }}
                   />
                 </div>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-slate-400">
                   Sec bits: {asset?.quantum_security_bits ?? 0} · Shor vulnerable: {asset?.quantum_status === 'shor_vulnerable' ? 'Yes' : 'No'}
                 </p>
               </div>
@@ -158,21 +158,23 @@ export const FindingDetailDrawer: React.FC<FindingDetailDrawerProps> = ({
 
             {/* Mosca Inequality Status */}
             {risk?.mosca_state && (
-              <div className="mt-2 p-2.5 rounded bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs font-mono">
+              <div className="mt-2 p-3 rounded-xl bg-slate-900/70 border border-slate-700/50 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-cyan-400" />
-                  <span>Mosca Inequality State:</span>
+                  <Clock className="w-4 h-4 text-sky-400" />
+                  <span className="text-slate-300">Mosca Horizon Status:</span>
                   <span
-                    className={`font-bold uppercase ${
-                      risk.mosca_state === 'breached' ? 'text-rose-400' : 'text-emerald-400'
+                    className={`font-semibold px-2 py-0.5 rounded-md ${
+                      risk.mosca_state === 'breached'
+                        ? 'bg-amber-500/10 text-amber-300 border border-amber-500/30'
+                        : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
                     }`}
                   >
-                    {risk.mosca_state}
+                    {risk.mosca_state === 'breached' ? 'Migration Required' : 'Safe Window'}
                   </span>
                 </div>
                 {risk.mosca_margin_years !== undefined && risk.mosca_margin_years !== null && (
-                  <span className="text-slate-400">
-                    Margin: <span className="font-bold text-slate-200">{risk.mosca_margin_years}y</span>
+                  <span className="text-slate-400 font-mono">
+                    Margin: <span className="font-semibold text-slate-200">{risk.mosca_margin_years}y</span>
                   </span>
                 )}
               </div>

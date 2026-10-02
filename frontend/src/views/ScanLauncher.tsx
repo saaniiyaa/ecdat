@@ -396,16 +396,16 @@ export const ScanLauncher: React.FC<ScanLauncherProps> = ({ onScanCompleted, onC
           <button
             type="submit"
             disabled={isLaunching}
-            className="ml-auto inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-slate-950 font-bold font-mono text-xs shadow-lg shadow-cyan-600/20 transition disabled:opacity-50"
+            className="ml-auto inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-xs shadow-md shadow-sky-500/20 transition disabled:opacity-50 cursor-pointer"
           >
             {isLaunching ? (
               <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
+                <RefreshCw className="w-4 h-4 animate-spin text-white" />
                 <span>Scanning Estate (Deterministic Engine)...</span>
               </>
             ) : (
               <>
-                <Play className="w-4 h-4 fill-current" />
+                <Play className="w-4 h-4 fill-current text-white" />
                 <span>Execute Discovery Scan</span>
               </>
             )}

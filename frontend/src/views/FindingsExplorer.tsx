@@ -109,43 +109,45 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Header and Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
         <div>
-          <h1 className="text-2xl font-bold font-mono text-slate-100 flex items-center gap-2">
-            <SlidersHorizontal className="w-6 h-6 text-cyan-400" />
-            Cryptographic Findings Explorer
-          </h1>
-          <p className="text-xs text-slate-400 font-mono mt-1">
-            Deterministic finding inventory with multi-factor attribution & confidence enforcement
+          <div className="flex items-center gap-2.5">
+            <SlidersHorizontal className="w-6 h-6 text-sky-400" />
+            <h1 className="text-2xl font-bold text-slate-100 tracking-tight">
+              Cryptographic Findings Explorer
+            </h1>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            Complete inventory of detected security algorithms, keys, and certificates.
           </p>
         </div>
 
         <button
           onClick={() => fetchFindings()}
-          className="self-start sm:self-center inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900 text-slate-300 hover:text-white text-xs font-mono"
+          className="self-start sm:self-center inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-700/70 bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 text-xs font-medium shadow-sm transition"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-sky-400' : ''}`} />
           <span>Refresh</span>
         </button>
       </div>
 
       {/* Filter Chips & Search Bar */}
-      <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-4">
+      <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm space-y-4">
         <div className="flex flex-col md:flex-row gap-3">
           {/* Search Box */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3 pointer-events-none" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
             <input
               type="text"
               value={search}
               onChange={(e) => handleFilterChange(setSearch, e.target.value)}
               placeholder="Search file path, algorithm, symbol, detector..."
-              className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-cyan-500"
+              className="w-full pl-10 pr-3 py-2 bg-slate-900/60 border border-slate-700/70 rounded-xl text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 transition"
             />
             {search && (
               <button
                 onClick={() => handleFilterChange(setSearch, '')}
-                className="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300"
+                className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -158,7 +160,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as any)}
-                className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-300 focus:outline-none focus:border-cyan-500"
+                className="px-3 py-2 bg-slate-900/60 border border-slate-700/70 rounded-xl text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-500 transition cursor-pointer"
               >
                 <option value="risk">Sort by Risk Score</option>
                 <option value="urgency">Sort by Urgency</option>
@@ -169,7 +171,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
 
             <button
               onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}
-              className="px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 hover:text-white flex items-center gap-1"
+              className="px-3 py-2 rounded-xl bg-slate-900/60 border border-slate-700/70 text-xs text-slate-200 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition font-medium"
               title={`Switch to ${order === 'asc' ? 'descending' : 'ascending'}`}
             >
               <ArrowUpDown className="w-3.5 h-3.5" />
@@ -179,16 +181,16 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
         </div>
 
         {/* Filter Dropdowns */}
-        <div className="flex flex-wrap items-center gap-2 pt-1 font-mono text-xs">
-          <span className="text-slate-500 flex items-center gap-1 text-[11px] uppercase mr-1">
-            <Filter className="w-3 h-3" /> Filters:
+        <div className="flex flex-wrap items-center gap-2.5 pt-1 text-xs">
+          <span className="text-slate-400 flex items-center gap-1.5 text-xs font-medium mr-1">
+            <Filter className="w-3.5 h-3.5 text-slate-400" /> Filters:
           </span>
 
           {/* Band Filter */}
           <select
             value={band}
             onChange={(e) => handleFilterChange(setBand, e.target.value)}
-            className="px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300 focus:outline-none focus:border-cyan-500"
+            className="px-3 py-1.5 rounded-lg bg-slate-900/70 border border-slate-700/70 text-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer"
           >
             <option value="">All Bands</option>
             <option value="critical">Critical</option>
@@ -202,7 +204,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
           <select
             value={quantumStatus}
             onChange={(e) => handleFilterChange(setQuantumStatus, e.target.value)}
-            className="px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300 focus:outline-none focus:border-cyan-500"
+            className="px-3 py-1.5 rounded-lg bg-slate-900/70 border border-slate-700/70 text-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer"
           >
             <option value="">All Quantum Statuses</option>
             <option value="shor_vulnerable">Shor Vulnerable</option>
@@ -215,7 +217,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
           <select
             value={evidenceClass}
             onChange={(e) => handleFilterChange(setEvidenceClass, e.target.value)}
-            className="px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300 focus:outline-none focus:border-cyan-500"
+            className="px-3 py-1.5 rounded-lg bg-slate-900/70 border border-slate-700/70 text-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer"
           >
             <option value="">All Evidence Classes</option>
             <option value="PARSED_STRUCTURE">Parsed Structure (AST/Cert)</option>
@@ -228,7 +230,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
           <select
             value={purpose}
             onChange={(e) => handleFilterChange(setPurpose, e.target.value)}
-            className="px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300 focus:outline-none focus:border-cyan-500"
+            className="px-3 py-1.5 rounded-lg bg-slate-900/70 border border-slate-700/70 text-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer"
           >
             <option value="">All Purposes</option>
             <option value="key_establishment">Key Establishment</option>
@@ -240,24 +242,24 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
           {(band || quantumStatus || evidenceClass || purpose || search) && (
             <button
               onClick={handleResetFilters}
-              className="px-2.5 py-1 rounded border border-rose-500/30 bg-rose-950/20 text-rose-400 hover:bg-rose-900/30 transition text-[11px]"
+              className="px-3 py-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 transition text-xs font-medium"
             >
               Clear Filters
             </button>
           )}
 
-          <div className="ml-auto text-slate-400 text-xs font-mono">
+          <div className="ml-auto text-slate-400 text-xs">
             {pageData ? `Showing ${pageData.items.length} of ${pageData.total} findings` : ''}
           </div>
         </div>
       </div>
 
       {/* Findings Table */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/80 overflow-hidden shadow-xl">
+      <div className="rounded-2xl border border-slate-700/60 bg-slate-800/40 overflow-hidden shadow-sm backdrop-blur-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono">
+          <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-800 bg-slate-950/60 text-slate-400 uppercase tracking-wider text-[11px]">
+              <tr className="border-b border-slate-700/50 bg-slate-800/60 text-slate-400 uppercase tracking-wider text-[11px] font-medium">
                 <th className="py-3 px-4">Band</th>
                 <th className="py-3 px-4">Algorithm & OID</th>
                 <th className="py-3 px-4">Source Location</th>
@@ -292,38 +294,38 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
                     <tr
                       key={f.id}
                       onClick={() => setSelectedFinding(f)}
-                      className="hover:bg-slate-800/50 cursor-pointer transition group"
+                      className="hover:bg-slate-700/20 cursor-pointer transition group"
                     >
                       {/* Band */}
-                      <td className="py-3 px-4 whitespace-nowrap">
+                      <td className="py-3.5 px-4 whitespace-nowrap">
                         {risk && <BandBadge band={risk.band} size="sm" />}
                       </td>
 
                       {/* Algorithm */}
-                      <td className="py-3 px-4">
-                        <div className="font-bold text-slate-200 group-hover:text-cyan-300 transition">
+                      <td className="py-3.5 px-4">
+                        <div className="font-semibold text-slate-200 group-hover:text-sky-300 transition">
                           {displayName}
                         </div>
-                        <div className="text-[10px] text-slate-500">
+                        <div className="text-[11px] text-slate-400 font-mono">
                           {asset?.oid || regAlg?.oid || asset?.purpose || 'No OID'}
                         </div>
                       </td>
 
                       {/* Location */}
-                      <td className="py-3 px-4 max-w-xs truncate">
+                      <td className="py-3.5 px-4 max-w-xs truncate">
                         <div className="flex items-center gap-1.5 text-slate-300 truncate">
-                          <FileCode className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                          <span className="truncate">{f.file_path}</span>
+                          <FileCode className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span className="truncate font-mono text-[11px]">{f.file_path}</span>
                         </div>
                         {f.line_start && (
-                          <div className="text-[10px] text-cyan-400 pl-5">
+                          <div className="text-[11px] text-sky-400 font-mono pl-5">
                             Line {f.line_start}{f.line_end ? `–${f.line_end}` : ''}
                           </div>
                         )}
                       </td>
 
                       {/* Evidence Class */}
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         <EvidenceBadge
                           evidenceClass={f.evidence_class}
                           confidence={f.confidence}
@@ -332,7 +334,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
                       </td>
 
                       {/* Quantum Status */}
-                      <td className="py-3 px-4 whitespace-nowrap">
+                      <td className="py-3.5 px-4 whitespace-nowrap">
                         <QuantumBadge
                           status={asset?.quantum_status}
                           isPostQuantum={asset?.is_post_quantum}
@@ -340,23 +342,23 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({ initialBand 
                       </td>
 
                       {/* Classical / Quantum Scores */}
-                      <td className="py-3 px-4 text-center whitespace-nowrap">
-                        <div className="font-bold text-slate-200">
+                      <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                        <div className="font-semibold text-slate-200 font-mono">
                           {risk?.composite_risk ?? 0}/100
                         </div>
-                        <div className="text-[10px] text-slate-500">
+                        <div className="text-[11px] text-slate-400 font-mono">
                           C:{risk?.classical_risk ?? 0} · Q:{risk?.quantum_risk ?? 0}
                         </div>
                       </td>
 
                       {/* Action */}
-                      <td className="py-3 px-4 text-center">
+                      <td className="py-3.5 px-4 text-center">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedFinding(f);
                           }}
-                          className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-[11px] font-medium transition"
+                          className="px-3 py-1 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 font-medium text-xs transition cursor-pointer"
                         >
                           Inspect
                         </button>

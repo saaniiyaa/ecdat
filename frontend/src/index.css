@@ -8,10 +8,12 @@
 
 body {
   margin: 0;
-  background-color: #0b0f19;
-  color: #f1f5f9;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #0f172a;
+  color: #f8fafc;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom Scrollbars */
@@ -21,12 +23,12 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #0b1120;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #334155;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -35,15 +37,16 @@ body {
 
 /* Code fonts */
 code, pre, .font-mono {
-  font-family: 'JetBrains Mono', Menlo, Monaco, monospace;
+  font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
 }
 
-/* Pulse glow animations */
+/* Subtle enterprise glow / pulse animations */
 @keyframes subtle-pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  50% { opacity: 0.75; }
 }
 
 .animate-subtle {
   animation: subtle-pulse 3s infinite ease-in-out;
 }
+

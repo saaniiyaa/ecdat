@@ -120,64 +120,64 @@ export const MigrationPlan: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
       {/* Title & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <GitPullRequest className="w-6 h-6 text-emerald-400" />
-            <h1 className="text-2xl font-bold font-mono text-slate-100">
+            <h1 className="text-2xl font-bold text-slate-100 tracking-tight">
               Purpose-Aware PQC Migration Roadmap
             </h1>
           </div>
-          <p className="text-xs text-slate-400 font-mono mt-1">
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
             FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), and RFC 10024 hybrid transitions
           </p>
         </div>
 
         <button
           onClick={loadData}
-          className="self-start sm:self-center inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900 text-slate-300 hover:text-white text-xs font-mono"
+          className="self-start sm:self-center inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-700/70 bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 text-xs font-medium shadow-sm transition cursor-pointer"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-sky-400' : ''}`} />
           <span>Refresh Queue</span>
         </button>
       </div>
 
       {/* Target Standards Grouping Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 font-mono text-xs space-y-1">
-          <div className="text-emerald-400 font-bold flex items-center gap-1.5">
+        <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm space-y-1.5">
+          <div className="text-emerald-400 font-semibold text-xs flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4" />
             NIST FIPS 203
           </div>
-          <div className="text-slate-200 font-semibold">ML-KEM (Kyber)</div>
-          <p className="text-[11px] text-slate-500 font-sans">
+          <div className="text-slate-100 font-bold text-sm">ML-KEM (Kyber)</div>
+          <p className="text-xs text-slate-400 font-sans">
             Primary replacement for RSA & ECDH key establishment
           </p>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 font-mono text-xs space-y-1">
-          <div className="text-cyan-400 font-bold flex items-center gap-1.5">
+        <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm space-y-1.5">
+          <div className="text-sky-400 font-semibold text-xs flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4" />
             NIST FIPS 204
           </div>
-          <div className="text-slate-200 font-semibold">ML-DSA (Dilithium)</div>
-          <p className="text-[11px] text-slate-500 font-sans">
+          <div className="text-slate-100 font-bold text-sm">ML-DSA (Dilithium)</div>
+          <p className="text-xs text-slate-400 font-sans">
             Lattice signature standard for digital signatures & PKI
           </p>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 font-mono text-xs space-y-1">
-          <div className="text-violet-400 font-bold flex items-center gap-1.5">
+        <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm space-y-1.5">
+          <div className="text-violet-400 font-semibold text-xs flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4" />
             NIST FIPS 205
           </div>
-          <div className="text-slate-200 font-semibold">SLH-DSA (SPHINCS+)</div>
-          <p className="text-[11px] text-slate-500 font-sans">
+          <div className="text-slate-100 font-bold text-sm">SLH-DSA (SPHINCS+)</div>
+          <p className="text-xs text-slate-400 font-sans">
             Stateless hash-based signature scheme backup
           </p>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 font-mono text-xs space-y-1">
+        <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm space-y-1.5">
           <div className="text-amber-400 font-bold flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4" />
             RFC 10024 Hybrids

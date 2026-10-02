@@ -143,15 +143,15 @@ export const EvidenceAndExport: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* CBOM v1.7 */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between space-y-3">
+          <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm flex flex-col justify-between space-y-4">
             <div>
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-200">CycloneDX CBOM</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/40">
+                <span className="font-semibold text-slate-200">CycloneDX CBOM</span>
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-sky-500/10 text-sky-400 border border-sky-500/30">
                   v1.7
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-sans mt-1">
+              <p className="text-xs text-slate-400 font-sans mt-1.5 leading-relaxed">
                 Cryptographic Bill of Materials with full asset algorithm & certificate metadata.
               </p>
             </div>
@@ -159,7 +159,7 @@ export const EvidenceAndExport: React.FC = () => {
               <button
                 onClick={() => handleExport('cbom', '1.7')}
                 disabled={exportingType === 'cbom1.7'}
-                className="flex-1 py-1.5 px-3 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+                className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 shadow-md shadow-sky-500/20 transition disabled:opacity-50 cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>{exportingType === 'cbom1.7' ? 'Exporting...' : 'CBOM 1.7'}</span>
@@ -167,7 +167,7 @@ export const EvidenceAndExport: React.FC = () => {
               <button
                 onClick={() => handleExport('cbom', '1.6')}
                 disabled={exportingType === 'cbom1.6'}
-                className="py-1.5 px-2.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs hover:bg-slate-700 transition"
+                className="py-2 px-3 rounded-xl border border-slate-700/70 bg-slate-900/60 text-slate-300 text-xs hover:bg-slate-800 transition font-medium"
                 title="Download CBOM 1.6"
               >
                 1.6
@@ -176,22 +176,22 @@ export const EvidenceAndExport: React.FC = () => {
           </div>
 
           {/* SARIF 2.1.0 */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between space-y-3">
+          <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm flex flex-col justify-between space-y-4">
             <div>
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-200">SARIF Interop</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-500/40">
+                <span className="font-semibold text-slate-200">SARIF Interop</span>
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
                   v2.1.0
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-sans mt-1">
+              <p className="text-xs text-slate-400 font-sans mt-1.5 leading-relaxed">
                 Static Analysis Results Interchange Format for GitHub / GitLab Code Scanning.
               </p>
             </div>
             <button
               onClick={() => handleExport('sarif')}
               disabled={exportingType === 'sarif'}
-              className="w-full py-1.5 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+              className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/20 transition disabled:opacity-50 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
               <span>{exportingType === 'sarif' ? 'Exporting...' : 'Download SARIF'}</span>
@@ -199,22 +199,22 @@ export const EvidenceAndExport: React.FC = () => {
           </div>
 
           {/* Markdown Security Audit */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between space-y-3">
+          <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm flex flex-col justify-between space-y-4">
             <div>
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-200">Security Report</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/40">
+                <span className="font-semibold text-slate-200">Security Report</span>
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
                   Markdown
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-sans mt-1">
+              <p className="text-xs text-slate-400 font-sans mt-1.5 leading-relaxed">
                 Executive & compliance briefing report ready for institutional submission.
               </p>
             </div>
             <button
               onClick={() => handleExport('report')}
               disabled={exportingType === 'report'}
-              className="w-full py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+              className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 transition disabled:opacity-50 cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5" />
               <span>{exportingType === 'report' ? 'Exporting...' : 'Download Report'}</span>
@@ -222,22 +222,22 @@ export const EvidenceAndExport: React.FC = () => {
           </div>
 
           {/* CSV Findings Export */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between space-y-3">
+          <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm flex flex-col justify-between space-y-4">
             <div>
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-200">CSV Spreadsheet</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-500/40">
+                <span className="font-semibold text-slate-200">CSV Spreadsheet</span>
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/30">
                   CSV
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-sans mt-1">
+              <p className="text-xs text-slate-400 font-sans mt-1.5 leading-relaxed">
                 Raw flat finding rows, risk bands, confidence, and line numbers for analysis.
               </p>
             </div>
             <button
               onClick={() => handleExport('findings.csv')}
               disabled={exportingType === 'findings.csv'}
-              className="w-full py-1.5 px-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+              className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-600/20 transition disabled:opacity-50 cursor-pointer"
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
               <span>{exportingType === 'findings.csv' ? 'Exporting...' : 'Download CSV'}</span>
@@ -247,10 +247,10 @@ export const EvidenceAndExport: React.FC = () => {
       </div>
 
       {/* Forensic Attestation & Verification (Merkle Root + Ed25519) */}
-      <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-6">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="p-6 rounded-2xl bg-slate-800/40 border border-slate-700/60 shadow-sm backdrop-blur-sm space-y-6">
+        <div className="flex items-center justify-between border-b border-slate-700/50 pb-3">
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-200 flex items-center gap-2">
               <KeyRound className="w-4 h-4 text-emerald-400" />
               2. Forensic Attestation & Cryptographic Verification
             </h3>
@@ -260,54 +260,54 @@ export const EvidenceAndExport: React.FC = () => {
           </div>
 
           {/* Rule 6.6 Notice */}
-          <div className="px-2.5 py-1 rounded bg-amber-950/40 border border-amber-500/40 text-amber-300 text-[11px] flex items-center gap-1.5">
+          <div className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-medium flex items-center gap-1.5">
             <Lock className="w-3.5 h-3.5 text-amber-400" />
             <span>Key Origin: Ephemeral Demo (Rule 6.6)</span>
           </div>
         </div>
 
         {/* Creation Form */}
-        <form onSubmit={handleCreateAttestation} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4 text-xs">
+        <form onSubmit={handleCreateAttestation} className="p-5 rounded-xl bg-slate-900/60 border border-slate-700/50 space-y-4 text-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-400 mb-1">Attesting Officer Name:</label>
+              <label className="block text-slate-300 font-medium mb-1.5">Attesting Officer Name:</label>
               <input
                 type="text"
                 required
                 value={officerName}
                 onChange={(e) => setOfficerName(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500"
+                className="w-full px-3.5 py-2 rounded-xl bg-slate-900/80 border border-slate-700/70 text-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-500 transition"
               />
             </div>
 
             <div>
-              <label className="block text-slate-400 mb-1">Officer Role / Designation:</label>
+              <label className="block text-slate-300 font-medium mb-1.5">Officer Role / Designation:</label>
               <input
                 type="text"
                 required
                 value={officerRole}
                 onChange={(e) => setOfficerRole(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500"
+                className="w-full px-3.5 py-2 rounded-xl bg-slate-900/80 border border-slate-700/70 text-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-500 transition"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-slate-400 mb-1">Formal Declaration:</label>
+            <label className="block text-slate-300 font-medium mb-1.5">Formal Declaration:</label>
             <input
               type="text"
               required
               value={declaration}
               onChange={(e) => setDeclaration(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500"
+              className="w-full px-3.5 py-2 rounded-xl bg-slate-900/80 border border-slate-700/70 text-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-500 transition"
             />
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-1">
             <button
               type="submit"
               disabled={creatingAttestation}
-              className="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold flex items-center gap-2 transition disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium text-xs flex items-center gap-2 shadow-md shadow-emerald-600/20 transition disabled:opacity-50 cursor-pointer"
             >
               <ShieldCheck className="w-4 h-4" />
               <span>{creatingAttestation ? 'Generating Merkle Attestation...' : 'Attest & Verify Scan'}</span>

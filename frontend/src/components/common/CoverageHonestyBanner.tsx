@@ -28,36 +28,37 @@ export const CoverageHonestyBanner: React.FC<CoverageHonestyBannerProps> = ({
 
   return (
     <div
-      className={`rounded-xl border transition-all ${
+      className={`rounded-2xl border backdrop-blur-sm transition-all shadow-sm ${
         isHighCoverage
-          ? 'bg-slate-900/90 border-slate-700/80'
-          : 'bg-amber-950/20 border-amber-500/40'
+          ? 'bg-slate-900/70 border-slate-700/60'
+          : 'bg-amber-950/20 border-amber-500/30'
       } ${className}`}
     >
       <div className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1.5 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="flex items-center gap-1.5 text-xs font-mono font-semibold px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-cyan-300">
-              <Layers className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-sky-300">
+              <Layers className="w-3.5 h-3.5 text-sky-400" />
               Coverage Index: {coverageIndex.toFixed(3)} ({coveragePct}%)
             </span>
-            <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800/80 text-slate-400 border border-slate-700/50">
+            <span className="text-xs px-2.5 py-1 rounded-lg bg-slate-800/60 text-slate-400 border border-slate-700/40">
               Unobserved: {unobservedPct.toFixed(1)}%
             </span>
           </div>
 
-          <div className="flex items-start gap-2">
+          <div className="flex items-start gap-2.5 pt-1">
             <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
             <div>
               {/* MANDATORY RULE 6.1: Never say 'quantum-safe' */}
               <p className="text-sm font-semibold text-slate-100">
-                No vulnerable artefacts detected within the scanned scope.
+                Coverage Honesty Banner: No vulnerable artefacts detected within the scanned scope.
               </p>
               <p className="text-xs text-slate-400 font-sans mt-0.5">
-                Deterministic scanner guarantee covers evaluated AST, binary symbols, configs, manifests, and X.509 certs. Surfaces outside this scope are accounted below.
+                Transparent accounting of fully inspected code vs unobserved binaries.
               </p>
             </div>
           </div>
+
         </div>
 
         {unobservedSamples.length > 0 && !condensed && (

@@ -58,22 +58,22 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLauncher, activeTab, setAc
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800">
+    <header className="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80">
       {/* Top Bar: Brand, Health, Scan Selector, Quick Actions */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Brand */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <Shield className="w-6 h-6 text-slate-950 font-bold" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow-md shadow-sky-500/10">
+              <Shield className="w-5 h-5 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-base font-bold tracking-tight text-white font-mono">ECDAT</span>
-                <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-semibold">
+                <span className="text-base font-bold tracking-tight text-white">ECDAT</span>
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/25 text-emerald-400">
                   NTRO PS 26164
                 </span>
-                <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 hidden sm:inline-block">
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-slate-800/70 text-slate-400 border border-slate-700/50 hidden sm:inline-block">
                   v1.0.0
                 </span>
               </div>
@@ -90,7 +90,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLauncher, activeTab, setAc
                 value={activeScanId || ''}
                 onChange={(e) => setActiveScanId(e.target.value || null)}
                 disabled={loadingScans || scans.length === 0}
-                className="w-full pl-3 pr-8 py-1.5 bg-slate-950 border border-slate-700/80 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-cyan-500 appearance-none cursor-pointer truncate"
+                className="w-full pl-3 pr-8 py-2 bg-slate-800/60 border border-slate-700/70 rounded-xl text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 appearance-none cursor-pointer truncate shadow-sm transition"
               >
                 {scans.length === 0 ? (
                   <option value="">No scans available</option>
@@ -102,30 +102,30 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLauncher, activeTab, setAc
                   ))
                 )}
               </select>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" />
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-3 pointer-events-none" />
             </div>
 
             <button
               onClick={() => refreshScans()}
               title="Refresh scans"
               disabled={loadingScans}
-              className="p-1.5 rounded-lg border border-slate-800 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              className="p-2 rounded-xl border border-slate-700/70 bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-700/60 shadow-sm transition"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loadingScans ? 'animate-spin text-cyan-400' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${loadingScans ? 'animate-spin text-sky-400' : ''}`} />
             </button>
           </div>
 
           {/* Right Actions: System Health & New Scan */}
           <div className="flex items-center gap-3">
             {/* System Health */}
-            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-950/80 border border-slate-800 text-xs font-mono">
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/50 border border-slate-700/60 text-xs">
               <span
                 className={`w-2 h-2 rounded-full ${
-                  systemOnline ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'
+                  systemOnline ? 'bg-emerald-400 shadow-sm shadow-emerald-400/50' : 'bg-rose-500'
                 }`}
               />
-              <span className="text-slate-300">
-                {systemOnline ? 'API 1.0.0 Live' : 'API Offline'}
+              <span className="text-slate-300 font-medium">
+                {systemOnline ? 'API Online' : 'API Offline'}
               </span>
               {health?.dialect && (
                 <span className="text-[10px] text-slate-500 uppercase">({health.dialect})</span>
@@ -135,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLauncher, activeTab, setAc
             {/* Launch Scan Button */}
             <button
               onClick={onOpenLauncher}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-semibold text-xs font-mono shadow-md shadow-emerald-600/20 transition"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-xs shadow-md shadow-sky-500/20 transition cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Launch Scan</span>
@@ -145,7 +145,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLauncher, activeTab, setAc
             <button
               onClick={() => setShowSettings(!showSettings)}
               title="API Configuration"
-              className="p-1.5 rounded-lg border border-slate-800 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              className="p-2 rounded-xl border border-slate-700/70 bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-700/60 shadow-sm transition"
             >
               <Settings className="w-4 h-4" />
             </button>
@@ -153,17 +153,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLauncher, activeTab, setAc
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="flex space-x-1 overflow-x-auto py-1 scrollbar-none border-t border-slate-800/60">
+        <nav className="flex space-x-1.5 overflow-x-auto py-2 scrollbar-none border-t border-slate-800/60">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`px-3 py-2 text-xs font-medium rounded-lg whitespace-nowrap transition ${
+                className={`px-3.5 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-all duration-150 ${
                   isActive
-                    ? 'bg-slate-800 text-cyan-300 border border-slate-700/60 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                    ? 'bg-slate-800 text-sky-300 border border-slate-700/80 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                 }`}
               >
                 {item.label}

@@ -68,17 +68,17 @@ export const RegistryView: React.FC = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 font-mono">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Title */}
-      <div className="border-b border-slate-800 pb-4">
-        <div className="flex items-center gap-2">
-          <BookOpen className="w-6 h-6 text-cyan-400" />
-          <h1 className="text-2xl font-bold text-slate-100">
+      <div className="border-b border-slate-800/80 pb-5">
+        <div className="flex items-center gap-2.5">
+          <BookOpen className="w-6 h-6 text-sky-400" />
+          <h1 className="text-2xl font-bold text-slate-100 tracking-tight">
             Cryptographic Knowledge Base & Policy Pack
           </h1>
         </div>
-        <p className="text-xs text-slate-400 mt-1">
-          Server-side authoritative catalogue ({algorithms.length} algorithms, {totalOidsCount} OIDs, {libraries.length} libraries, {protocols.length} protocol profiles)
+        <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          Authoritative enterprise catalogue ({algorithms.length} algorithms, {totalOidsCount} OIDs, {libraries.length} libraries, {protocols.length} protocol profiles)
         </p>
       </div>
 
@@ -86,58 +86,58 @@ export const RegistryView: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div
           onClick={() => setActiveTab('algorithms')}
-          className={`p-4 rounded-xl border cursor-pointer transition ${
+          className={`p-5 rounded-2xl border cursor-pointer transition shadow-sm backdrop-blur-sm ${
             activeTab === 'algorithms'
-              ? 'bg-cyan-950/30 border-cyan-500/50 shadow-md shadow-cyan-950/40'
-              : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
+              ? 'bg-sky-500/10 border-sky-500/40 text-sky-200'
+              : 'bg-slate-800/40 border-slate-700/60 hover:border-slate-600/80'
           }`}
         >
-          <span className="text-slate-400 text-xs block">Cryptographic Algorithms</span>
-          <span className="text-2xl font-bold text-cyan-400 mt-1 block">
+          <span className="text-slate-400 text-xs block font-medium">Cryptographic Algorithms</span>
+          <span className="text-2xl font-bold text-sky-400 mt-1 block tracking-tight font-mono">
             {snapshot?.algorithms ?? algorithms.length}
           </span>
-          <span className="text-[10px] text-slate-500">{totalOidsCount} standard ASN.1 OIDs</span>
+          <span className="text-[11px] text-slate-400">{totalOidsCount} standard ASN.1 OIDs</span>
         </div>
 
         <div
           onClick={() => setActiveTab('libraries')}
-          className={`p-4 rounded-xl border cursor-pointer transition ${
+          className={`p-5 rounded-2xl border cursor-pointer transition shadow-sm backdrop-blur-sm ${
             activeTab === 'libraries'
-              ? 'bg-emerald-950/30 border-emerald-500/50 shadow-md shadow-emerald-950/40'
-              : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
+              ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-200'
+              : 'bg-slate-800/40 border-slate-700/60 hover:border-slate-600/80'
           }`}
         >
-          <span className="text-slate-400 text-xs block">Monitored Libraries</span>
-          <span className="text-2xl font-bold text-emerald-400 mt-1 block">
+          <span className="text-slate-400 text-xs block font-medium">Monitored Libraries</span>
+          <span className="text-2xl font-bold text-emerald-400 mt-1 block tracking-tight font-mono">
             {snapshot?.libraries ?? libraries.length}
           </span>
-          <span className="text-[10px] text-slate-500">Cross-referenced manifests</span>
+          <span className="text-[11px] text-slate-400">Cross-referenced manifests</span>
         </div>
 
         <div
           onClick={() => setActiveTab('protocols')}
-          className={`p-4 rounded-xl border cursor-pointer transition ${
+          className={`p-5 rounded-2xl border cursor-pointer transition shadow-sm backdrop-blur-sm ${
             activeTab === 'protocols'
-              ? 'bg-indigo-950/30 border-indigo-500/50 shadow-md shadow-indigo-950/40'
-              : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
+              ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-200'
+              : 'bg-slate-800/40 border-slate-700/60 hover:border-slate-600/80'
           }`}
         >
-          <span className="text-slate-400 text-xs block">Protocol Profiles</span>
-          <span className="text-2xl font-bold text-indigo-400 mt-1 block">
+          <span className="text-slate-400 text-xs block font-medium">Protocol Profiles</span>
+          <span className="text-2xl font-bold text-indigo-400 mt-1 block tracking-tight font-mono">
             {snapshot?.protocols ?? protocols.length}
           </span>
-          <span className="text-[10px] text-slate-500">SSL/TLS profiles</span>
+          <span className="text-[11px] text-slate-400">SSL/TLS profiles</span>
         </div>
 
         <div
           onClick={() => setActiveTab('policypack')}
-          className={`p-4 rounded-xl border cursor-pointer transition ${
+          className={`p-5 rounded-2xl border cursor-pointer transition shadow-sm backdrop-blur-sm ${
             activeTab === 'policypack'
-              ? 'bg-amber-950/30 border-amber-500/50 shadow-md shadow-amber-950/40'
-              : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
+              ? 'bg-amber-500/10 border-amber-500/40 text-amber-200'
+              : 'bg-slate-800/40 border-slate-700/60 hover:border-slate-600/80'
           }`}
         >
-          <span className="text-slate-400 text-xs block">Active Policy Pack</span>
+          <span className="text-slate-400 text-xs block font-medium">Active Policy Pack</span>
           <span className="text-base font-bold text-amber-400 mt-2 block truncate">
             {snapshot?.policy_pack_version || 'pp-2026.09'}
           </span>
