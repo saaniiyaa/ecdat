@@ -2,6 +2,7 @@
 import { ApiError, ErrorEnvelope } from '../types/api';
 
 const DEFAULT_BASE_URL = 'https://ecdat-api-oci7.onrender.com/api/v1';
+const STORAGE_KEY_BASE_URL = 'ecdat_api_base_url';
 const STORAGE_KEY_API_KEY = 'ecdat_api_key';
 
 export function getBaseUrl(): string {
