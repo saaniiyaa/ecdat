@@ -8,11 +8,11 @@ interface BandBadgeProps {
 }
 
 export const BAND_COLORS: Record<string, { bg: string; text: string; border: string; dot: string; hex: string }> = {
-  critical: { bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/30', dot: 'bg-rose-500', hex: '#f43f5e' },
-  high: { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/30', dot: 'bg-amber-500', hex: '#f59e0b' },
-  medium: { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/30', dot: 'bg-blue-500', hex: '#3b82f6' },
-  low: { bg: 'bg-slate-500/15', text: 'text-slate-300', border: 'border-slate-600/40', dot: 'bg-slate-400', hex: '#64748b' },
-  informational: { bg: 'bg-slate-500/10', text: 'text-slate-400', border: 'border-slate-700/50', dot: 'bg-slate-500', hex: '#94a3b8' },
+  critical: { bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200/60', dot: 'bg-rose-500', hex: '#e11d48' },
+  high: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200/60', dot: 'bg-amber-500', hex: '#d97706' },
+  medium: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200/60', dot: 'bg-blue-500', hex: '#2563eb' },
+  low: { bg: 'bg-slate-50', text: 'text-slate-600', border: 'border-slate-200', dot: 'bg-slate-400', hex: '#64748b' },
+  informational: { bg: 'bg-slate-50', text: 'text-slate-500', border: 'border-slate-200', dot: 'bg-slate-400', hex: '#94a3b8' },
 };
 
 export const BandBadge: React.FC<BandBadgeProps> = ({ band, size = 'md', showCount }) => {
@@ -28,16 +28,15 @@ export const BandBadge: React.FC<BandBadgeProps> = ({ band, size = 'md', showCou
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-md border font-medium ${theme.bg} ${theme.text} ${theme.border} ${sizeClass}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border font-medium ${theme.bg} ${theme.text} ${theme.border} ${sizeClass}`}
     >
       <span className={`w-1.5 h-1.5 rounded-full ${theme.dot}`} />
       <span>{band}</span>
       {showCount !== undefined && (
-        <span className="ml-1 px-1.5 py-0.2 rounded bg-slate-900/70 font-semibold text-slate-200 text-[11px]">
+        <span className="ml-1 px-1.5 py-0.2 rounded-full bg-white font-semibold text-slate-700 text-[11px] border border-slate-200">
           {showCount}
         </span>
       )}
     </span>
   );
 };
-

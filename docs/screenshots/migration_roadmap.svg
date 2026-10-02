@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1000" height="500" fill="url(#bg)" rx="12"/>
+  <text x="500" y="45" fill="#38bdf8" font-family="sans-serif" font-size="20" font-weight="bold" text-anchor="middle">NIST POST-QUANTUM MIGRATION ROADMAP &amp; TRANSITION WAVES</text>
+
+  <!-- Wave 1 -->
+  <rect x="40" y="80" width="280" height="380" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+  <rect x="55" y="95" width="250" height="35" rx="6" fill="#7f1d1d"/>
+  <text x="180" y="118" fill="#fca5a5" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">WAVE 1: IMMEDIATE / CRITICAL</text>
+  <text x="60" y="155" fill="#ef4444" font-family="sans-serif" font-size="12" font-weight="bold">Target: Internet-Facing &amp; Deprecated</text>
+  
+  <rect x="55" y="175" width="250" height="75" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="65" y="195" fill="#f87171" font-family="monospace" font-size="11">Legacy: DES, 3DES, MD5, SHA-1</text>
+  <text x="65" y="215" fill="#38bdf8" font-family="monospace" font-size="11">Action: Immediate Replacement</text>
+  <text x="65" y="235" fill="#34d399" font-family="monospace" font-size="11">Target: AES-256-GCM / SHA-384</text>
+
+  <rect x="55" y="265" width="250" height="75" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="65" y="285" fill="#f87171" font-family="monospace" font-size="11">Legacy: RSA-2048 Key Exchange</text>
+  <text x="65" y="305" fill="#38bdf8" font-family="monospace" font-size="11">Action: KEM Hybrid Transition</text>
+  <text x="65" y="325" fill="#34d399" font-family="monospace" font-size="11">Target: ML-KEM-768 (FIPS 203)</text>
+
+  <text x="65" y="375" fill="#94a3b8" font-family="sans-serif" font-size="11">• Sovereign-critical assets first</text>
+  <text x="65" y="400" fill="#94a3b8" font-family="sans-serif" font-size="11">• Store Now Decrypt Later risk eliminated</text>
+  <text x="65" y="425" fill="#94a3b8" font-family="sans-serif" font-size="11">• Target Start: Q1 2026</text>
+
+  <!-- Wave 2 -->
+  <rect x="360" y="80" width="280" height="380" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+  <rect x="375" y="95" width="250" height="35" rx="6" fill="#78350f"/>
+  <text x="500" y="118" fill="#fde68a" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">WAVE 2: HIGH PRIORITY SIGNING</text>
+  <text x="380" y="155" fill="#f59e0b" font-family="sans-serif" font-size="12" font-weight="bold">Target: Authentication &amp; PKI</text>
+
+  <rect x="375" y="175" width="250" height="75" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="385" y="195" fill="#fbbf24" font-family="monospace" font-size="11">Legacy: RSA-2048 / ECDSA P-256</text>
+  <text x="385" y="215" fill="#38bdf8" font-family="monospace" font-size="11">Action: Digital Signature PQC</text>
+  <text x="385" y="235" fill="#34d399" font-family="monospace" font-size="11">Target: ML-DSA-65 (FIPS 204)</text>
+
+  <rect x="375" y="265" width="250" height="75" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="385" y="285" fill="#fbbf24" font-family="monospace" font-size="11">Legacy: Code Signing / Firmware</text>
+  <text x="385" y="305" fill="#38bdf8" font-family="monospace" font-size="11">Action: Stateless Hash Signatures</text>
+  <text x="385" y="325" fill="#34d399" font-family="monospace" font-size="11">Target: SLH-DSA (FIPS 205)</text>
+
+  <text x="385" y="375" fill="#94a3b8" font-family="sans-serif" font-size="11">• Internal CA &amp; token re-issuance</text>
+  <text x="385" y="400" fill="#94a3b8" font-family="sans-serif" font-size="11">• Dual-signature hybrid validation</text>
+  <text x="385" y="425" fill="#94a3b8" font-family="sans-serif" font-size="11">• Target Start: Q3 2027</text>
+
+  <!-- Wave 3 -->
+  <rect x="680" y="80" width="280" height="380" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+  <rect x="695" y="95" width="250" height="35" rx="6" fill="#064e3b"/>
+  <text x="820" y="118" fill="#a7f3d0" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">WAVE 3: HARDENING &amp; POST-PQ</text>
+  <text x="700" y="155" fill="#10b981" font-family="sans-serif" font-size="12" font-weight="bold">Target: Symmetric &amp; Long-Term</text>
+
+  <rect x="695" y="175" width="250" height="75" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="705" y="195" fill="#6ee7b7" font-family="monospace" font-size="11">Legacy: AES-128 Symmetric</text>
+  <text x="705" y="215" fill="#38bdf8" font-family="monospace" font-size="11">Action: Grover Resistance Bump</text>
+  <text x="705" y="235" fill="#34d399" font-family="monospace" font-size="11">Target: AES-256 (128-bit quantum)</text>
+
+  <rect x="695" y="265" width="250" height="75" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="705" y="285" fill="#6ee7b7" font-family="monospace" font-size="11">Protocol: TLS 1.3 Strict</text>
+  <text x="705" y="305" fill="#38bdf8" font-family="monospace" font-size="11">Action: RFC 10024 Hybrid KEM</text>
+  <text x="705" y="325" fill="#34d399" font-family="monospace" font-size="11">Target: X25519 + ML-KEM-768</text>
+
+  <text x="705" y="375" fill="#94a3b8" font-family="sans-serif" font-size="11">• Complete crypto agility verified</text>
+  <text x="705" y="400" fill="#94a3b8" font-family="sans-serif" font-size="11">• Continuous CBOM CI/CD audit</text>
+  <text x="705" y="425" fill="#94a3b8" font-family="sans-serif" font-size="11">• Target Start: 2028+</text>
+</svg>

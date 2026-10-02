@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1000" height="500" fill="url(#bg)" rx="12"/>
+  <text x="500" y="45" fill="#38bdf8" font-family="sans-serif" font-size="20" font-weight="bold" text-anchor="middle">STANDARDS-BASED CBOM EXPORT &amp; CRYPTOGRAPHIC ATTESTATION</text>
+
+  <!-- Left: CycloneDX CBOM -->
+  <rect x="50" y="80" width="420" height="380" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <rect x="65" y="95" width="390" height="35" rx="6" fill="#0369a1"/>
+  <text x="260" y="118" fill="#ffffff" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">CycloneDX 1.6 / 1.7 CBOM SPECIFICATION</text>
+  
+  <text x="75" y="160" fill="#38bdf8" font-family="monospace" font-size="12">{"$schema": "cyclonedx/cbom-1.7",</text>
+  <text x="75" y="185" fill="#94a3b8" font-family="monospace" font-size="11">  "bomFormat": "CycloneDX",</text>
+  <text x="75" y="210" fill="#94a3b8" font-family="monospace" font-size="11">  "specVersion": "1.7",</text>
+  <text x="75" y="235" fill="#38bdf8" font-family="monospace" font-size="11">  "serialNumber": "urn:uuid:550e8400-...",</text>
+  <text x="75" y="260" fill="#cbd5e1" font-family="monospace" font-size="11">  "components": [</text>
+  <text x="95" y="285" fill="#f59e0b" font-family="monospace" font-size="11">    { "type": "cryptographic-asset",</text>
+  <text x="95" y="310" fill="#34d399" font-family="monospace" font-size="11">      "name": "RSA-2048", "oid": "1.2.840...",</text>
+  <text x="95" y="335" fill="#f472b6" font-family="monospace" font-size="11">      "quantumSecurityLevel": 0,</text>
+  <text x="95" y="360" fill="#94a3b8" font-family="monospace" font-size="11">      "algorithmProperties": { ... } } ] }</text>
+  
+  <text x="75" y="410" fill="#10b981" font-family="sans-serif" font-size="12" font-weight="bold">✓ Deterministic Content-Addressed UUIDv5</text>
+  <text x="75" y="435" fill="#10b981" font-family="sans-serif" font-size="12" font-weight="bold">✓ SARIF 2.1.0 Compatible for DevSecOps</text>
+
+  <!-- Right: Attestation & Merkle Tree -->
+  <rect x="530" y="80" width="420" height="380" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <rect x="545" y="95" width="390" height="35" rx="6" fill="#701a75"/>
+  <text x="740" y="118" fill="#fbcfe8" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">FORENSIC DOSSIER &amp; TAMPER-EVIDENT MERKLE ROOT</text>
+
+  <rect x="550" y="150" width="380" height="50" rx="6" fill="#0f172a" stroke="#a21caf" stroke-width="1"/>
+  <text x="560" y="172" fill="#f472b6" font-family="sans-serif" font-size="11" font-weight="bold">61-Leaf Merkle Tree Root Hash</text>
+  <text x="560" y="190" fill="#cbd5e1" font-family="monospace" font-size="10">Root: a9f8e43...d772c10b (Canonical SHA-256)</text>
+
+  <rect x="550" y="215" width="380" height="50" rx="6" fill="#0f172a" stroke="#3b82f6" stroke-width="1"/>
+  <text x="560" y="237" fill="#60a5fa" font-family="sans-serif" font-size="11" font-weight="bold">Ed25519 Cryptographic Signature</text>
+  <text x="560" y="255" fill="#cbd5e1" font-family="monospace" font-size="10">Sig: 3e9d8f...44bc1 (Signed by Security Officer)</text>
+
+  <rect x="550" y="280" width="380" height="50" rx="6" fill="#0f172a" stroke="#059669" stroke-width="1"/>
+  <text x="560" y="302" fill="#34d399" font-family="sans-serif" font-size="11" font-weight="bold">Attestation Verdict</text>
+  <text x="560" y="320" fill="#34d399" font-family="monospace" font-size="12" font-weight="bold">VERDICT: AUTHENTIC (Zero Tampering Detected)</text>
+
+  <text x="555" y="375" fill="#94a3b8" font-family="sans-serif" font-size="11">• Officer Name: A. Sharma (Principal Cryptographer)</text>
+  <text x="555" y="400" fill="#94a3b8" font-family="sans-serif" font-size="11">• Verifiable offline via: python -m app.manage verify &lt;id&gt;</text>
+  <text x="555" y="425" fill="#94a3b8" font-family="sans-serif" font-size="11">• Complete legal &amp; forensic non-repudiation chain</text>
+</svg>

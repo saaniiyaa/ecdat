@@ -8,24 +8,20 @@ export default {
     extend: {
       colors: {
         brand: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          500: '#16a34a',
-          600: '#15803d',
-          700: '#166534',
-          900: '#14532d',
+          50: '#eef2ff',
+          100: '#e0e7ff',
+          500: '#6366f1',
+          600: '#4f46e5',
+          700: '#4338ca',
+          900: '#312e81',
         },
         band: {
-          critical: '#b4232c',
+          critical: '#e11d48',
           high: '#d97706',
           medium: '#2563eb',
           low: '#64748b',
           informational: '#94a3b8',
         },
-        slate: {
-          850: '#151f32',
-          950: '#0a0f1d',
-        }
       },
       fontFamily: {
         mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'Courier New', 'monospace'],
