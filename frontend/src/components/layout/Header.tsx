@@ -61,18 +61,18 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur-md border-b border-border cipher-grid">
+    <header className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-sm">
       <div className="px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
         {/* Mobile menu trigger */}
         <div className="flex items-center gap-3 md:hidden">
           <button
             onClick={onToggleMobileSidebar}
-            className="p-2 rounded-lg text-text-muted hover:text-text-main hover:bg-surface-2 transition"
+            className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition"
             aria-label="Toggle navigation menu"
           >
             <Menu className="w-5 h-5" />
           </button>
-          <span className="font-bold text-sm text-text-main">ECDAT</span>
+          <span className="font-bold text-sm text-slate-900">ECDAT</span>
         </div>
 
         {/* Global Search / Command Palette Bar */}
@@ -80,13 +80,13 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenCommandPalette}
-            className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-surface-2 border border-border text-xs text-text-muted hover:border-accent/40 hover:text-text-main transition shadow-sm group cursor-pointer"
+            className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-600 hover:border-indigo-500 hover:text-slate-900 transition shadow-sm group cursor-pointer"
           >
             <div className="flex items-center gap-2.5">
-              <Search className="w-4 h-4 text-text-dim group-hover:text-accent transition-colors" />
+              <Search className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors" />
               <span className="font-medium">Search findings, algorithms, tabs...</span>
             </div>
-            <kbd className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-surface border border-border text-text-dim">
+            <kbd className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white border border-slate-300 text-slate-600">
               Ctrl+K
             </kbd>
           </button>
@@ -100,7 +100,7 @@ export const Header: React.FC<HeaderProps> = ({
               onChange={(e) => setActiveScanId(e.target.value || null)}
               disabled={loadingScans || scans.length === 0}
               aria-label="Active Scan Target"
-              className="w-full pl-3 pr-8 py-1.5 bg-surface-2 border border-border rounded-xl text-xs font-semibold text-text-main focus:outline-none focus:border-accent appearance-none cursor-pointer truncate shadow-sm transition"
+              className="w-full pl-3 pr-8 py-1.5 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-indigo-600 appearance-none cursor-pointer truncate shadow-sm transition"
             >
               {scans.length === 0 ? (
                 <option value="">No scans registered</option>
@@ -112,51 +112,51 @@ export const Header: React.FC<HeaderProps> = ({
                 ))
               )}
             </select>
-            <ChevronDown className="w-3.5 h-3.5 text-text-dim absolute right-3 top-2.5 pointer-events-none" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-3 top-2.5 pointer-events-none" />
           </div>
 
           <button
             onClick={() => refreshScans()}
             title="Refresh active scans list"
             disabled={loadingScans}
-            className="p-2 rounded-xl border border-border bg-surface-2 text-text-muted hover:text-text-main hover:bg-surface-3 shadow-sm transition cursor-pointer"
+            className="p-2 rounded-xl border border-slate-300 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 shadow-sm transition cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loadingScans ? 'animate-spin text-accent' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loadingScans ? 'animate-spin text-indigo-600' : ''}`} />
           </button>
         </div>
 
         {/* Right Action Icons: Status, Theme Toggle, Help, Settings */}
         <div className="flex items-center gap-2">
           {/* Engine Status indicator */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-2 border border-border text-xs">
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
             <span
               className={`w-2 h-2 rounded-full ${
-                systemOnline ? 'bg-accent shadow-glow-accent' : 'bg-danger'
+                systemOnline ? 'bg-emerald-500' : 'bg-rose-500'
               }`}
             />
-            <span className="text-text-main font-semibold">
+            <span className="text-slate-900 font-semibold">
               {systemOnline ? 'Engine Online' : 'Engine Offline'}
             </span>
             {health?.dialect && (
-              <span className="text-[10px] text-text-dim uppercase font-mono">({health.dialect})</span>
+              <span className="text-[10px] text-slate-500 uppercase font-mono">({health.dialect})</span>
             )}
           </div>
 
           {/* Theme Toggle Button */}
           <button
             onClick={onToggleTheme}
-            title={theme === 'dark' ? 'Switch to Soft Light Theme' : 'Switch to Secure Dark Theme'}
-            className="p-2 rounded-xl border border-border bg-surface-2 text-text-muted hover:text-accent hover:bg-surface-3 shadow-sm transition cursor-pointer"
+            title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            className="p-2 rounded-xl border border-slate-300 bg-white text-slate-600 hover:text-indigo-600 hover:bg-slate-50 shadow-sm transition cursor-pointer"
             aria-label="Toggle visual theme"
           >
-            {theme === 'dark' ? <Sun className="w-4 h-4 text-warning" /> : <Moon className="w-4 h-4 text-accent-2" />}
+            {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-indigo-600" />}
           </button>
 
           {/* Help Button */}
           <button
             onClick={onOpenHelp}
             title="Cryptographic Guidelines & Jargon Reference"
-            className="p-2 rounded-xl border border-border bg-surface-2 text-text-muted hover:text-accent hover:bg-surface-3 shadow-sm transition cursor-pointer"
+            className="p-2 rounded-xl border border-slate-300 bg-white text-slate-600 hover:text-indigo-600 hover:bg-slate-50 shadow-sm transition cursor-pointer"
             aria-label="Help reference"
           >
             <HelpCircle className="w-4 h-4" />
@@ -166,7 +166,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={() => setShowSettings(!showSettings)}
             title="API Configuration"
-            className="p-2 rounded-xl border border-border bg-surface-2 text-text-muted hover:text-accent hover:bg-surface-3 shadow-sm transition cursor-pointer"
+            className="p-2 rounded-xl border border-slate-300 bg-white text-slate-600 hover:text-indigo-600 hover:bg-slate-50 shadow-sm transition cursor-pointer"
             aria-label="Settings"
           >
             <Settings className="w-4 h-4" />
@@ -176,16 +176,16 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Settings Modal */}
       {showSettings && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-surface border border-border rounded-xl p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="font-bold text-text-main flex items-center gap-2 text-sm">
-                <Settings className="w-4 h-4 text-accent" />
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white border border-slate-300 rounded-2xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h3 className="font-bold text-slate-900 flex items-center gap-2 text-sm">
+                <Settings className="w-4 h-4 text-indigo-600" />
                 ECDAT Console Configuration
               </h3>
               <button
                 onClick={() => setShowSettings(false)}
-                className="text-text-dim hover:text-text-main text-xs font-mono"
+                className="text-slate-500 hover:text-slate-900 text-xs font-mono p-1 rounded hover:bg-slate-100"
               >
                 Close
               </button>
@@ -193,35 +193,35 @@ export const Header: React.FC<HeaderProps> = ({
 
             <form onSubmit={handleSaveSettings} className="space-y-4 text-xs">
               <div>
-                <label className="block text-text-muted mb-1 font-semibold">Backend Base URL:</label>
+                <label className="block text-slate-700 mb-1 font-semibold">Backend Base URL:</label>
                 <input
                   type="text"
                   value={baseUrlInput}
                   onChange={(e) => setBaseUrlInput(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-main font-mono text-xs focus:outline-none focus:border-accent"
+                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-600"
                   placeholder="http://127.0.0.1:8000/api/v1"
                 />
-                <span className="text-[10px] text-text-dim mt-1 block font-mono">
+                <span className="text-[10px] text-slate-500 mt-1 block font-mono">
                   Default: http://127.0.0.1:8000/api/v1
                 </span>
               </div>
 
               <div>
-                <label className="block text-text-muted mb-1 font-semibold">X-API-Key:</label>
+                <label className="block text-slate-700 mb-1 font-semibold">X-API-Key:</label>
                 <input
                   type="text"
                   value={apiKeyInput}
                   onChange={(e) => setApiKeyInput(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-main font-mono text-xs focus:outline-none focus:border-accent"
+                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-600"
                   placeholder="dev-ecdat-key"
                 />
-                <span className="text-[10px] text-text-dim mt-1 block font-mono">
+                <span className="text-[10px] text-slate-500 mt-1 block font-mono">
                   Default: dev-ecdat-key
                 </span>
               </div>
 
               {saveMessage && (
-                <div className="p-2.5 rounded-lg bg-success-subtle border border-success-border text-success text-center font-semibold">
+                <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-800 text-center font-semibold">
                   {saveMessage}
                 </div>
               )}
@@ -230,13 +230,13 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowSettings(false)}
-                  className="px-3.5 py-2 rounded-lg border border-border text-text-muted hover:text-text-main hover:bg-surface-2 transition font-semibold"
+                  className="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-accent hover:bg-accent-hover text-bg font-bold transition shadow-sm"
+                  className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition shadow-sm"
                 >
                   Save & Reload
                 </button>

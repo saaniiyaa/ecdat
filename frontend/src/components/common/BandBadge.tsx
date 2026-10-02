@@ -13,37 +13,37 @@ export const BAND_CONFIG: Record<
   { bg: string; text: string; border: string; icon: React.FC<{ className?: string }>; label: string }
 > = {
   critical: {
-    bg: 'bg-danger-subtle',
-    text: 'text-danger',
-    border: 'border-danger-border',
+    bg: 'bg-rose-50',
+    text: 'text-rose-800',
+    border: 'border-rose-300',
     icon: ShieldAlert,
     label: 'Critical',
   },
   high: {
-    bg: 'bg-warning-subtle',
-    text: 'text-warning',
-    border: 'border-warning-border',
+    bg: 'bg-amber-50',
+    text: 'text-amber-800',
+    border: 'border-amber-300',
     icon: AlertTriangle,
     label: 'High',
   },
   medium: {
-    bg: 'bg-accent-2-subtle',
-    text: 'text-accent-2',
-    border: 'border-accent-2-border',
+    bg: 'bg-blue-50',
+    text: 'text-blue-800',
+    border: 'border-blue-300',
     icon: AlertCircle,
     label: 'Medium',
   },
   low: {
-    bg: 'bg-surface-2',
-    text: 'text-text-muted',
-    border: 'border-border',
+    bg: 'bg-slate-100',
+    text: 'text-slate-700',
+    border: 'border-slate-300',
     icon: Info,
     label: 'Low',
   },
   informational: {
-    bg: 'bg-surface-2',
-    text: 'text-text-dim',
-    border: 'border-border',
+    bg: 'bg-slate-100',
+    text: 'text-slate-600',
+    border: 'border-slate-300',
     icon: HelpCircle,
     label: 'Info',
   },
@@ -51,11 +51,11 @@ export const BAND_CONFIG: Record<
 
 // Export backward compatibility for BAND_COLORS
 export const BAND_COLORS: Record<string, { bg: string; text: string; border: string; dot: string; hex: string }> = {
-  critical: { bg: 'bg-danger-subtle', text: 'text-danger', border: 'border-danger-border', dot: 'bg-danger', hex: '#FF5C6C' },
-  high: { bg: 'bg-warning-subtle', text: 'text-warning', border: 'border-warning-border', dot: 'bg-warning', hex: '#FFB020' },
-  medium: { bg: 'bg-accent-2-subtle', text: 'text-accent-2', border: 'border-accent-2-border', dot: 'bg-accent-2', hex: '#5B9DFF' },
-  low: { bg: 'bg-surface-2', text: 'text-text-muted', border: 'border-border', dot: 'bg-text-dim', hex: '#8E9DB5' },
-  informational: { bg: 'bg-surface-2', text: 'text-text-dim', border: 'border-border', dot: 'bg-text-dim', hex: '#B4C0D4' },
+  critical: { bg: 'bg-rose-50', text: 'text-rose-800', border: 'border-rose-300', dot: 'bg-rose-600', hex: '#E11D48' },
+  high: { bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-300', dot: 'bg-amber-600', hex: '#D97706' },
+  medium: { bg: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-300', dot: 'bg-blue-600', hex: '#2563EB' },
+  low: { bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-300', dot: 'bg-slate-500', hex: '#64748B' },
+  informational: { bg: 'bg-slate-100', text: 'text-slate-600', border: 'border-slate-300', dot: 'bg-slate-400', hex: '#94A3B8' },
 };
 
 export const BandBadge: React.FC<BandBadgeProps> = ({ band, size = 'md', showCount }) => {
@@ -72,12 +72,12 @@ export const BandBadge: React.FC<BandBadgeProps> = ({ band, size = 'md', showCou
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border ${config.bg} ${config.text} ${config.border} ${sizeClass} tracking-wide select-none`}
+      className={`inline-flex items-center gap-1.5 rounded-full border ${config.bg} ${config.text} ${config.border} ${sizeClass} tracking-wide select-none shadow-sm`}
     >
       <Icon className="w-3.5 h-3.5 shrink-0" />
       <span className="capitalize">{band || config.label}</span>
       {showCount !== undefined && (
-        <span className="ml-1 px-1.5 py-0.2 rounded-full bg-surface border border-border text-text-main font-mono text-[10px] font-bold">
+        <span className="ml-1 px-1.5 py-0.2 rounded-full bg-white border border-slate-300 text-slate-900 font-mono text-[10px] font-bold">
           {showCount}
         </span>
       )}

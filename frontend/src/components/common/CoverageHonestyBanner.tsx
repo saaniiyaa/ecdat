@@ -29,20 +29,20 @@ export const CoverageHonestyBanner: React.FC<CoverageHonestyBannerProps> = ({
 
   return (
     <div
-      className={`rounded-card border transition-all shadow-card ${
+      className={`rounded-2xl border transition-all shadow-sm ${
         isHighCoverage
-          ? 'bg-surface border-border'
-          : 'bg-warning-subtle/40 border-warning-border'
+          ? 'bg-white border-slate-300'
+          : 'bg-amber-50/70 border-amber-300 text-amber-950'
       } ${className}`}
     >
       <div className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1.5 flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg bg-surface-2 border border-border text-accent-2">
-              <Layers className="w-3.5 h-3.5 text-accent-2" />
+            <span className="flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 font-mono">
+              <Layers className="w-3.5 h-3.5 text-indigo-600" />
               Coverage Index: {coverageIndex.toFixed(3)} ({coveragePct}%)
             </span>
-            <span className="text-xs px-2.5 py-1 rounded-lg bg-surface-2 text-text-muted border border-border font-mono font-semibold">
+            <span className="text-xs px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-300 font-mono font-semibold">
               Unobserved: {unobservedPct.toFixed(1)}%
             </span>
             <HelpTooltip
@@ -52,13 +52,13 @@ export const CoverageHonestyBanner: React.FC<CoverageHonestyBannerProps> = ({
           </div>
 
           <div className="flex items-start gap-2.5 pt-1">
-            <ShieldCheck className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+            <ShieldCheck className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
             <div>
               {/* MANDATORY RULE 6.1: Never say 'quantum-safe' */}
-              <p className="text-sm font-bold text-text-main">
+              <p className="text-sm font-bold text-slate-900">
                 Coverage Honesty Ledger: No vulnerable artefacts detected within the scanned scope.
               </p>
-              <p className="text-xs text-text-muted mt-0.5">
+              <p className="text-xs text-slate-600 mt-0.5">
                 Transparent accounting of fully inspected code vs unobserved binaries and stripped symbols.
               </p>
             </div>
@@ -68,9 +68,9 @@ export const CoverageHonestyBanner: React.FC<CoverageHonestyBannerProps> = ({
         {unobservedSamples.length > 0 && !condensed && (
           <button
             onClick={() => setExpanded(!expanded)}
-            className="self-start md:self-center inline-flex items-center gap-2 px-3.5 py-2 text-xs font-mono font-semibold rounded-xl border border-border bg-surface-2 hover:bg-surface-3 text-text-main transition shadow-sm cursor-pointer"
+            className="self-start md:self-center inline-flex items-center gap-2 px-3.5 py-2 text-xs font-mono font-semibold rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 transition shadow-sm cursor-pointer"
           >
-            <EyeOff className="w-3.5 h-3.5 text-warning" />
+            <EyeOff className="w-3.5 h-3.5 text-amber-600" />
             <span>Unobserved Surfaces ({unobservedSamples.length})</span>
             {expanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
@@ -78,10 +78,10 @@ export const CoverageHonestyBanner: React.FC<CoverageHonestyBannerProps> = ({
       </div>
 
       {expanded && unobservedSamples.length > 0 && (
-        <div className="border-t border-border bg-surface-2/60 p-4 rounded-b-card space-y-2.5">
-          <div className="flex items-center justify-between text-xs text-text-muted mb-2 font-mono">
-            <span className="font-bold uppercase tracking-wider text-[11px] text-warning flex items-center gap-1.5">
-              <AlertCircle className="w-3.5 h-3.5" />
+        <div className="border-t border-slate-200 bg-slate-50 p-4 rounded-b-2xl space-y-2.5">
+          <div className="flex items-center justify-between text-xs text-slate-600 mb-2 font-mono">
+            <span className="font-bold uppercase tracking-wider text-[11px] text-amber-800 flex items-center gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
               Unobserved Surface Ledger (Rule 6.4)
             </span>
             <span>{unobservedSamples.length} item(s) logged</span>
@@ -91,11 +91,11 @@ export const CoverageHonestyBanner: React.FC<CoverageHonestyBannerProps> = ({
             {unobservedSamples.map((sample, idx) => (
               <div
                 key={idx}
-                className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-surface border border-border text-xs font-mono"
+                className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-white border border-slate-200 text-xs font-mono shadow-sm"
               >
                 <div className="flex items-center gap-2 min-w-0 truncate">
-                  <span className="text-text-main font-semibold truncate">{sample.path}</span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-surface-2 text-text-dim border border-border">
+                  <span className="text-slate-900 font-semibold truncate">{sample.path}</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-300">
                     {sample.kind}
                   </span>
                 </div>
@@ -103,13 +103,13 @@ export const CoverageHonestyBanner: React.FC<CoverageHonestyBannerProps> = ({
                   <span
                     className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase border ${
                       sample.state === 'partial'
-                        ? 'bg-warning-subtle text-warning border-warning-border'
-                        : 'bg-surface-2 text-text-muted border-border'
+                        ? 'bg-amber-50 text-amber-800 border-amber-300'
+                        : 'bg-slate-100 text-slate-700 border-slate-300'
                     }`}
                   >
                     {sample.state}
                   </span>
-                  <span className="text-text-dim text-xs truncate max-w-xs">{sample.reason}</span>
+                  <span className="text-slate-500 text-xs truncate max-w-xs">{sample.reason}</span>
                 </div>
               </div>
             ))}

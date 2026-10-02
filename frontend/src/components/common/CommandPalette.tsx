@@ -149,34 +149,34 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start justify-center pt-20 p-4 animate-in fade-in duration-150">
-      <div className="w-full max-w-2xl bg-surface border border-border rounded-xl shadow-2xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-start justify-center pt-20 p-4 animate-in fade-in duration-150">
+      <div className="w-full max-w-2xl bg-white border border-slate-300 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
         {/* Search Input Bar */}
-        <div className="p-4 border-b border-border flex items-center gap-3 bg-surface-2/40">
-          <Search className="w-5 h-5 text-accent shrink-0" />
+        <div className="p-4 border-b border-slate-200 flex items-center gap-3 bg-slate-50">
+          <Search className="w-5 h-5 text-indigo-600 shrink-0" />
           <input
             type="text"
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a command, navigate tabs, or launch scan (Ctrl+K)..."
-            className="w-full bg-transparent text-sm font-semibold text-text-main placeholder:text-text-dim focus:outline-none"
+            className="w-full bg-transparent text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
-          <kbd className="px-2 py-0.5 rounded text-[11px] font-mono bg-surface border border-border text-text-dim">
+          <kbd className="px-2 py-0.5 rounded text-[11px] font-mono bg-white border border-slate-300 text-slate-500">
             ESC
           </kbd>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-text-dim hover:text-text-main hover:bg-surface transition"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Results List */}
-        <div className="max-h-[60vh] overflow-y-auto p-2 divide-y divide-border/40">
+        <div className="max-h-[60vh] overflow-y-auto p-2 divide-y divide-slate-100">
           {filtered.length === 0 ? (
-            <div className="p-8 text-center text-sm font-semibold text-text-muted">
+            <div className="p-8 text-center text-sm font-semibold text-slate-500">
               No actions found matching "{query}".
             </div>
           ) : (
@@ -186,22 +186,22 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 <button
                   key={cmd.id}
                   onClick={cmd.action}
-                  className="w-full p-3 rounded-lg flex items-center justify-between text-left hover:bg-surface-2/80 transition-colors group cursor-pointer focus:bg-surface-2 focus:outline-none"
+                  className="w-full p-3 rounded-xl flex items-center justify-between text-left hover:bg-slate-50 transition-colors group cursor-pointer focus:bg-slate-50 focus:outline-none"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-lg bg-surface-3 border border-border/80 flex items-center justify-center text-accent group-hover:border-accent/40 transition-colors">
+                    <div className="w-9 h-9 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 group-hover:border-indigo-400 transition-colors">
                       <Icon className="w-5 h-5" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-sm font-bold text-text-main truncate group-hover:text-accent transition-colors">
+                      <div className="text-sm font-bold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
                         {cmd.title}
                       </div>
-                      <div className="text-xs font-normal text-text-muted truncate">
+                      <div className="text-xs font-normal text-slate-600 truncate">
                         {cmd.subtitle}
                       </div>
                     </div>
                   </div>
-                  <span className="text-[11px] font-mono font-semibold text-text-dim px-2 py-0.5 rounded bg-surface border border-border shrink-0 ml-3">
+                  <span className="text-[11px] font-mono font-semibold text-slate-500 px-2 py-0.5 rounded bg-slate-100 border border-slate-200 shrink-0 ml-3">
                     {cmd.category}
                   </span>
                 </button>
@@ -211,7 +211,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-3 border-t border-border bg-surface-2/30 flex items-center justify-between text-xs text-text-dim font-mono">
+        <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500 font-mono">
           <span>ECDAT Command Palette · NTRO PS 26164</span>
           <span>Use ↑ ↓ to navigate, ↵ to select</span>
         </div>

@@ -36,22 +36,22 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-bg flex items-center justify-center p-6 text-text-main font-sans">
-          <div className="max-w-lg w-full p-8 rounded-card bg-surface border border-danger-border shadow-2xl space-y-4">
-            <div className="flex items-center gap-3 text-danger">
+        <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6 text-slate-900 font-sans">
+          <div className="max-w-lg w-full p-8 rounded-2xl bg-white border border-rose-300 shadow-xl space-y-4">
+            <div className="flex items-center gap-3 text-rose-600">
               <AlertTriangle className="w-8 h-8 shrink-0" />
               <div>
-                <span className="text-xs uppercase font-bold text-text-dim">ECDAT Error Envelope</span>
-                <h2 className="text-lg font-bold text-text-main">Error Code: {this.state.errorCode}</h2>
+                <span className="text-xs uppercase font-bold text-slate-500">ECDAT Error Envelope</span>
+                <h2 className="text-lg font-bold text-slate-900">Error Code: {this.state.errorCode}</h2>
               </div>
             </div>
-            <p className="text-xs text-text-muted leading-relaxed bg-surface-2 p-4 rounded-xl border border-border font-mono">
+            <p className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200 font-mono">
               {this.state.errorMessage}
             </p>
             <div className="flex justify-end gap-3 pt-2">
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-bg font-bold text-xs transition cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition cursor-pointer"
               >
                 Reload Console
               </button>
@@ -73,10 +73,10 @@ const MainConsole: React.FC = () => {
   const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
   const [targetBandFilter, setTargetBandFilter] = useState<string | undefined>(undefined);
   
-  // Theme state: default to dark, persist in localStorage
+  // Theme state: default to light, persist in localStorage
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const saved = localStorage.getItem('ecdat_theme');
-    return saved === 'light' ? 'light' : 'dark';
+    return saved === 'dark' ? 'dark' : 'light';
   });
 
   const { error, clearError } = useScan();
@@ -115,7 +115,7 @@ const MainConsole: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-bg text-text-main transition-colors duration-200">
+    <div className="min-h-screen flex bg-slate-100 text-slate-900 transition-colors duration-200">
       {/* Desktop Sidebar */}
       <div className="hidden md:block shrink-0">
         <Sidebar
@@ -246,16 +246,16 @@ const MainConsole: React.FC = () => {
 
         {/* Scan Orchestrator Modal */}
         {showLauncherModal && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150">
-            <div className="w-full max-w-4xl bg-surface border border-border rounded-card shadow-2xl overflow-hidden my-8">
-              <div className="p-4 border-b border-border bg-surface-2/60 flex items-center justify-between">
-                <span className="font-bold text-xs uppercase tracking-wider text-text-main flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-accent" />
+          <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150">
+            <div className="w-full max-w-4xl bg-white border border-slate-300 rounded-2xl shadow-2xl overflow-hidden my-8">
+              <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                <span className="font-bold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-indigo-600" />
                   ECDAT Cryptographic Discovery Orchestrator
                 </span>
                 <button
                   onClick={() => setShowLauncherModal(false)}
-                  className="text-text-dim hover:text-text-main text-xs font-mono p-1 rounded-lg hover:bg-surface"
+                  className="text-slate-500 hover:text-slate-900 text-xs font-mono p-1 rounded-lg hover:bg-slate-200 transition"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -274,12 +274,12 @@ const MainConsole: React.FC = () => {
         )}
 
         {/* Institutional NTRO Footer */}
-        <footer className="border-t border-border bg-surface/50 py-4 px-6 text-center text-xs text-text-dim font-mono">
+        <footer className="border-t border-slate-200 bg-white/80 py-4 px-6 text-center text-xs text-slate-600 font-mono">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span className="font-semibold">
+            <span className="font-semibold text-slate-800">
               ECDAT — National Technical Research Organisation · SIH PS 26164
             </span>
-            <span>
+            <span className="text-slate-600">
               Deterministic Cryptographic Discovery & Post-Quantum Risk Management Engine
             </span>
           </div>
