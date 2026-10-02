@@ -20,6 +20,7 @@ import time
 import uuid
 from concurrent.futures import Future, ThreadPoolExecutor
 from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from typing import Any
 
@@ -172,6 +173,13 @@ def create_app() -> FastAPI:
         docs_url="/docs",
         redoc_url="/redoc",
     )
+  app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
     # One error envelope for the whole API. Declaring it here means the contract
     # in /docs shows the exact failure shape on every operation, so the frontend
