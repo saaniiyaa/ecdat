@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { useRegistry } from '../context/RegistryContext';
 import { QuantumBadge } from '../components/common/QuantumBadge';
+import { HelpTooltip } from '../components/common/HelpTooltip';
 import {
   BookOpen,
   Search,
-  Shield,
   Layers,
-  FileCode,
   Package,
   Globe,
   Sliders,
@@ -21,7 +20,7 @@ export const RegistryView: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto p-12 text-center text-slate-500 font-mono">
+      <div className="max-w-7xl mx-auto p-12 text-center text-text-muted font-mono">
         Loading authoritative algorithm registry catalogue...
       </div>
     );
@@ -29,7 +28,7 @@ export const RegistryView: React.FC = () => {
 
   if (error || !registry) {
     return (
-      <div className="max-w-4xl mx-auto p-8 rounded-xl bg-rose-50 border border-rose-200/60 text-rose-700 font-mono text-xs">
+      <div className="max-w-4xl mx-auto p-8 rounded-card bg-danger-subtle border border-danger-border text-danger font-mono text-xs">
         Failed to load algorithm registry: {error}
       </div>
     );
@@ -39,14 +38,9 @@ export const RegistryView: React.FC = () => {
   const libraries = Array.isArray(registry.libraries) ? registry.libraries : [];
   const protocols = Array.isArray(registry.protocols) ? registry.protocols : [];
   const snapshot = registry.snapshot;
-  const policyPack = registry.policy_pack;
 
-  // Derive unique OIDs from algorithms. Count what the server actually
-  // returned - never substitute a hardcoded total, which silently lies as soon
-  // as the registry grows.
   const oidsFound = Array.from(new Set(algorithms.map((a) => a.oid).filter(Boolean)));
   const totalOidsCount = oidsFound.length;
-
   const families = Array.from(new Set(algorithms.map((a) => a.family))).filter(Boolean);
 
   const filteredAlgorithms = algorithms.filter((a) => {
@@ -68,17 +62,21 @@ export const RegistryView: React.FC = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 animate-in fade-in duration-200">
       {/* Title */}
-      <div className="border-b border-slate-200 pb-5">
+      <div className="border-b border-border pb-5">
         <div className="flex items-center gap-2.5">
-          <BookOpen className="w-6 h-6 text-indigo-600" />
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <BookOpen className="w-6 h-6 text-accent" />
+          <h1 className="text-2xl font-bold text-text-main tracking-tight">
             Cryptographic Knowledge Base & Policy Pack
           </h1>
+          <HelpTooltip
+            title="Authoritative Crypto Registry"
+            content="Built-in intelligence cataloging known algorithms, security bits, standard OIDs, NIST deprecation dates, and recommended post-quantum replacements."
+          />
         </div>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1">
-          Authoritative enterprise catalogue ({algorithms.length} algorithms, {totalOidsCount} OIDs, {libraries.length} libraries, {protocols.length} protocol profiles)
+        <p className="text-xs sm:text-sm text-text-muted mt-1">
+          Authoritative enterprise catalogue ({algorithms.length} algorithms, {totalOidsCount} OIDs, {libraries.length} libraries, {protocols.length} protocol profiles).
         </p>
       </div>
 
@@ -86,103 +84,103 @@ export const RegistryView: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div
           onClick={() => setActiveTab('algorithms')}
-          className={`p-5 rounded-2xl border cursor-pointer transition shadow-sm ${
+          className={`p-5 rounded-card border cursor-pointer transition shadow-card ${
             activeTab === 'algorithms'
-              ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
-              : 'bg-white border-slate-200/80 hover:border-slate-300 text-slate-700'
+              ? 'bg-surface-2 border-accent text-accent'
+              : 'bg-surface border-border hover:border-accent/40'
           }`}
         >
-          <span className="text-slate-500 text-xs block font-medium">Cryptographic Algorithms</span>
-          <span className="text-2xl font-bold text-indigo-600 mt-1 block tracking-tight font-mono">
+          <span className="text-text-muted text-xs block font-bold">Algorithms</span>
+          <span className="text-2xl font-bold text-accent-2 mt-1 block tracking-tight font-mono">
             {snapshot?.algorithms ?? algorithms.length}
           </span>
-          <span className="text-[11px] text-slate-500">{totalOidsCount} standard ASN.1 OIDs</span>
+          <span className="text-[11px] text-text-dim font-mono">{totalOidsCount} standard OIDs</span>
         </div>
 
         <div
           onClick={() => setActiveTab('libraries')}
-          className={`p-5 rounded-2xl border cursor-pointer transition shadow-sm ${
+          className={`p-5 rounded-card border cursor-pointer transition shadow-card ${
             activeTab === 'libraries'
-              ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
-              : 'bg-white border-slate-200/80 hover:border-slate-300 text-slate-700'
+              ? 'bg-surface-2 border-accent text-accent'
+              : 'bg-surface border-border hover:border-accent/40'
           }`}
         >
-          <span className="text-slate-500 text-xs block font-medium">Monitored Libraries</span>
-          <span className="text-2xl font-bold text-emerald-600 mt-1 block tracking-tight font-mono">
+          <span className="text-text-muted text-xs block font-bold">Monitored Libraries</span>
+          <span className="text-2xl font-bold text-accent mt-1 block tracking-tight font-mono">
             {snapshot?.libraries ?? libraries.length}
           </span>
-          <span className="text-[11px] text-slate-500">Cross-referenced manifests</span>
+          <span className="text-[11px] text-text-dim">Cross-referenced manifests</span>
         </div>
 
         <div
           onClick={() => setActiveTab('protocols')}
-          className={`p-5 rounded-2xl border cursor-pointer transition shadow-sm ${
+          className={`p-5 rounded-card border cursor-pointer transition shadow-card ${
             activeTab === 'protocols'
-              ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
-              : 'bg-white border-slate-200/80 hover:border-slate-300 text-slate-700'
+              ? 'bg-surface-2 border-accent text-accent'
+              : 'bg-surface border-border hover:border-accent/40'
           }`}
         >
-          <span className="text-slate-500 text-xs block font-medium">Protocol Profiles</span>
-          <span className="text-2xl font-bold text-indigo-600 mt-1 block tracking-tight font-mono">
+          <span className="text-text-muted text-xs block font-bold">Protocol Profiles</span>
+          <span className="text-2xl font-bold text-info mt-1 block tracking-tight font-mono">
             {snapshot?.protocols ?? protocols.length}
           </span>
-          <span className="text-[11px] text-slate-500">SSL/TLS profiles</span>
+          <span className="text-[11px] text-text-dim">SSL/TLS & IPsec</span>
         </div>
 
         <div
           onClick={() => setActiveTab('policypack')}
-          className={`p-5 rounded-2xl border cursor-pointer transition shadow-sm ${
+          className={`p-5 rounded-card border cursor-pointer transition shadow-card ${
             activeTab === 'policypack'
-              ? 'bg-amber-50 border-amber-300 text-amber-700'
-              : 'bg-white border-slate-200/80 hover:border-slate-300 text-slate-700'
+              ? 'bg-surface-2 border-accent text-accent'
+              : 'bg-surface border-border hover:border-accent/40'
           }`}
         >
-          <span className="text-slate-500 text-xs block font-medium">Active Policy Pack</span>
-          <span className="text-base font-bold text-amber-600 mt-2 block truncate">
+          <span className="text-text-muted text-xs block font-bold">Active Policy Pack</span>
+          <span className="text-base font-bold text-warning mt-2 block truncate font-mono">
             {snapshot?.policy_pack_version || 'pp-2026.09'}
           </span>
-          <span className="text-[10px] text-slate-500">Dual-track scoring weights</span>
+          <span className="text-[10px] text-text-dim">Dual-track scoring weights</span>
         </div>
       </div>
 
-      {/* View Switcher Bar */}
-      <div className="flex border-b border-slate-200 gap-2">
+      {/* View Switcher Tabs */}
+      <div className="flex border-b border-border gap-2 overflow-x-auto">
         <button
           onClick={() => setActiveTab('algorithms')}
-          className={`px-4 py-2 text-xs font-semibold rounded-t-lg transition border-b-2 ${
+          className={`px-4 py-2.5 text-xs font-bold rounded-t-xl transition border-b-2 cursor-pointer ${
             activeTab === 'algorithms'
-              ? 'border-indigo-500 text-indigo-700 bg-indigo-50'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+              ? 'border-accent text-accent bg-surface-2'
+              : 'border-transparent text-text-muted hover:text-text-main'
           }`}
         >
           Algorithms ({algorithms.length})
         </button>
         <button
           onClick={() => setActiveTab('libraries')}
-          className={`px-4 py-2 text-xs font-semibold rounded-t-lg transition border-b-2 ${
+          className={`px-4 py-2.5 text-xs font-bold rounded-t-xl transition border-b-2 cursor-pointer ${
             activeTab === 'libraries'
-              ? 'border-emerald-500 text-emerald-700 bg-emerald-50'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+              ? 'border-accent text-accent bg-surface-2'
+              : 'border-transparent text-text-muted hover:text-text-main'
           }`}
         >
           Libraries ({libraries.length})
         </button>
         <button
           onClick={() => setActiveTab('protocols')}
-          className={`px-4 py-2 text-xs font-semibold rounded-t-lg transition border-b-2 ${
+          className={`px-4 py-2.5 text-xs font-bold rounded-t-xl transition border-b-2 cursor-pointer ${
             activeTab === 'protocols'
-              ? 'border-indigo-500 text-indigo-700 bg-indigo-50'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+              ? 'border-accent text-accent bg-surface-2'
+              : 'border-transparent text-text-muted hover:text-text-main'
           }`}
         >
           Protocols ({protocols.length})
         </button>
         <button
           onClick={() => setActiveTab('policypack')}
-          className={`px-4 py-2 text-xs font-semibold rounded-t-lg transition border-b-2 ${
+          className={`px-4 py-2.5 text-xs font-bold rounded-t-xl transition border-b-2 cursor-pointer ${
             activeTab === 'policypack'
-              ? 'border-amber-500 text-amber-700 bg-amber-50'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+              ? 'border-accent text-accent bg-surface-2'
+              : 'border-transparent text-text-muted hover:text-text-main'
           }`}
         >
           Policy Pack & Horizons
@@ -193,22 +191,22 @@ export const RegistryView: React.FC = () => {
       {activeTab === 'algorithms' && (
         <div className="space-y-4">
           {/* Filters */}
-          <div className="p-4 rounded-xl bg-white border border-slate-200 flex flex-col sm:flex-row gap-3">
+          <div className="p-4 rounded-card bg-surface border border-border flex flex-col sm:flex-row gap-3 shadow-card">
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+              <Search className="w-4 h-4 text-text-dim absolute left-3 top-3 pointer-events-none" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search canonical name, OID, purpose, or replacement hint..."
-                className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                className="w-full pl-9 pr-3 py-2 bg-surface-2 border border-border rounded-xl text-xs font-semibold text-text-main placeholder:text-text-dim focus:outline-none focus:border-accent"
               />
             </div>
 
             <select
               value={filterFamily}
               onChange={(e) => setFilterFamily(e.target.value)}
-              className="px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="px-3 py-2 bg-surface-2 border border-border rounded-xl text-xs font-semibold text-text-main focus:outline-none focus:border-accent cursor-pointer"
             >
               <option value="">All Algorithm Families</option>
               {families.map((fam) => (
@@ -224,52 +222,56 @@ export const RegistryView: React.FC = () => {
             {filteredAlgorithms.map((alg) => (
               <div
                 key={alg.canonical_name}
-                className="p-5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 shadow-sm transition flex flex-col justify-between space-y-4"
+                className="p-5 rounded-card bg-surface border border-border hover:border-accent/40 transition flex flex-col justify-between space-y-4 shadow-card group"
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h3 className="text-sm font-bold text-slate-900">{alg.canonical_name}</h3>
-                      <span className="text-[10px] text-slate-500 uppercase">{alg.family} · {alg.purpose}</span>
+                      <h3 className="text-sm font-bold text-text-main group-hover:text-accent transition-colors">
+                        {alg.canonical_name}
+                      </h3>
+                      <span className="text-[10px] text-text-dim uppercase font-mono font-semibold">
+                        {alg.family} · {alg.purpose}
+                      </span>
                     </div>
                     <QuantumBadge status={alg.quantum_status} isPostQuantum={alg.is_post_quantum} />
                   </div>
 
                   {alg.oid && (
-                    <div className="text-[11px] text-slate-500">
-                      OID: <span className="text-indigo-600 select-all">{alg.oid}</span>
+                    <div className="text-[11px] text-text-muted font-mono">
+                      OID: <span className="text-accent font-bold select-all">{alg.oid}</span>
                     </div>
                   )}
 
-                  <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-100">
+                  <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-border font-mono">
                     <div>
-                      <span className="text-slate-500 text-[10px] block">Classical Bits:</span>
-                      <span className="text-slate-700">{alg.classical_bits ?? 'N/A'}</span>
+                      <span className="text-text-dim text-[10px] block font-sans font-semibold">Classical Bits:</span>
+                      <span className="text-text-main font-semibold">{alg.classical_bits ?? 'N/A'}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 text-[10px] block">Quantum Bits:</span>
-                      <span className="text-slate-700">{alg.quantum_bits ?? 0}</span>
+                      <span className="text-text-dim text-[10px] block font-sans font-semibold">Quantum Bits:</span>
+                      <span className="text-accent-2 font-semibold">{alg.quantum_bits ?? 0}</span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                     <div>
-                      <span className="text-slate-500 text-[10px] block">NIST Deprecated:</span>
-                      <span className="text-amber-600">{alg.nist_deprecated_after ?? 'N/A'}</span>
+                      <span className="text-text-dim text-[10px] block font-sans font-semibold">NIST Deprecated:</span>
+                      <span className="text-warning font-semibold">{alg.nist_deprecated_after ?? 'N/A'}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 text-[10px] block">NIST Disallowed:</span>
-                      <span className="text-rose-600">{alg.nist_disallowed_after ?? 'N/A'}</span>
+                      <span className="text-text-dim text-[10px] block font-sans font-semibold">NIST Disallowed:</span>
+                      <span className="text-danger font-semibold">{alg.nist_disallowed_after ?? 'N/A'}</span>
                     </div>
                   </div>
                 </div>
 
                 {alg.replacement_hint && (
-                  <div className="p-2.5 rounded bg-emerald-50 border border-emerald-200/60 text-[11px] text-emerald-700">
-                    <span className="font-semibold block text-[10px] uppercase text-emerald-600 mb-0.5">
-                      Replacement Hint:
+                  <div className="p-3 rounded-xl bg-accent-subtle border border-accent-border text-xs text-text-main space-y-1">
+                    <span className="font-bold text-[10px] uppercase text-accent flex items-center gap-1 font-sans">
+                      <CheckCircle className="w-3.5 h-3.5" /> Replacement Hint:
                     </span>
-                    {alg.replacement_hint}
+                    <p className="font-mono text-xs">{alg.replacement_hint}</p>
                   </div>
                 )}
               </div>
@@ -282,13 +284,13 @@ export const RegistryView: React.FC = () => {
       {activeTab === 'libraries' && (
         <div className="space-y-4">
           <div className="relative max-w-md">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+            <Search className="w-4 h-4 text-text-dim absolute left-3 top-3 pointer-events-none" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search 42 monitored cryptographic libraries..."
-              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="w-full pl-9 pr-3 py-2 bg-surface border border-border rounded-xl text-xs font-semibold text-text-main focus:outline-none focus:border-accent"
             />
           </div>
 
@@ -296,10 +298,10 @@ export const RegistryView: React.FC = () => {
             {filteredLibraries.map((lib, idx) => (
               <div
                 key={idx}
-                className="p-3.5 rounded-lg bg-white border border-slate-200 flex items-center gap-2.5"
+                className="p-3.5 rounded-xl bg-surface border border-border flex items-center gap-2.5 shadow-sm hover:border-accent/40 transition"
               >
-                <Package className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span className="text-xs font-semibold text-slate-800 truncate">{lib}</span>
+                <Package className="w-4 h-4 text-accent shrink-0" />
+                <span className="text-xs font-bold text-text-main truncate font-mono">{lib}</span>
               </div>
             ))}
           </div>
@@ -312,15 +314,15 @@ export const RegistryView: React.FC = () => {
           {protocols.map((proto, idx) => (
             <div
               key={idx}
-              className="p-4 rounded-xl bg-white border border-slate-200 space-y-2"
+              className="p-4 rounded-card bg-surface border border-border space-y-2 shadow-card"
             >
               <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-slate-900">{proto.canonical_name}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-indigo-50 text-indigo-600 border border-indigo-200">
+                <span className="text-sm font-bold text-text-main">{proto.canonical_name}</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent-2-subtle text-accent-2 border border-accent-2-border font-mono font-bold">
                   {proto.name}
                 </span>
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-text-muted">
                 Enumerated in configuration surfaces and live probes.
               </p>
             </div>
@@ -331,35 +333,33 @@ export const RegistryView: React.FC = () => {
       {/* Tab 4: Policy Pack & Scenarios */}
       {activeTab === 'policypack' && (
         <div className="space-y-6">
-          {/* Stored CRQC Horizons */}
-          <div className="p-5 rounded-xl bg-white border border-slate-200 space-y-4">
-            <h3 className="text-xs font-bold uppercase text-slate-800">
+          <div className="p-6 rounded-card bg-surface border border-border shadow-card space-y-4">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-text-main">
               Stored Mosca CRQC Arrival Scenarios (Z)
-            </h3>
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {(snapshot?.scenarios || []).map((sc, i) => (
-                <div key={i} className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+                <div key={i} className="p-4 rounded-xl bg-surface-2 border border-border space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-indigo-600 uppercase text-xs">{sc.name}</span>
-                    <span className="text-xs font-bold text-slate-800">Z = {sc.z_years} years</span>
+                    <span className="font-bold text-accent uppercase text-xs">{sc.name}</span>
+                    <span className="text-xs font-mono font-bold text-text-main">Z = {sc.z_years} years</span>
                   </div>
-                  <div className="text-xs text-slate-700 font-semibold">{sc.label}</div>
-                  <p className="text-[11px] text-slate-500 font-sans">{sc.source}</p>
+                  <div className="text-xs text-text-main font-semibold">{sc.label}</div>
+                  <p className="text-[11px] text-text-muted">{sc.source}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Evidence Class Baseline Thresholds */}
-          <div className="p-5 rounded-xl bg-white border border-slate-200 space-y-3">
-            <h3 className="text-xs font-bold uppercase text-slate-800">
-              Evidence Class Confidence Rules & Maximum Severity Ceilings
-            </h3>
+          <div className="p-6 rounded-card bg-surface border border-border shadow-card space-y-3">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-text-main">
+              Evidence Class Confidence Rules & Severity Ceilings
+            </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               {Object.entries(snapshot?.evidence_classes || {}).map(([cls, maxBand]) => (
-                <div key={cls} className="p-3 rounded bg-slate-50 border border-slate-200">
-                  <span className="text-slate-500 block text-[10px]">{cls}</span>
-                  <span className="font-bold uppercase text-slate-800 text-xs mt-1 block">
+                <div key={cls} className="p-3 rounded-xl bg-surface-2 border border-border">
+                  <span className="text-text-dim block text-[10px] font-mono">{cls}</span>
+                  <span className="font-bold uppercase text-text-main text-xs mt-1 block">
                     Max: {maxBand}
                   </span>
                 </div>

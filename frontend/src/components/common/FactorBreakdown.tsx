@@ -16,51 +16,53 @@ export const FactorBreakdown: React.FC<FactorBreakdownProps> = ({
   return (
     <div className="space-y-4">
       {explanation && (
-        <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-600 leading-relaxed font-sans">
-          <div className="font-semibold text-slate-900 flex items-center gap-1.5 mb-1 text-[13px]">
-            <Scale className="w-4 h-4 text-indigo-600" />
-            <span>Deterministic Scoring Explanation</span>
+        <div className="p-4 rounded-xl border border-border bg-surface-2 text-xs text-text-muted leading-relaxed">
+          <div className="font-bold text-text-main flex items-center gap-2 mb-1.5 text-xs">
+            <Scale className="w-4 h-4 text-accent" />
+            <span>Deterministic Scoring Explanation (Rule 6.2)</span>
           </div>
-          <p className="font-mono text-slate-600 text-xs">{explanation}</p>
+          <p className="font-mono text-text-muted text-xs leading-relaxed bg-surface/80 p-3 rounded-lg border border-border/60">
+            {explanation}
+          </p>
         </div>
       )}
 
       {drivers && drivers.context && (
-        <div className="p-3 rounded-md bg-slate-50 border border-slate-200 text-xs font-mono">
-          <div className="text-slate-500 text-[11px] uppercase tracking-wider mb-2 font-semibold">
+        <div className="p-3.5 rounded-xl bg-surface-2 border border-border text-xs font-mono">
+          <div className="text-text-dim text-[11px] uppercase tracking-wider mb-2 font-bold">
             Context Drivers (+{drivers.context_points || 0} pts)
           </div>
-          <div className="grid grid-cols-2 gap-2 text-slate-700">
+          <div className="grid grid-cols-2 gap-3 text-text-muted">
             <div>
-              <span className="text-slate-500">Exposure:</span>{' '}
-              <span className="text-amber-600">{drivers.context.exposure}</span>
+              <span className="text-text-dim font-sans font-semibold">Exposure:</span>{' '}
+              <span className="text-warning font-bold">{drivers.context.exposure}</span>
             </div>
             <div>
-              <span className="text-slate-500">Criticality:</span>{' '}
-              <span className="text-rose-600">{drivers.context.criticality}</span>
+              <span className="text-text-dim font-sans font-semibold">Criticality:</span>{' '}
+              <span className="text-danger font-bold">{drivers.context.criticality}</span>
             </div>
             <div>
-              <span className="text-slate-500">Classification:</span>{' '}
-              <span className="text-indigo-600">{drivers.context.classification}</span>
+              <span className="text-text-dim font-sans font-semibold">Classification:</span>{' '}
+              <span className="text-accent-2 font-bold">{drivers.context.classification}</span>
             </div>
             <div>
-              <span className="text-slate-500">Data Lifetime:</span>{' '}
-              <span className="text-emerald-600">{drivers.context.data_lifetime_years} years</span>
+              <span className="text-text-dim font-sans font-semibold">Data Lifetime:</span>{' '}
+              <span className="text-accent font-bold">{drivers.context.data_lifetime_years} years</span>
             </div>
           </div>
         </div>
       )}
 
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-xs uppercase tracking-wider font-semibold text-slate-500">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="text-xs uppercase tracking-wider font-bold text-text-dim">
             Attributed Factors ({factors.length})
           </div>
-          <span className="text-[11px] text-slate-500 font-mono">Server-side attribution (Rule 6.2)</span>
+          <span className="text-[11px] text-text-dim font-mono">Server-side attribution (Rule 6.2)</span>
         </div>
 
         {factors.length === 0 ? (
-          <div className="p-4 text-center border border-dashed border-slate-200 rounded text-xs text-slate-400 font-mono">
+          <div className="p-6 text-center border border-dashed border-border rounded-xl text-xs text-text-dim font-mono bg-surface-2/40">
             No specific risk factors registered for this finding.
           </div>
         ) : (
@@ -69,53 +71,53 @@ export const FactorBreakdown: React.FC<FactorBreakdownProps> = ({
               const isPositive = f.delta > 0;
               const trackColor =
                 f.track === 'quantum'
-                  ? 'border-indigo-200/60 bg-indigo-50 text-indigo-700'
+                  ? 'border-accent-2-border bg-accent-2-subtle text-accent-2'
                   : f.track === 'classical'
-                  ? 'border-amber-200/60 bg-amber-50 text-amber-700'
-                  : 'border-slate-200 bg-slate-50 text-slate-700';
+                  ? 'border-warning-border bg-warning-subtle text-warning'
+                  : 'border-border bg-surface-2 text-text-muted';
 
               return (
                 <div
                   key={f.rule_id || i}
-                  className="p-3 rounded-lg border border-slate-200 bg-white hover:border-slate-300 transition"
+                  className="p-3.5 rounded-xl border border-border bg-surface-2/70 hover:border-border transition shadow-sm space-y-1.5"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono border ${trackColor}`}>
+                    <div className="space-y-1.5 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border uppercase ${trackColor}`}>
                           {f.track}
                         </span>
-                        <span className="font-mono text-xs font-semibold text-slate-800">
+                        <span className="font-mono text-xs font-bold text-text-main">
                           {f.rule_id}
                         </span>
-                        <span className="text-xs text-slate-700 font-medium">
+                        <span className="text-xs text-text-muted font-semibold truncate">
                           {f.title}
                         </span>
                       </div>
 
                       {f.factor_value && (
-                        <div className="text-xs text-slate-500 font-mono">
+                        <div className="text-xs text-text-dim font-mono">
                           Value:{' '}
-                          <span className="text-slate-800 bg-slate-100 px-1 py-0.5 rounded">
+                          <span className="text-text-main bg-surface px-1.5 py-0.5 rounded border border-border">
                             {String(f.factor_value)}
                           </span>
                         </div>
                       )}
 
                       {f.evidence && (
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1 font-mono">
-                          <FileCode className="w-3.5 h-3.5 text-slate-400" />
-                          <span>{f.evidence}</span>
+                        <div className="flex items-center gap-1.5 text-xs text-text-dim font-mono truncate">
+                          <FileCode className="w-3.5 h-3.5 text-accent shrink-0" />
+                          <span className="truncate">{f.evidence}</span>
                         </div>
                       )}
                     </div>
 
                     <div className="text-right shrink-0">
                       <span
-                        className={`inline-flex items-center text-xs font-mono font-bold px-2 py-0.5 rounded ${
+                        className={`inline-flex items-center text-xs font-mono font-bold px-2.5 py-1 rounded-lg border ${
                           isPositive
-                            ? 'text-rose-700 bg-rose-50 border border-rose-200/60'
-                            : 'text-emerald-700 bg-emerald-50 border border-emerald-200/60'
+                            ? 'text-danger bg-danger-subtle border-danger-border'
+                            : 'text-accent bg-accent-subtle border-accent-border'
                         }`}
                       >
                         {isPositive ? `+${f.delta}` : f.delta} pts
