@@ -1,8 +1,7 @@
 // ECDAT API Client with Frozen Error Envelope parsing & X-Request-Id correlation
 import { ApiError, ErrorEnvelope } from '../types/api';
 
-const DEFAULT_BASE_URL = 'http://127.0.0.1:8000/api/v1';
-const STORAGE_KEY_BASE_URL = 'ecdat_api_base_url';
+const DEFAULT_BASE_URL = import.meta.env.VITE_API_URL || 'https://ecdat-api-oci7.onrender.com/api/v1';const STORAGE_KEY_BASE_URL = 'ecdat_api_base_url';
 const STORAGE_KEY_API_KEY = 'ecdat_api_key';
 
 export function getBaseUrl(): string {
